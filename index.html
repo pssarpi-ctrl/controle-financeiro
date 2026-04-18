@@ -124,6 +124,10 @@
         .btn-danger { width: 100%; height: 48px; background: #ffe5e5; color: #c0392b; border: none; border-radius: 14px; font-weight: 600; cursor: pointer; }
         .btn-warn { width: 100%; height: 48px; background: #fff3cd; color: #856404; border: none; border-radius: 14px; font-weight: 600; cursor: pointer; }
 
+        /* ACCORDION */
+        .chev { font-size:12px; color:#c7c7cc; transition:transform .2s; display:inline-block; }
+        .chev.open { transform:rotate(180deg); }
+
         /* MODAIS */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(2px); flex-direction: column; }
         .modal-content { background: #fff; border-radius: 24px; width: 100%; max-width: 380px; padding: 24px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column; }
@@ -150,20 +154,24 @@
             👤 Acessar como Visitante
         </button>
 
-        <div style="margin-top: 60px; font-size: 11px; color: #8e8e93; font-weight: 500;">
-            Desenvolvido por <span style="color: #007aff; font-weight: 700;">Pedro Sarpi</span>
+        <div style="margin-top: 60px; font-size: 11px; color: #8e8e93; font-weight: 500; line-height: 1.5;">
+            Desenvolvido por <span style="color: #007aff; font-weight: 700;">Pedro Sarpi</span><br>
+            Versão 1.2 BETA
         </div>
     </div>
 
     <div id="app-main">
         <div class="top-bar">
             <div style="display:flex; justify-content:space-between; align-items:flex-start">
-                <div>
+                <div style="flex:1">
                     <div class="welcome" id="top-welcome">Olá, Pedro ✨</div>
                     <h1 style="font-size: 18px; font-weight: 800;">Controle Financeiro</h1>
-                    <div style="font-size: 16px; margin-top: 4px;">💵 💸 🤑 🥳 📈</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 4px; padding-right: 10px;">
+                        <div style="font-size: 16px;">💵 💸 🤑 🥳 📈</div>
+                        <div id="top-saldo" style="font-size: 16px; font-weight: 800; transition: color 0.3s;">R$ 0,00</div>
+                    </div>
                 </div>
-                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px">
+                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px; margin-left: 10px;">
                     <div style="display:flex; align-items:center; gap:10px">
                         <span id="cloud-status" style="font-size:10px; font-weight:bold; color:#8e8e93"></span>
                         <button class="config-icon" onclick="window.abrirConfig()">⚙️</button>
@@ -228,17 +236,21 @@
                     </div>
                 </div>
                 
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                    <span style="font-weight:700; font-size:16px;">Gastos Fixos & Parcelas</span>
-                    <button class="btn-small" onclick="window.abrirModalGasto('fixo')">+ Fixo</button>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; cursor:pointer;" onclick="window.toggleAccordion('wrap-fixos', 'chev-fixos')">
+                    <span style="font-weight:700; font-size:16px;">Gastos Fixos & Parcelas <span class="chev" id="chev-fixos">▼</span></span>
+                    <button class="btn-small" onclick="event.stopPropagation(); window.abrirModalGasto('fixo')">+ Fixo</button>
                 </div>
-                <div class="card" id="gastos-fixos-list" style="padding:4px 16px;"></div>
+                <div id="wrap-fixos" style="display:none">
+                    <div class="card" id="gastos-fixos-list" style="padding:4px 16px;"></div>
+                </div>
 
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; margin-bottom:12px;">
-                    <span style="font-weight:700; font-size:16px;">Gastos Variáveis</span>
-                    <button class="btn-small" onclick="window.abrirModalGasto('var')">+ Variável</button>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; margin-bottom:12px; cursor:pointer;" onclick="window.toggleAccordion('wrap-vars', 'chev-vars')">
+                    <span style="font-weight:700; font-size:16px;">Gastos Variáveis <span class="chev" id="chev-vars">▼</span></span>
+                    <button class="btn-small" onclick="event.stopPropagation(); window.abrirModalGasto('var')">+ Variável</button>
                 </div>
-                <div class="card" id="gastos-var-list" style="padding:4px 16px;"></div>
+                <div id="wrap-vars" style="display:none">
+                    <div class="card" id="gastos-var-list" style="padding:4px 16px;"></div>
+                </div>
             </div>
 
             <div class="page" id="pg-metas">
@@ -514,7 +526,6 @@
 
     const MESES_CURTO = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
     
-    // TIPOS DE RECEITA (ERGEON)
     window.TIPOS = [
         {k:"salario", l:"Salário", bg:"#d1f7e0", tc:"#1a6b3a"},
         {k:"reembolso", l:"Reemb.", bg:"#e3f0ff", tc:"#0055cc"},
@@ -525,7 +536,6 @@
     const anoSel = document.getElementById("mg-limit-y");
     for(let i = activeY; i <= activeY + 15; i++){ anoSel.innerHTML += `<option value="${i}">${i}</option>`; }
 
-    // Dados para Restauração
     const BASE_FIXOS_PEDRO = [
       { id: "gf_1", n: "📱 Plano Vivo + Seguro", val: 90, pay: "nubank", endM: null, endY: null, hiddenMonths: [] },
       { id: "gf_8", n: "❄️ Ar Condicionado", val: 220.39, pay: "nubank", endM: 6, endY: 2026, hiddenMonths: [] },
@@ -613,7 +623,7 @@
 
     window.updateReceitaUSD = function(i, val) {
         activeData.semanas[i].usd = Number(val);
-        activeData.semanas[i].tipos = {salario:0, reembolso:0, review:0, bonus:0}; // Zera as caixinhas se digitar no total
+        activeData.semanas[i].tipos = {salario:0, reembolso:0, review:0, bonus:0}; 
         window.recalc();
         const el = document.getElementById(`rec-line-total-${i}`);
         if(el) el.textContent = window.R((activeData.semanas[i].usd||0) * (activeData.semanas[i].cam||5.90));
@@ -662,7 +672,7 @@
     window.tipoTotals = function() {
         const t = {salario:{u:0,b:0},reembolso:{u:0,b:0},review:{u:0,b:0},bonus:{u:0,b:0}};
         (activeData.semanas || []).forEach(s => {
-            if(!s.isBRL && s.tipos) { // Conta detalhes apenas se estiver no modo USD
+            if(!s.isBRL && s.tipos) { 
                 window.TIPOS.forEach(tp => {
                     const v = s.tipos[tp.k] || 0;
                     if(v > 0) { t[tp.k].u += v; t[tp.k].b += (v * (s.cam||5.90)); }
@@ -851,9 +861,7 @@
     }
     window.removerGastoVar = function(id) { activeData.gastosV = activeData.gastosV.filter(v => v.id !== id); window.renderView(); }
 
-    /* ==========================================
-       METAS E OUTRAS ABAS
-    ========================================== */
+    /* METAS */
     window.buildMetas = function() {
       const list = document.getElementById("metas-list"); list.innerHTML = "";
       const activeMetas = (window.S.metas || []).filter(m => window.isItemActive(m, activeM, activeY));
@@ -958,6 +966,13 @@
       const {tBRL, tUSD, tReal, tOrc, tAp, saldo} = window.calcTotals();
       const isE = (window.S.config && window.S.config.isErgeon) || false;
 
+      // Topo Geral
+      const topSaldo = document.getElementById("top-saldo");
+      if(topSaldo) {
+          topSaldo.textContent = window.R(saldo);
+          topSaldo.style.color = saldo >= 0 ? '#30d158' : '#ff453a';
+      }
+
       // Topo Receitas
       document.getElementById("total-brl").textContent = window.R(tBRL);
       const usdEl = document.getElementById("total-usd");
@@ -989,8 +1004,8 @@
       const apEl = document.getElementById("metas-total-val"); if(apEl) apEl.textContent = window.R(tAp);
 
       document.getElementById("painel-metrics").innerHTML = `
-        <div class="m-card"><div class="m-label">RECEBIDO</div><div class="m-val green">${window.R(tBRL)}</div><div class="m-sub">Total do mês</div></div>
-        <div class="m-card"><div class="m-label">GASTOS</div><div class="m-val red">${window.R(tReal)}</div><div class="m-sub">${tReal>0 && tOrc>0 ? Math.round(tReal/tOrc*100)+"% da base" : "orçado"}</div></div>
+        <div class="m-card" onclick="window.goTo('receitas')" style="cursor:pointer;"><div class="m-label">RECEBIDO</div><div class="m-val green">${window.R(tBRL)}</div><div class="m-sub">Total do mês</div></div>
+        <div class="m-card" onclick="window.goTo('gastos')" style="cursor:pointer;"><div class="m-label">GASTOS</div><div class="m-val red">${window.R(tReal)}</div><div class="m-sub">${tReal>0 && tOrc>0 ? Math.round(tReal/tOrc*100)+"% da base" : "orçado"}</div></div>
         <div class="m-card"><div class="m-label">APORTES</div><div class="m-val blue">${window.R(tAp)}</div><div class="m-sub">${(window.S.metas||[]).filter(m=>window.isItemActive(m, activeM, activeY)).length} ativas</div></div>
         <div class="m-card"><div class="m-label">SALDO</div><div class="m-val ${saldo>=0?'green':'red'}">${window.R(saldo)}</div><div class="m-sub">${tBRL>0 ? Math.round(saldo/tBRL*100)+"% livre" : "—"}</div></div>
       `;
@@ -1137,27 +1152,47 @@
     }
 
     window.buildSaude = function(){
-      const{tBRL,tReal,tAp,saldo}=window.calcTotals();
-      const comprometido=tBRL>0?(tReal+tAp)/tBRL*100:0;
-      const emergMeta = (window.S.metas||[]).find(m=>m.n.toLowerCase().includes("emerg"));
-      let emergAcum=0; if(emergMeta){ Object.keys(window.S.dataByMonth).forEach(k => { const [km, ky] = k.split('-').map(Number); if (ky < activeY || (ky === activeY && km <= activeM)) emergAcum += ((window.S.dataByMonth[k].metasAcum||{})[emergMeta.id] || 0); }); }
-      const emergObj = emergMeta ? emergMeta.obj : 20000;
-      const emergPct = emergObj>0 ? emergAcum/emergObj*100 : 0;
-      const keys = Object.keys(window.S.dataByMonth);
-      const hist = keys.map(k => window.calcTotals(window.S.dataByMonth[k], ...k.split('-').map(Number))).filter(t => t.hasData);
+        const { tBRL, tReal, tAp, saldo, hasData } = window.calcTotals();
+        let pts = 0;
+        
+        if (!hasData) {
+            pts = 50; 
+        } else {
+            if (saldo > 0) {
+                pts += 25; 
+                if ((saldo / tBRL) >= 0.1) pts += 15; 
+            } else if (saldo === 0) {
+                pts += 10; 
+            } else {
+                pts += 0; 
+            }
+            
+            if (tBRL > 0) {
+                const comprometido = tReal / tBRL;
+                if (comprometido <= 0.6) pts += 30;
+                else if (comprometido <= 0.85) pts += 15;
+            } else if (tReal === 0) {
+                pts += 30;
+            }
+            
+            if (tAp > 0) pts += 15;
+            
+            const emergMeta = (window.S.metas||[]).find(m=>m.n.toLowerCase().includes("emerg"));
+            let emergAcum=0; 
+            if(emergMeta){ Object.keys(window.S.dataByMonth).forEach(k => { const [km, ky] = k.split('-').map(Number); if (ky < activeY || (ky === activeY && km <= activeM)) emergAcum += ((window.S.dataByMonth[k].metasAcum||{})[emergMeta.id] || 0); }); }
+            const emergPct = emergMeta && emergMeta.obj > 0 ? (emergAcum/emergMeta.obj)*100 : 0;
+            
+            if (emergPct >= 50 || !emergMeta) pts += 15; 
+        }
 
-      let pts=0;
-      pts+=comprometido<=70?25:comprometido<=85?15:comprometido<=95?5:0;
-      pts+=emergPct>=100?25:emergPct>=50?15:emergPct>=25?8:emergPct>0?3:0;
-      if(hist.length>=3){pts+=Math.round(hist.filter(h=>h.saldo>0).length/hist.length*50);} else pts+=15;
-      const score=Math.min(100,pts);
-      const sc=score>=70?{c:"#1a6b3a",bg:"#d1f7e0",bc:"#1a6b3a",l:"Boa"}:score>=45?{c:"#856404",bg:"#fff3cd",bc:"#856404",l:"Regular"}:{c:"#c0392b",bg:"#ffe5e5",bc:"#c0392b",l:"Atenção"};
+        const score = Math.min(100, Math.round(pts));
+        const sc = score >= 70 ? {c:"#1a6b3a",bg:"#d1f7e0",bc:"#1a6b3a",l:"Boa"} : score >= 40 ? {c:"#856404",bg:"#fff3cd",bc:"#856404",l:"Regular"} : {c:"#c0392b",bg:"#ffe5e5",bc:"#c0392b",l:"Atenção"};
 
-      document.getElementById("saude-score-card").innerHTML=`
-        <div class="card" style="display:flex;align-items:center;gap:16px;">
-            <div style="width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;border:3px solid ${sc.bc};background:${sc.bg};color:${sc.c}">${score}</div>
-            <div style="flex:1"><div style="font-size:11px;color:#8e8e93;font-weight:600;margin-bottom:4px">SAÚDE FINANCEIRA</div><div style="font-size:20px;font-weight:800;color:${sc.c};margin-bottom:4px">${sc.l}</div><div style="font-size:13px;">${score>=70?"Você está no caminho certo.":score>=45?"Há pontos de melhoria.":"Atenção necessária."}</div></div>
-        </div>`;
+        document.getElementById("saude-score-card").innerHTML=`
+            <div class="card" style="display:flex;align-items:center;gap:16px;">
+                <div style="width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;border:3px solid ${sc.bc};background:${sc.bg};color:${sc.c}">${score}</div>
+                <div style="flex:1"><div style="font-size:11px;color:#8e8e93;font-weight:600;margin-bottom:4px">SAÚDE FINANCEIRA</div><div style="font-size:20px;font-weight:800;color:${sc.c};margin-bottom:4px">${sc.l}</div><div style="font-size:13px;">${score>=70?"Você está no caminho certo.":score>=40?"Há pontos de melhoria.":"Atenção necessária!"}</div></div>
+            </div>`;
     }
 
     window.analisarCompra = function(){
@@ -1228,7 +1263,7 @@
         window.S.config.isErgeon = document.getElementById("cfg-ergeon").checked; 
         window.S.config.freq = document.getElementById("cfg-freq").value;
         window.fecharModal('modal-config'); 
-        window.setMonthData(activeM, activeY); // Força recriar mês atual com a config nova
+        window.setMonthData(activeM, activeY); 
     }
     
     window.abrirModalParcelas = function() { document.getElementById("modal-parcelas").style.display = "flex"; }
