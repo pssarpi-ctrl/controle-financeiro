@@ -69,11 +69,11 @@
         .gasto-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 0.5px solid #f2f2f7; gap: 12px; flex-wrap: wrap; }
         .gasto-row:last-child { border-bottom: none; }
         .gasto-nome { flex: 1; min-width: 140px; display: flex; flex-direction: column; gap: 4px; }
-        .gasto-nome-text { font-size: 15px; line-height: 1.3; font-weight: 500; }
+        .gasto-nome-text { font-size: 16px; line-height: 1.3; font-weight: 500; }
         .gasto-tags { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
         .gasto-orc { font-size: 12px; color: #8e8e93; }
         .gasto-ctrl { display: flex; align-items: center; gap: 8px; }
-        .gasto-inp { width: 90px; height: 38px; border: 1.5px solid #e5e5ea; border-radius: 8px; background: transparent; font-size: 15px; font-weight: 700; font-family: inherit; color: inherit; padding: 0 8px; text-align: right; outline: none; }
+        .gasto-inp { width: 90px; height: 38px; border: 1.5px solid #e5e5ea; border-radius: 8px; background: transparent; font-size: 16px; font-weight: 700; font-family: inherit; color: inherit; padding: 0 8px; text-align: right; outline: none; }
         .gasto-inp:focus { border-color: #007aff; }
         .gasto-diff { font-size: 12px; font-weight: 600; min-width: 48px; text-align: right; }
         
@@ -112,9 +112,9 @@
         .login-screen { position: absolute; top:0; left:0; width:100%; height:100%; background:#fff; z-index:999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; text-align:center; }
         .login-btn { width: 100%; height: 54px; border-radius: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; border: none; margin-bottom: 12px; font-family: inherit; font-size: 16px; }
 
-        /* INPUTS & BUTTONS */
+        /* INPUTS & BUTTONS - 16px to stop iOS Auto-Zoom */
         input[type=number], input[type=text], select.form-sel { 
-            width: 100%; height: 42px; border-radius: 10px; border: 1.5px solid #e5e5ea; padding: 0 10px; font-family: inherit; font-size: 15px; -webkit-appearance: none; background: #fff; color: #1c1c1e;
+            width: 100%; height: 42px; border-radius: 10px; border: 1.5px solid #e5e5ea; padding: 0 10px; font-family: inherit; font-size: 16px; -webkit-appearance: none; background: #fff; color: #1c1c1e;
         }
         .input-group { margin-bottom: 14px; width: 100%; }
         .input-label { font-size: 13px; font-weight: 500; color: #3c3c43; margin-bottom: 6px; display: block; text-align: left; }
@@ -158,7 +158,7 @@
 
         <div style="margin-top: 60px; font-size: 11px; color: #8e8e93; font-weight: 500; line-height: 1.5;">
             Desenvolvido por <span style="color: #007aff; font-weight: 700;">Pedro Sarpi</span><br>
-            Versão 1.3 BETA
+            Versão 1.9
         </div>
     </div>
 
@@ -608,7 +608,7 @@
             } else if (freq === 'quinzenal') {
                 linhasIniciais = [{n:"Quinzena 1", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Quinzena 2", brl:0, usd:0, cam:5.90, tipos:{}}];
             } else {
-                linhasIniciais = [{n:"Semana 1", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Semana 2", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Semana 3", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Semana 4", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Semana 5", brl:0, usd:0, cam:5.90, tipos:{}}];
+                linhasIniciais = [{n:"Semana 1", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Semana 2", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Semana 3", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Semana 4", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Semana 5", brl:0, usd:0, cam:5.90, types:{}}];
             }
 
             if(!window.S.dataByMonth[activeKey]) window.S.dataByMonth[activeKey] = {};
@@ -639,7 +639,7 @@
     }
 
     /* ==========================================
-       RECEITAS E MODOS DÓLAR
+       RECEITAS E MODO ERGEON OTIMIZADO
     ========================================== */
     window.toggleCurrency = function(i) {
         activeData.semanas[i].isBRL = !activeData.semanas[i].isBRL;
@@ -725,7 +725,7 @@
             
             let html = `
                 <div class="receita-header">
-                    <input type="text" value="${s.n || ''}" oninput="window.S.dataByMonth['${activeKey}'].semanas[${i}].n=this.value; if(window.syncFirebase) window.syncFirebase();" style="font-size:15px; font-weight:700; border:none; background:transparent; outline:none; flex:1;" placeholder="Nome da receita...">
+                    <input type="text" value="${s.n || ''}" oninput="window.S.dataByMonth['${activeKey}'].semanas[${i}].n=this.value; window.scheduleSync();" style="font-size:16px; font-weight:700; border:none; background:transparent; outline:none; flex:1;" placeholder="Nome da receita...">
                     <button class="btn-del" onclick="window.removerReceita(${i})">&times;</button>
                 </div>`;
 
@@ -743,7 +743,7 @@
                         return `
                             <div style="background:#f9f9f9; border:1px solid #e5e5ea; border-radius:10px; padding:6px 8px;">
                                 <div style="font-size:10px; font-weight:700; color:${t.tc}; background:${t.bg}; padding:2px 6px; border-radius:6px; display:inline-block; margin-bottom:4px;">${t.l}</div>
-                                <input id="ti-${i}-${t.k}" type="number" step="0.01" inputmode="decimal" min="0" value="${v}" placeholder="0,00" oninput="window.updateReceitaTipo(${i}, '${t.k}', this.value)" style="width:100%; height:28px; border:none; background:transparent; font-size:14px; text-align:right; font-weight:600; color:#1c1c1e; padding:0;">
+                                <input id="ti-${i}-${t.k}" type="number" step="0.01" inputmode="decimal" min="0" value="${v}" placeholder="0,00" oninput="window.updateReceitaTipo(${i}, '${t.k}', this.value)" style="width:100%; height:28px; border:none; background:transparent; font-size:16px; text-align:right; font-weight:600; color:#1c1c1e; padding:0;">
                             </div>`;
                     }).join('');
                 }
@@ -752,12 +752,12 @@
                     <div class="receita-inputs" style="margin-top:8px;">
                         <div style="flex:1; background:#f2f2f7; border-radius:10px; display:flex; align-items:center; padding:0 8px;">
                             <span onclick="window.toggleCurrency(${i})" style="font-size:13px; color:${currColor}; font-weight:800; cursor:pointer; padding:8px 4px 8px 0; user-select:none;">${isBRL ? 'R$' : 'U$'} <span style="font-size:9px; vertical-align:middle;">▼</span></span>
-                            <input id="wu-${i}" type="number" step="0.01" inputmode="decimal" min="0" value="${inputValue}" placeholder="0,00" oninput="${onInputFunc}" style="border:none; background:transparent; height:42px; width:100%; font-weight:600; text-align:left; color:#1c1c1e;">
+                            <input id="wu-${i}" type="number" step="0.01" inputmode="decimal" min="0" value="${inputValue}" placeholder="0,00" oninput="${onInputFunc}" style="border:none; background:transparent; height:42px; width:100%; font-weight:600; text-align:left; color:#1c1c1e; font-size:16px;">
                         </div>
                         ${!isBRL ? `
                         <div style="width:85px; background:#f2f2f7; border-radius:10px; display:flex; align-items:center; padding:0 6px;">
                             <span style="font-size:10px; color:#8e8e93; margin-right:2px;">Câmbio</span>
-                            <input type="number" step="0.01" inputmode="decimal" min="0" value="${s.cam || 5.90}" oninput="window.updateReceitaCam(${i}, this.value)" style="border:none; background:transparent; height:42px; width:100%; font-size:13px; font-weight:600; text-align:right; color:#1c1c1e; padding:0;">
+                            <input type="number" step="0.01" inputmode="decimal" min="0" value="${s.cam || 5.90}" oninput="window.updateReceitaCam(${i}, this.value)" style="border:none; background:transparent; height:42px; width:100%; font-size:16px; font-weight:600; text-align:right; color:#1c1c1e; padding:0;">
                         </div>` : ''}
                         <div style="min-width:80px; display:flex; flex-direction:column; align-items:flex-end;">
                             <span id="rec-line-total-${i}" style="font-weight:800; color:#30d158; font-size:15px;">${displayTotal}</span>
@@ -804,10 +804,9 @@
 
     window.updateGastoFixoNome = function(id, name) {
         const gf = window.S.gastosFixos.find(g => g.id === id);
-        if(gf) { gf.n = name; if(window.syncFirebase) window.syncFirebase(); window.recalc(); }
+        if(gf) { gf.n = name; window.scheduleSync(); }
     }
     
-    // FIX DOM para o teclado não sumir nos Gastos
     window.updateGastoFixoVal = function(id, valStr) {
       const val = +valStr;
       if (!activeData.gastosF[id] || typeof activeData.gastosF[id] === 'number') { activeData.gastosF[id] = { val: val, pay: 'none' }; } 
@@ -828,7 +827,7 @@
 
     window.updateGastoVarNome = function(id, name) {
         const gv = activeData.gastosV.find(g => g.id === id);
-        if(gv) { gv.n = name; if(window.syncFirebase) window.syncFirebase(); window.recalc(); }
+        if(gv) { gv.n = name; window.scheduleSync(); }
     }
     window.updateGastoVarVal = function(id, valStr) {
         const gv = activeData.gastosV.find(g => g.id === id);
@@ -860,7 +859,7 @@
           el.innerHTML = `
             <div class="gasto-nome">
               <div style="display:flex; align-items:center; gap:6px;">
-                  <input type="text" value="${gf.n}" oninput="window.updateGastoFixoNome('${gf.id}', this.value)" style="border:none;background:transparent;font-size:15px;font-weight:600;color:inherit;padding:0;outline:none;width:100%;">
+                  <input type="text" value="${gf.n}" oninput="window.updateGastoFixoNome('${gf.id}', this.value)" style="border:none;background:transparent;font-size:16px;font-weight:600;color:inherit;padding:0;outline:none;width:100%;">
               </div>
               <div class="gasto-tags">${window.renderPaySelect(gf.id, gastoAtual.pay || 'none', 'fixo')}<div class="gasto-orc">Padrão: ${window.R(gf.val)} ${dtBadge}</div></div>
             </div>
@@ -880,7 +879,7 @@
           el.innerHTML = `
             <div class="gasto-nome">
               <div style="display:flex; align-items:center; gap:6px;">
-                  <input type="text" value="${gv.n}" oninput="window.updateGastoVarNome('${gv.id}', this.value)" style="border:none;background:transparent;font-size:15px;font-weight:600;color:#007aff;padding:0;outline:none;width:100%;">
+                  <input type="text" value="${gv.n}" oninput="window.updateGastoVarNome('${gv.id}', this.value)" style="border:none;background:transparent;font-size:16px;font-weight:600;color:#007aff;padding:0;outline:none;width:100%;">
               </div>
               <div class="gasto-tags">${window.renderPaySelect(gv.id, gv.pay || 'none', 'var')}</div>
             </div>
@@ -962,7 +961,7 @@
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
             <div style="background:#f2f2f7; border-radius:10px; padding:10px;">
               <div style="font-size:11px; color:#8e8e93; margin-bottom:4px;">Aporte neste mês</div>
-              <input type="number" step="0.01" inputmode="decimal" value="${aporteMes||""}" placeholder="${m.ap}" min="0" oninput="window.updateMetaAcum('${m.id}', this.value)" style="background:transparent; border:none; border-bottom:1.5px solid #e5e5ea; height:28px; padding:0; font-size:15px; font-weight:700;">
+              <input type="number" step="0.01" inputmode="decimal" value="${aporteMes||""}" placeholder="${m.ap}" min="0" oninput="window.updateMetaAcum('${m.id}', this.value)" style="background:transparent; border:none; border-bottom:1.5px solid #e5e5ea; height:28px; padding:0; font-size:16px; font-weight:700;">
             </div>
             <div style="background:#e3f0ff; border-radius:10px; padding:10px;">
               <div style="font-size:11px; color:#007aff; margin-bottom:4px;">Acumulado</div>
@@ -1112,7 +1111,7 @@
     }
 
     /* ==========================================
-       RECALC E TOTAIS
+       RECALC E TOTAIS OTIMIZADOS COM DEBOUNCE
     ========================================== */
     window.calcTotals = function(dataObj = activeData, m = activeM, y = activeY) {
       if (!dataObj) return {tBRL:0, tUSD:0, tOrc:0, tReal:0, tAp:0, saldo:0, hasData:false};
@@ -1141,50 +1140,58 @@
       return {tBRL, tUSD, tOrc, tReal, tAp, saldo, hasData};
     }
 
+    let recalcTimeout;
     window.recalc = function() {
+      // 1. Atualizações Imediatas (NÃO PISCA A TELA)
       const {tBRL, tUSD, tReal, tOrc, tAp, saldo} = window.calcTotals();
       const dolarMode = (window.S.config && window.S.config.dolarMode) ? window.S.config.dolarMode : 'none';
       const isUSDMode = dolarMode !== 'none';
       const isErgeon = dolarMode === 'ergeon';
 
-      // Topo Geral
       const topSaldo = document.getElementById("top-saldo");
       if(topSaldo) {
           topSaldo.textContent = window.R(saldo);
           topSaldo.style.color = saldo >= 0 ? '#30d158' : '#ff453a';
       }
 
-      // Topo Receitas
       document.getElementById("total-brl").textContent = window.R(tBRL);
       const usdEl = document.getElementById("total-usd");
-      const detEl = document.getElementById("total-tipos-det");
-      
       if(isUSDMode && tUSD > 0) { 
         if(usdEl) { usdEl.textContent = `U$ ${tUSD.toLocaleString('pt-BR', {minimumFractionDigits:2})}`; usdEl.style.display = "block"; }
-        
-        if(detEl && isErgeon) {
-            const tt = window.tipoTotals();
-            const rows = window.TIPOS.filter(t => tt[t.k].b > 0).map(t => `
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:4px 0; border-bottom:0.5px solid rgba(255,255,255,0.1);">
-                    <span style="background:${t.bg};color:${t.tc};font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;">${t.l}</span>
-                    <div style="text-align:right;">
-                        <div style="font-size:14px;font-weight:800;color:#30d158;">${window.R(tt[t.k].b)}</div>
-                        <div style="font-size:10px;color:#8e8e93;font-weight:600;">U$ ${tt[t.k].u.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>
-                    </div>
-                </div>
-            `).join("");
-            detEl.innerHTML = rows || `<div style="font-size:12px; color:#8e8e93; text-align:center;">Sem detalhamento ativo</div>`;
-        } else if (detEl) {
-            detEl.style.display = "none";
-        }
       } else { 
         if(usdEl) usdEl.style.display = "none"; 
-        if(detEl) detEl.style.display = "none"; 
       }
 
       document.getElementById("gastos-total-real").textContent = window.R(tReal);
       document.getElementById("gastos-total-orc").textContent = `Base fixa: ${window.R(tOrc)}`;
       const apEl = document.getElementById("metas-total-val"); if(apEl) apEl.textContent = window.R(tAp);
+
+      // 2. Atualizações Pesadas com Debounce (Evita o tremor no teclado)
+      clearTimeout(recalcTimeout);
+      recalcTimeout = setTimeout(() => {
+          window.recalcHeavy(tBRL, tUSD, tReal, tOrc, tAp, saldo, isUSDMode, isErgeon);
+      }, 600); // Aguarda 0.6s após o usuário parar de digitar
+      
+      window.scheduleSync();
+    }
+
+    window.recalcHeavy = function(tBRL, tUSD, tReal, tOrc, tAp, saldo, isUSDMode, isErgeon) {
+      const detEl = document.getElementById("total-tipos-det");
+      if(isUSDMode && tUSD > 0 && detEl && isErgeon) {
+          const tt = window.tipoTotals();
+          const rows = window.TIPOS.filter(t => tt[t.k].b > 0).map(t => `
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:4px 0; border-bottom:0.5px solid rgba(255,255,255,0.1);">
+                  <span style="background:${t.bg};color:${t.tc};font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;">${t.l}</span>
+                  <div style="text-align:right;">
+                      <div style="font-size:14px;font-weight:800;color:#30d158;">${window.R(tt[t.k].b)}</div>
+                      <div style="font-size:10px;color:#8e8e93;font-weight:600;">U$ ${tt[t.k].u.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>
+                  </div>
+              </div>
+          `).join("");
+          detEl.innerHTML = rows || `<div style="font-size:12px; color:#8e8e93; text-align:center;">Sem detalhamento ativo</div>`;
+      } else if (detEl) {
+          detEl.style.display = "none";
+      }
 
       document.getElementById("painel-metrics").innerHTML = `
         <div class="m-card" onclick="window.goTo('receitas')" style="cursor:pointer;"><div class="m-label">RECEBIDO</div><div class="m-val green">${window.R(tBRL)}</div><div class="m-sub">Total do mês</div></div>
@@ -1201,7 +1208,14 @@
       window.buildCal();
       window.buildHistorico();
       if(document.getElementById("pg-saude").classList.contains("active")) window.buildSaude();
-      if(window.syncFirebase) window.syncFirebase();
+    }
+
+    let syncTimer;
+    window.scheduleSync = function() {
+        clearTimeout(syncTimer);
+        syncTimer = setTimeout(() => {
+            if(window.syncFirebase) window.syncFirebase();
+        }, 1500); // Salva na nuvem silenciosamente 1.5s após o usuário parar de digitar
     }
 
     window.buildParcelas = function() {
