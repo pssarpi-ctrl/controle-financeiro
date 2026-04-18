@@ -456,9 +456,13 @@
             </select>
         </div>
 
-        <div style="margin-bottom:20px; display:flex; align-items:center; gap:10px;">
-            <input type="checkbox" id="cfg-ergeon" style="width:20px; height:20px; cursor:pointer;">
-            <label for="cfg-ergeon" style="font-weight:600; cursor:pointer;">Modo ERGEON (Dólar)</label>
+        <div class="input-group" style="margin-top:16px; margin-bottom:20px;">
+            <label class="input-label">Modo Dólar (USD)</label>
+            <select class="form-sel" id="cfg-dolar">
+                <option value="none">Desativado (Apenas R$)</option>
+                <option value="padrao">Padrão (Valor + Câmbio)</option>
+                <option value="ergeon">Ergeon (Com Detalhamento)</option>
+            </select>
         </div>
         
         <button class="btn-primary" onclick="window.salvarConfigOptions()" style="margin-bottom:20px;">Salvar Alterações</button>
@@ -497,7 +501,7 @@
 
     window.iniciarVisitante = () => {
         window.currentUserUID = null;
-        window.S = { userName: "Visitante", config: {isErgeon: false, freq: 'mensal'}, gastosFixos: [], metas: [], dataByMonth: {} };
+        window.S = { userName: "Visitante", config: {dolarMode: 'none', freq: 'mensal'}, gastosFixos: [], metas: [], dataByMonth: {} };
         window.iniciarApp("Visitante");
     };
 
@@ -510,7 +514,7 @@
             window.currentUserUID = user.uid;
             document.getElementById("cloud-status").textContent = "☁️...";
             const docSnap = await getDoc(doc(db, "usuarios", user.uid));
-            window.S = docSnap.exists() ? docSnap.data() : { userName: user.displayName, config: {isErgeon: false, freq: 'mensal'}, gastosFixos: [], metas: [], dataByMonth: {} };
+            window.S = docSnap.exists() ? docSnap.data() : { userName: user.displayName, config: {dolarMode: 'none', freq: 'mensal'}, gastosFixos: [], metas: [], dataByMonth: {} };
             window.iniciarApp(user.displayName);
         }
     });
@@ -566,7 +570,14 @@
 
     window.iniciarApp = function(nome) {
         const isV = !window.currentUserUID;
-        window.S.config = window.S.config || {isErgeon: false, freq: 'mensal'};
+        window.S.config = window.S.config || {dolarMode: 'none', freq: 'mensal'};
+        
+        // Correção para quem já usava o isErgeon antigo
+        if (window.S.config.isErgeon && !window.S.config.dolarMode) {
+            window.S.config.dolarMode = 'ergeon';
+        } else if (!window.S.config.dolarMode) {
+            window.S.config.dolarMode = 'none';
+        }
         
         document.getElementById("top-welcome").textContent = `Olá, ${nome} ✨`;
         document.getElementById("btn-top-login").style.display = isV ? "block" : "none";
@@ -629,7 +640,7 @@
     }
 
     /* ==========================================
-       RECEITAS E MODO ERGEON OTIMIZADO
+       RECEITAS E MODOS DÓLAR
     ========================================== */
     window.toggleCurrency = function(i) {
         activeData.semanas[i].isBRL = !activeData.semanas[i].isBRL;
@@ -675,7 +686,8 @@
     };
 
     window.toggleTotalTipos = function() {
-        if(!window.S.config.isErgeon) return;
+        const dolarMode = window.S.config.dolarMode || 'none';
+        if(dolarMode !== 'ergeon') return;
         const el = document.getElementById("total-tipos-det");
         const btn = document.getElementById("btn-ver-detalhes");
         if(el) {
@@ -700,10 +712,13 @@
     window.buildReceitas = function() {
         const list = document.getElementById("lista-receitas");
         list.innerHTML = "";
-        const isE = (window.S.config && window.S.config.isErgeon);
+        
+        const dolarMode = (window.S.config && window.S.config.dolarMode) ? window.S.config.dolarMode : 'none';
+        const isUSDMode = dolarMode !== 'none';
+        const isErgeon = dolarMode === 'ergeon';
         
         const btnVer = document.getElementById("btn-ver-detalhes");
-        if(btnVer) btnVer.style.display = isE ? "inline" : "none";
+        if(btnVer) btnVer.style.display = isErgeon ? "inline" : "none";
 
         activeData.semanas.forEach((s, i) => {
             const card = document.createElement("div");
@@ -715,21 +730,24 @@
                     <button class="btn-del" onclick="window.removerReceita(${i})">&times;</button>
                 </div>`;
 
-            if(isE) {
+            if(isUSDMode) {
                 const isBRL = s.isBRL || false;
                 const currColor = isBRL ? '#30d158' : '#007aff';
                 const inputValue = isBRL ? (s.brl || '') : (s.usd || '');
                 const onInputFunc = isBRL ? `window.updateReceitaBRL(${i}, this.value)` : `window.updateReceitaUSD(${i}, this.value)`;
                 const displayTotal = isBRL ? window.R(s.brl) : window.R((s.usd||0) * (s.cam||5.90));
 
-                const tiposInputs = window.TIPOS.map(t => {
-                    const v = (s.tipos && s.tipos[t.k]) || '';
-                    return `
-                        <div style="background:#f9f9f9; border:1px solid #e5e5ea; border-radius:10px; padding:6px 8px;">
-                            <div style="font-size:10px; font-weight:700; color:${t.tc}; background:${t.bg}; padding:2px 6px; border-radius:6px; display:inline-block; margin-bottom:4px;">${t.l}</div>
-                            <input id="ti-${i}-${t.k}" type="number" step="0.01" inputmode="decimal" min="0" value="${v}" placeholder="0,00" oninput="window.updateReceitaTipo(${i}, '${t.k}', this.value)" style="width:100%; height:28px; border:none; background:transparent; font-size:14px; text-align:right; font-weight:600; color:#1c1c1e; padding:0;">
-                        </div>`;
-                }).join('');
+                let tiposInputs = '';
+                if(isErgeon) {
+                    tiposInputs = window.TIPOS.map(t => {
+                        const v = (s.tipos && s.tipos[t.k]) || '';
+                        return `
+                            <div style="background:#f9f9f9; border:1px solid #e5e5ea; border-radius:10px; padding:6px 8px;">
+                                <div style="font-size:10px; font-weight:700; color:${t.tc}; background:${t.bg}; padding:2px 6px; border-radius:6px; display:inline-block; margin-bottom:4px;">${t.l}</div>
+                                <input id="ti-${i}-${t.k}" type="number" step="0.01" inputmode="decimal" min="0" value="${v}" placeholder="0,00" oninput="window.updateReceitaTipo(${i}, '${t.k}', this.value)" style="width:100%; height:28px; border:none; background:transparent; font-size:14px; text-align:right; font-weight:600; color:#1c1c1e; padding:0;">
+                            </div>`;
+                    }).join('');
+                }
 
                 html += `
                     <div class="receita-inputs" style="margin-top:8px;">
@@ -744,10 +762,10 @@
                         </div>` : ''}
                         <div style="min-width:80px; display:flex; flex-direction:column; align-items:flex-end;">
                             <span id="rec-line-total-${i}" style="font-weight:800; color:#30d158; font-size:15px;">${displayTotal}</span>
-                            ${!isBRL ? `<span onclick="window.toggleWeek(${i})" style="font-size:10px; color:#007aff; font-weight:700; cursor:pointer; margin-top:2px; padding:4px 0;">Detalhar ▾</span>` : ''}
+                            ${(!isBRL && isErgeon) ? `<span onclick="window.toggleWeek(${i})" style="font-size:10px; color:#007aff; font-weight:700; cursor:pointer; margin-top:2px; padding:4px 0;">Detalhar ▾</span>` : ''}
                         </div>
                     </div>
-                    ${!isBRL ? `
+                    ${(!isBRL && isErgeon) ? `
                     <div id="wd-${i}" style="display:none; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; padding-top:10px; border-top:1px dashed #e5e5ea;">
                         ${tiposInputs}
                     </div>` : ''}
@@ -773,7 +791,7 @@
     }
 
     /* ==========================================
-       GASTOS - EDIÇÃO INTELIGENTE
+       GASTOS
     ========================================== */
     window.renderPaySelect = function(id, currentPay, tipo) {
       return `<select class="pay-tag pay-${currentPay}" onchange="window.updatePay('${id}', this.value, '${tipo}')"><option value="none" ${currentPay==='none'?'selected':''}>Método?</option><option value="inter" ${currentPay==='inter'?'selected':''}>Inter</option><option value="nubank" ${currentPay==='nubank'?'selected':''}>Nubank</option><option value="pix" ${currentPay==='pix'?'selected':''}>Pix</option></select>`;
@@ -911,7 +929,7 @@
 
       activeMetas.forEach(m => {
         const aporteMes = activeData.metasAcum[m.id] || 0;
-        let acumulado = m.acumInicial || 0; // Soma o inicial!
+        let acumulado = m.acumInicial || 0; 
         
         Object.keys(window.S.dataByMonth).forEach(k => {
           const [km, ky] = k.split('-').map(Number);
@@ -1061,11 +1079,12 @@
     ========================================== */
     window.calcTotals = function(dataObj = activeData, m = activeM, y = activeY) {
       if (!dataObj) return {tBRL:0, tUSD:0, tOrc:0, tReal:0, tAp:0, saldo:0, hasData:false};
-      const isE = (window.S.config && window.S.config.isErgeon) || false;
+      const dolarMode = (window.S.config && window.S.config.dolarMode) ? window.S.config.dolarMode : 'none';
+      const isUSDMode = dolarMode !== 'none';
       let tBRL = 0, tUSD = 0;
       
       (dataObj.semanas || []).forEach(s => {
-        if(isE && !s.isBRL) { 
+        if(isUSDMode && !s.isBRL) { 
             tUSD += Number(s.usd||0); 
             tBRL += (Number(s.usd||0) * Number(s.cam||5.90)); 
         } else { 
@@ -1087,7 +1106,9 @@
 
     window.recalc = function() {
       const {tBRL, tUSD, tReal, tOrc, tAp, saldo} = window.calcTotals();
-      const isE = (window.S.config && window.S.config.isErgeon) || false;
+      const dolarMode = (window.S.config && window.S.config.dolarMode) ? window.S.config.dolarMode : 'none';
+      const isUSDMode = dolarMode !== 'none';
+      const isErgeon = dolarMode === 'ergeon';
 
       // Topo Geral
       const topSaldo = document.getElementById("top-saldo");
@@ -1101,10 +1122,10 @@
       const usdEl = document.getElementById("total-usd");
       const detEl = document.getElementById("total-tipos-det");
       
-      if(isE && tUSD > 0) { 
+      if(isUSDMode && tUSD > 0) { 
         if(usdEl) { usdEl.textContent = `U$ ${tUSD.toLocaleString('pt-BR', {minimumFractionDigits:2})}`; usdEl.style.display = "block"; }
         
-        if(detEl) {
+        if(detEl && isErgeon) {
             const tt = window.tipoTotals();
             const rows = window.TIPOS.filter(t => tt[t.k].b > 0).map(t => `
                 <div style="display:flex; justify-content:space-between; align-items:center; padding:4px 0; border-bottom:0.5px solid rgba(255,255,255,0.1);">
@@ -1116,6 +1137,8 @@
                 </div>
             `).join("");
             detEl.innerHTML = rows || `<div style="font-size:12px; color:#8e8e93; text-align:center;">Sem detalhamento ativo</div>`;
+        } else if (detEl) {
+            detEl.style.display = "none";
         }
       } else { 
         if(usdEl) usdEl.style.display = "none"; 
@@ -1369,13 +1392,15 @@
     window.toggleDarkMode = function() { document.body.classList.toggle("dark-theme"); localStorage.setItem('cf_dark_mode', document.body.classList.contains('dark-theme')); }
     window.abrirConfig = function() { 
         document.getElementById('cfg-freq').value = window.S.config.freq || 'mensal';
-        document.getElementById('cfg-ergeon').checked = window.S.config.isErgeon || false;
+        document.getElementById('cfg-dolar').value = window.S.config.dolarMode || (window.S.config.isErgeon ? 'ergeon' : 'none');
         document.getElementById("modal-config").style.display = "flex"; 
     }
     window.fecharModal = function(id) { document.getElementById(id).style.display = "none"; }
     
     window.salvarConfigOptions = function() { 
-        window.S.config.isErgeon = document.getElementById("cfg-ergeon").checked; 
+        const dolarMode = document.getElementById("cfg-dolar").value;
+        window.S.config.dolarMode = dolarMode;
+        window.S.config.isErgeon = (dolarMode === 'ergeon'); 
         window.S.config.freq = document.getElementById("cfg-freq").value;
         window.fecharModal('modal-config'); 
         window.setMonthData(activeM, activeY); 
@@ -1389,7 +1414,7 @@
         const senha = prompt("Senha:");
         if (senha === "PEDRINHO2609") {
             window.S.config.isErgeon = true;
-            document.getElementById('cfg-ergeon').checked = true;
+            window.S.config.dolarMode = 'ergeon';
             window.S.gastosFixos = JSON.parse(JSON.stringify(BASE_FIXOS_PEDRO));
             window.S.metas = JSON.parse(JSON.stringify(BASE_METAS_PEDRO));
             window.setMonthData(activeM, activeY);
