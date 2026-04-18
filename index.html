@@ -158,7 +158,7 @@
 
         <div style="margin-top: 60px; font-size: 11px; color: #8e8e93; font-weight: 500; line-height: 1.5;">
             Desenvolvido por <span style="color: #007aff; font-weight: 700;">Pedro Sarpi</span><br>
-            Versão 1.8
+            Versão 1.3 BETA
         </div>
     </div>
 
@@ -193,11 +193,6 @@
                 <div class="m-grid" id="painel-metrics"></div>
                 <div id="painel-alerts"></div>
                 <div id="painel-parcelas"></div>
-                
-                <div class="card">
-                    <div style="font-size:12px; font-weight:700; color:#8e8e93; margin-bottom:12px; text-transform:uppercase;">Análise Inteligente de Gastos</div>
-                    <div id="painel-analise"></div>
-                </div>
 
                 <div class="card">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
@@ -211,6 +206,7 @@
                     <div class="cal-grid" id="cal-grid"></div>
                     <div id="cal-detail"></div>
                 </div>
+                <div style="text-align:center; margin-top: 10px; font-size: 10px; color: #c7c7cc;">Desenvolvido por Pedro Sarpi</div>
             </div>
 
             <div class="page" id="pg-receitas">
@@ -419,9 +415,13 @@
         <input type="number" id="mm-ap" placeholder="0,00" min="0" step="0.01" inputmode="decimal">
       </div>
       <div class="input-group">
-        <label class="input-label">Objetivo (Opcional)</label>
+        <label class="input-label">Objetivo Total</label>
         <input type="number" id="mm-obj" placeholder="0,00" min="0" step="0.01" inputmode="decimal">
       </div>
+    </div>
+    <div class="input-group">
+      <label class="input-label">Já tem valor guardado? (Acumulado Inicial)</label>
+      <input type="number" id="mm-acum-ini" placeholder="0,00" min="0" step="0.01" inputmode="decimal">
     </div>
     <button class="btn-primary" onclick="window.salvarMeta()" style="margin-top:20px;">Salvar Meta</button>
   </div>
@@ -560,8 +560,8 @@
     ];
 
     const BASE_METAS_PEDRO = [
-      { id: "m_1", n: "Emergência 20k", prazo: "Mai/2026", ap: 660, obj: 20000, endM: null, endY: null, hiddenMonths: [] },
-      { id: "m_2", n: "Viagem", prazo: "Set/2026", ap: 1500, obj: 0, endM: null, endY: null, hiddenMonths: [] }
+      { id: "m_1", n: "Emergência 20k", prazo: "Mai/2026", pM: 4, pY: 2026, ap: 660, obj: 20000, acumInicial: 0, endM: null, endY: null, hiddenMonths: [] },
+      { id: "m_2", n: "Viagem", prazo: "Set/2026", pM: 8, pY: 2026, ap: 1500, obj: 0, acumInicial: 0, endM: null, endY: null, hiddenMonths: [] }
     ];
 
     window.iniciarApp = function(nome) {
@@ -757,7 +757,7 @@
                     <div style="display:flex; justify-content:flex-end;">
                         <div style="width:160px; display:flex; align-items:center; background:#f2f2f7; border-radius:10px; padding:0 12px;">
                             <span style="font-size:14px; color:#30d158; font-weight:800;">R$</span>
-                            <input type="number" step="0.01" inputmode="decimal" min="0" value="${s.brl || ''}" placeholder="0,00" oninput="window.S.dataByMonth['${activeKey}'].semanas[${i}].brl=this.value; window.recalc()" style="border:none; background:transparent; height:42px; width:100%; text-align:right; font-weight:800; font-size:16px; color:#30d158;">
+                            <input type="number" step="0.01" inputmode="decimal" min="0" value="${s.brl || ''}" placeholder="0,00" oninput="window.updateReceitaBRL(${i}, this.value)" style="border:none; background:transparent; height:42px; width:100%; text-align:right; font-weight:800; font-size:16px; color:#30d158;">
                         </div>
                     </div>`;
             }
@@ -911,11 +911,13 @@
 
       activeMetas.forEach(m => {
         const aporteMes = activeData.metasAcum[m.id] || 0;
-        let acumulado = 0;
+        let acumulado = m.acumInicial || 0; // Soma o inicial!
+        
         Object.keys(window.S.dataByMonth).forEach(k => {
           const [km, ky] = k.split('-').map(Number);
           if (ky < activeY || (ky === activeY && km <= activeM)) acumulado += ((window.S.dataByMonth[k].metasAcum||{})[m.id] || 0);
         });
+        
         const pct = m.obj>0 ? Math.min(100, (acumulado/m.obj)*100) : 0;
         
         const el = document.createElement("div"); el.className = "card"; el.style.marginBottom = "10px";
@@ -954,6 +956,7 @@
                 document.getElementById('mm-nome').value = meta.n;
                 document.getElementById('mm-ap').value = meta.ap;
                 document.getElementById('mm-obj').value = meta.obj || '';
+                document.getElementById('mm-acum-ini').value = meta.acumInicial || '';
                 
                 if(meta.pM !== undefined && meta.pY !== undefined) {
                     document.getElementById('mm-prazo-m').value = meta.pM;
@@ -978,6 +981,7 @@
             document.getElementById('mm-prazo-y').value = ''; 
             document.getElementById('mm-ap').value = ''; 
             document.getElementById('mm-obj').value = ''; 
+            document.getElementById('mm-acum-ini').value = ''; 
             document.getElementById('mm-prazo-old').style.display = 'none';
         }
         document.getElementById('modal-meta').style.display='flex'; 
@@ -990,6 +994,7 @@
         const pY = document.getElementById('mm-prazo-y').value;
         const ap = +(document.getElementById('mm-ap').value) || 0; 
         const obj = +(document.getElementById('mm-obj').value) || 0;
+        const acumIni = +(document.getElementById('mm-acum-ini').value) || 0;
         
         if(!nome || ap <= 0) return alert('Preencha um nome e o aporte mensal.');
         nome = window.autoEmoji(nome);
@@ -1010,6 +1015,7 @@
                 meta.n = nome;
                 meta.ap = ap;
                 meta.obj = obj;
+                meta.acumInicial = acumIni;
                 if(parsedM !== undefined) {
                     meta.pM = parsedM;
                     meta.pY = parsedY;
@@ -1018,7 +1024,7 @@
             }
         } else {
             const id = 'm_' + Date.now(); 
-            window.S.metas.push({ id, n: nome, prazo: prazoStr, pM: parsedM, pY: parsedY, ap, obj, endM: null, endY: null, hiddenMonths: [] });
+            window.S.metas.push({ id, n: nome, prazo: prazoStr, pM: parsedM, pY: parsedY, ap, obj, acumInicial: acumIni, endM: null, endY: null, hiddenMonths: [] });
             Object.keys(window.S.dataByMonth).forEach(k => { window.S.dataByMonth[k].metasAcum[id] = 0; });
         }
         
@@ -1051,56 +1057,8 @@
     }
 
     /* ==========================================
-       RECALC, ANÁLISE INTELIGENTE & TOTAIS
+       RECALC E TOTAIS
     ========================================== */
-    window.categorizeGasto = function(nome) {
-        const n = nome.toLowerCase();
-        if(n.includes("mercado livre")||n.includes("shopee")||n.includes("shein")||n.includes("amazon")||n.includes("aliexpress")) return {id: "online", l: "📦 Compras Online", c: "#bf5af2"};
-        if(n.includes("uber")||n.includes("99")||n.includes("ônibus")||n.includes("onibus")||n.includes("van")||n.includes("combustível")||n.includes("combustivel")||n.includes("gasolina")||n.includes("blablacar")||n.includes("transporte")) return {id: "transporte", l: "🚗 Transporte", c: "#ff9f0a"};
-        if(n.includes("mercado")||n.includes("supermercado")||n.includes("atacadão")||n.includes("compras")) return {id: "mercado", l: "🛒 Mercado", c: "#30d158"};
-        if(n.includes("lanche")||n.includes("comida")||n.includes("fastfood")||n.includes("mcdonalds")||n.includes("ifood")||n.includes("pizza")||n.includes("restaurante")||n.includes("hamburguer")||n.includes("padaria")) return {id: "alimentacao", l: "🍔 Alimentação", c: "#ff453a"};
-        return {id: "outros", l: "🏷️ Outros", c: "#8e8e93"};
-    }
-
-    window.buildAnalise = function(totalGastos) {
-        const bd = document.getElementById("painel-analise");
-        if (!bd) return;
-        if (totalGastos <= 0) {
-            bd.innerHTML = `<p style="font-size:14px;color:#8e8e93;text-align:center;padding:8px 0">Insira gastos para ver a análise</p>`;
-            return;
-        }
-
-        const catTotals = {};
-        const activeFixos = (window.S.gastosFixos||[]).filter(gf => window.isItemActive(gf, activeM, activeY));
-        activeFixos.forEach(gf => {
-            let val = gf.val;
-            if(activeData.gastosF[gf.id]) val = typeof activeData.gastosF[gf.id] === 'number' ? activeData.gastosF[gf.id] : (activeData.gastosF[gf.id].val || 0);
-            const cat = window.categorizeGasto(gf.n);
-            if(!catTotals[cat.id]) catTotals[cat.id] = {l: cat.l, c: cat.c, v: 0};
-            catTotals[cat.id].v += val;
-        });
-
-        (activeData.gastosV || []).forEach(gv => {
-            const cat = window.categorizeGasto(gv.n);
-            if(!catTotals[cat.id]) catTotals[cat.id] = {l: cat.l, c: cat.c, v: 0};
-            catTotals[cat.id].v += (gv.val || 0);
-        });
-
-        const catArray = Object.values(catTotals).filter(c => c.v > 0).sort((a,b) => b.v - a.v);
-
-        bd.innerHTML = catArray.map(it => {
-            const p = (it.v / totalGastos) * 100;
-            return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-                <span style="font-size:13px;color:#1c1c1e;font-weight:600;width:125px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${it.l}</span>
-                <div style="flex:1;background:#e5e5ea;border-radius:4px;height:7px;overflow:hidden">
-                    <div style="width:${p.toFixed(1)}%;height:100%;background:${it.c};border-radius:4px"></div>
-                </div>
-                <span style="font-size:13px;font-weight:700;min-width:65px;text-align:right">${window.R(it.v).replace("R$ ","")}</span>
-                <span style="font-size:11px;color:#8e8e93;min-width:28px;text-align:right">${p.toFixed(0)}%</span>
-            </div>`;
-        }).join("");
-    }
-
     window.calcTotals = function(dataObj = activeData, m = activeM, y = activeY) {
       if (!dataObj) return {tBRL:0, tUSD:0, tOrc:0, tReal:0, tAp:0, saldo:0, hasData:false};
       const isE = (window.S.config && window.S.config.isErgeon) || false;
@@ -1179,7 +1137,6 @@
       if(tBRL>0) alerts.push({cls:saldo>=0?"alert-ok":"alert-red",msg:saldo>=0?"Mês no positivo":"Mês no negativo",val:window.R(Math.abs(saldo))});
       document.getElementById("painel-alerts").innerHTML=alerts.map(a=>`<div class="alert ${a.cls}"><span>${a.msg}</span><span>${a.val}</span></div>`).join("");
 
-      window.buildAnalise(tReal);
       window.buildParcelas();
       window.buildCal();
       window.buildHistorico();
@@ -1335,7 +1292,7 @@
             if (tAp > 0) pts += 15;
             
             const emergMeta = (window.S.metas||[]).find(m=>m.n.toLowerCase().includes("emerg"));
-            let emergAcum=0; 
+            let emergAcum= emergMeta ? (emergMeta.acumInicial || 0) : 0; 
             if(emergMeta){ Object.keys(window.S.dataByMonth).forEach(k => { const [km, ky] = k.split('-').map(Number); if (ky < activeY || (ky === activeY && km <= activeM)) emergAcum += ((window.S.dataByMonth[k].metasAcum||{})[emergMeta.id] || 0); }); }
             const emergPct = emergMeta && emergMeta.obj > 0 ? (emergAcum/emergMeta.obj)*100 : 0;
             
