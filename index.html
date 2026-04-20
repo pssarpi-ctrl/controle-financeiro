@@ -145,8 +145,13 @@
     <div class="login-screen" id="login-screen">
         <div style="font-size: 64px; margin-bottom: 10px;">💸</div>
         <h1 style="font-size: 26px; font-weight: 800; margin-bottom: 8px;">Controle Financeiro</h1>
-        <p style="color: #8e8e93; margin-bottom: 40px;" id="login-msg">Seus dados salvos na nuvem.</p>
+        <p style="color: #8e8e93; margin-bottom: 20px;" id="login-msg">Seus dados salvos na nuvem.</p>
         
+        <div id="webview-warning" style="display:none; background:#fff3cd; color:#856404; padding:16px; border-radius:12px; font-size:14px; margin-bottom:20px; line-height:1.4; border: 1.5px solid #ffe69c; text-align: left;">
+            ⚠️ <b>Atenção:</b> Você abriu o app por dentro de outro aplicativo (WhatsApp ou Instagram). Por segurança do Google, o login está bloqueado aqui.<br><br>
+            Para entrar, toque no ícone de <b>opções</b> (os três pontinhos ou a bússola) no topo ou fundo da tela e escolha <b>"Abrir no Navegador"</b> (Safari/Chrome).
+        </div>
+
         <button class="login-btn" style="background: #f2f2f7; color: #1c1c1e;" onclick="window.iniciarLoginGoogle()">
             <svg width="20" height="20" viewBox="0 0 24 24" style="margin-right:8px"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
             Entrar com Google
@@ -158,7 +163,7 @@
 
         <div style="margin-top: 60px; font-size: 11px; color: #8e8e93; font-weight: 500; line-height: 1.5;">
             Desenvolvido por <span style="color: #007aff; font-weight: 700;">Pedro Sarpi</span><br>
-            Versão 1.9
+            Versão 1.4 beta
         </div>
     </div>
 
@@ -495,7 +500,7 @@
 
     window.iniciarLoginGoogle = () => {
         signInWithPopup(auth, new GoogleAuthProvider()).catch(e => {
-            alert("Atenção: O login com Google pode estar bloqueado em sites de teste. Use Vercel ou abra o arquivo direto no PC.");
+            alert("Atenção: Houve um erro no login. Se você estiver usando o navegador do Instagram/WhatsApp, tente abrir no Safari ou Chrome.");
         });
     };
 
@@ -530,6 +535,21 @@
 </script>
 
 <script>
+    // DETECTOR DE WEBVIEW (Impede dor de cabeça no WhatsApp/Instagram)
+    window.onload = () => {
+        const ua = navigator.userAgent || navigator.vendor || window.opera;
+        const isInstagram = (ua.indexOf('Instagram') > -1);
+        const isWhatsApp = (ua.indexOf('WhatsApp') > -1);
+        const isFBAV = (ua.indexOf('FBAV') > -1);
+        const isIOSWebView = /(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(ua);
+        const isAndroidWebView = /wv/.test(ua);
+
+        if(isInstagram || isWhatsApp || isFBAV || isIOSWebView || isAndroidWebView) {
+            const warn = document.getElementById('webview-warning');
+            if(warn) warn.style.display = 'block';
+        }
+    };
+
     let activeM = new Date().getMonth();
     let activeY = new Date().getFullYear();
     let calYear = activeY;
@@ -608,7 +628,7 @@
             } else if (freq === 'quinzenal') {
                 linhasIniciais = [{n:"Quinzena 1", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Quinzena 2", brl:0, usd:0, cam:5.90, tipos:{}}];
             } else {
-                linhasIniciais = [{n:"Semana 1", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Semana 2", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Semana 3", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Semana 4", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Semana 5", brl:0, usd:0, cam:5.90, types:{}}];
+                linhasIniciais = [{n:"Semana 1", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Semana 2", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Semana 3", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Semana 4", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Semana 5", brl:0, usd:0, cam:5.90, tipos:{}}];
             }
 
             if(!window.S.dataByMonth[activeKey]) window.S.dataByMonth[activeKey] = {};
@@ -639,7 +659,7 @@
     }
 
     /* ==========================================
-       RECEITAS E MODO ERGEON OTIMIZADO
+       RECEITAS E MODO DÓLAR
     ========================================== */
     window.toggleCurrency = function(i) {
         activeData.semanas[i].isBRL = !activeData.semanas[i].isBRL;
@@ -790,7 +810,7 @@
     }
 
     /* ==========================================
-       GASTOS - FIX KEYBOARD FOCUS
+       GASTOS
     ========================================== */
     window.renderPaySelect = function(id, currentPay, tipo) {
       return `<select class="pay-tag pay-${currentPay}" onchange="window.updatePay('${id}', this.value, '${tipo}')"><option value="none" ${currentPay==='none'?'selected':''}>Método?</option><option value="inter" ${currentPay==='inter'?'selected':''}>Inter</option><option value="nubank" ${currentPay==='nubank'?'selected':''}>Nubank</option><option value="pix" ${currentPay==='pix'?'selected':''}>Pix</option></select>`;
@@ -930,7 +950,7 @@
     }
 
     /* ==========================================
-       METAS - FIX KEYBOARD FOCUS
+       METAS
     ========================================== */
     window.buildMetas = function() {
       const list = document.getElementById("metas-list"); list.innerHTML = "";
@@ -974,7 +994,6 @@
       });
     }
 
-    // FIX DOM para o teclado não sumir nas Metas
     window.updateMetaAcum = function(id, valStr) { 
         activeData.metasAcum[id] = +valStr; 
         window.recalc(); 
@@ -1085,7 +1104,6 @@
         window.fecharModal('modal-meta'); window.renderView();
     }
 
-    /* DELETE MODAIS GERAIS */
     window.abrirModalDelete = function(type, id) {
       delTargetType = type; delTargetId = id; const list = type === 'gastoFixo' ? window.S.gastosFixos : window.S.metas;
       const item = list.find(x => x.id === id); if(item) document.getElementById('md-text').innerHTML = `O que deseja fazer com <b>${item.n}</b>?`;
@@ -1111,7 +1129,7 @@
     }
 
     /* ==========================================
-       RECALC E TOTAIS OTIMIZADOS COM DEBOUNCE
+       RECALC E TOTAIS OTIMIZADOS
     ========================================== */
     window.calcTotals = function(dataObj = activeData, m = activeM, y = activeY) {
       if (!dataObj) return {tBRL:0, tUSD:0, tOrc:0, tReal:0, tAp:0, saldo:0, hasData:false};
@@ -1142,7 +1160,6 @@
 
     let recalcTimeout;
     window.recalc = function() {
-      // 1. Atualizações Imediatas (NÃO PISCA A TELA)
       const {tBRL, tUSD, tReal, tOrc, tAp, saldo} = window.calcTotals();
       const dolarMode = (window.S.config && window.S.config.dolarMode) ? window.S.config.dolarMode : 'none';
       const isUSDMode = dolarMode !== 'none';
@@ -1166,11 +1183,10 @@
       document.getElementById("gastos-total-orc").textContent = `Base fixa: ${window.R(tOrc)}`;
       const apEl = document.getElementById("metas-total-val"); if(apEl) apEl.textContent = window.R(tAp);
 
-      // 2. Atualizações Pesadas com Debounce (Evita o tremor no teclado)
       clearTimeout(recalcTimeout);
       recalcTimeout = setTimeout(() => {
           window.recalcHeavy(tBRL, tUSD, tReal, tOrc, tAp, saldo, isUSDMode, isErgeon);
-      }, 600); // Aguarda 0.6s após o usuário parar de digitar
+      }, 600); 
       
       window.scheduleSync();
     }
@@ -1215,7 +1231,7 @@
         clearTimeout(syncTimer);
         syncTimer = setTimeout(() => {
             if(window.syncFirebase) window.syncFirebase();
-        }, 1500); // Salva na nuvem silenciosamente 1.5s após o usuário parar de digitar
+        }, 1500); 
     }
 
     window.buildParcelas = function() {
