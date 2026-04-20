@@ -163,7 +163,7 @@
 
         <div style="margin-top: 60px; font-size: 11px; color: #8e8e93; font-weight: 500; line-height: 1.5;">
             Desenvolvido por <span style="color: #007aff; font-weight: 700;">Pedro Sarpi</span><br>
-            Versão 1.4 beta
+            Versão 1.4 BETA
         </div>
     </div>
 
@@ -592,6 +592,7 @@
         const isV = !window.currentUserUID;
         window.S.config = window.S.config || {dolarMode: 'none', freq: 'mensal'};
         
+        // Correção para quem já usava o isErgeon antigo
         if (window.S.config.isErgeon && !window.S.config.dolarMode) {
             window.S.config.dolarMode = 'ergeon';
         } else if (!window.S.config.dolarMode) {
@@ -659,7 +660,7 @@
     }
 
     /* ==========================================
-       RECEITAS E MODO DÓLAR
+       RECEITAS E MODOS DÓLAR
     ========================================== */
     window.toggleCurrency = function(i) {
         activeData.semanas[i].isBRL = !activeData.semanas[i].isBRL;
@@ -810,7 +811,7 @@
     }
 
     /* ==========================================
-       GASTOS
+       GASTOS - FIX KEYBOARD FOCUS
     ========================================== */
     window.renderPaySelect = function(id, currentPay, tipo) {
       return `<select class="pay-tag pay-${currentPay}" onchange="window.updatePay('${id}', this.value, '${tipo}')"><option value="none" ${currentPay==='none'?'selected':''}>Método?</option><option value="inter" ${currentPay==='inter'?'selected':''}>Inter</option><option value="nubank" ${currentPay==='nubank'?'selected':''}>Nubank</option><option value="pix" ${currentPay==='pix'?'selected':''}>Pix</option></select>`;
@@ -950,7 +951,7 @@
     }
 
     /* ==========================================
-       METAS
+       METAS - FIX KEYBOARD FOCUS E ACUMULADO GERAL
     ========================================== */
     window.buildMetas = function() {
       const list = document.getElementById("metas-list"); list.innerHTML = "";
@@ -1109,6 +1110,7 @@
       const item = list.find(x => x.id === id); if(item) document.getElementById('md-text').innerHTML = `O que deseja fazer com <b>${item.n}</b>?`;
       document.getElementById('modal-delete').style.display = 'flex';
     }
+    
     window.confirmarDelete = function(mode) {
       const list = delTargetType === 'gastoFixo' ? window.S.gastosFixos : window.S.metas;
       const item = list.find(x => x.id === delTargetId); if (!item) return;
@@ -1129,7 +1131,7 @@
     }
 
     /* ==========================================
-       RECALC E TOTAIS OTIMIZADOS
+       RECALC, DEBOUNCE E TOTAIS
     ========================================== */
     window.calcTotals = function(dataObj = activeData, m = activeM, y = activeY) {
       if (!dataObj) return {tBRL:0, tUSD:0, tOrc:0, tReal:0, tAp:0, saldo:0, hasData:false};
@@ -1158,8 +1160,11 @@
       return {tBRL, tUSD, tOrc, tReal, tAp, saldo, hasData};
     }
 
+    // VARIÁVEL PARA DEBOUNCE (Evita que a tela pisque enquanto digita)
     let recalcTimeout;
+
     window.recalc = function() {
+      // 1. Atualizações Rápidas (Textos simples que não travam o teclado)
       const {tBRL, tUSD, tReal, tOrc, tAp, saldo} = window.calcTotals();
       const dolarMode = (window.S.config && window.S.config.dolarMode) ? window.S.config.dolarMode : 'none';
       const isUSDMode = dolarMode !== 'none';
@@ -1183,14 +1188,16 @@
       document.getElementById("gastos-total-orc").textContent = `Base fixa: ${window.R(tOrc)}`;
       const apEl = document.getElementById("metas-total-val"); if(apEl) apEl.textContent = window.R(tAp);
 
+      // 2. Agendar a atualização pesada (Painel, Gráficos e Calendário)
       clearTimeout(recalcTimeout);
       recalcTimeout = setTimeout(() => {
           window.recalcHeavy(tBRL, tUSD, tReal, tOrc, tAp, saldo, isUSDMode, isErgeon);
-      }, 600); 
+      }, 600); // Espera o usuário parar de digitar por 600ms
       
       window.scheduleSync();
     }
 
+    // A função pesada só roda quando o usuário "descansa" o dedo
     window.recalcHeavy = function(tBRL, tUSD, tReal, tOrc, tAp, saldo, isUSDMode, isErgeon) {
       const detEl = document.getElementById("total-tipos-det");
       if(isUSDMode && tUSD > 0 && detEl && isErgeon) {
@@ -1209,10 +1216,26 @@
           detEl.style.display = "none";
       }
 
+      let totalAcumuladoGeral = 0;
+      let activeMetasCount = 0;
+      (window.S.metas || []).forEach(m => {
+          if(window.isItemActive(m, activeM, activeY)) {
+              activeMetasCount++;
+              let acumulado = m.acumInicial || 0;
+              Object.keys(window.S.dataByMonth).forEach(k => {
+                  const [km, ky] = k.split('-').map(Number);
+                  if (ky < activeY || (ky === activeY && km <= activeM)) {
+                      acumulado += ((window.S.dataByMonth[k].metasAcum||{})[m.id] || 0);
+                  }
+              });
+              totalAcumuladoGeral += acumulado;
+          }
+      });
+
       document.getElementById("painel-metrics").innerHTML = `
         <div class="m-card" onclick="window.goTo('receitas')" style="cursor:pointer;"><div class="m-label">RECEBIDO</div><div class="m-val green">${window.R(tBRL)}</div><div class="m-sub">Total do mês</div></div>
         <div class="m-card" onclick="window.goTo('gastos')" style="cursor:pointer;"><div class="m-label">GASTOS</div><div class="m-val red">${window.R(tReal)}</div><div class="m-sub">${tReal>0 && tOrc>0 ? Math.round(tReal/tOrc*100)+"% da base" : "orçado"}</div></div>
-        <div class="m-card"><div class="m-label">APORTES</div><div class="m-val blue">${window.R(tAp)}</div><div class="m-sub">${(window.S.metas||[]).filter(m=>window.isItemActive(m, activeM, activeY)).length} ativas</div></div>
+        <div class="m-card" onclick="window.goTo('metas')" style="cursor:pointer;"><div class="m-label">APORTES</div><div class="m-val blue">${window.R(tAp)}</div><div class="m-sub">${activeMetasCount} ativas • Acum: ${window.R(totalAcumuladoGeral).replace('R$ ','')}</div></div>
         <div class="m-card"><div class="m-label">SALDO</div><div class="m-val ${saldo>=0?'green':'red'}">${window.R(saldo)}</div><div class="m-sub">${tBRL>0 ? Math.round(saldo/tBRL*100)+"% livre" : "—"}</div></div>
       `;
 
