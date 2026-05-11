@@ -169,7 +169,7 @@
 
         <div style="margin-top: 60px; font-size: 11px; color: #8e8e93; font-weight: 500; line-height: 1.5;">
             Desenvolvido por <span style="color: #007aff; font-weight: 700;">Pedro Sarpi</span><br>
-            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()">Versão 1.7 BETA</span>
+            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()">Versão 1.10 BETA</span>
         </div>
     </div>
 
@@ -240,6 +240,7 @@
                     <span style="font-size:15px; font-weight:700; color:#1c1c1e;">Total do Mês <span style="font-size:10px; color:#8e8e93;" id="btn-ver-gastos-det">(Ver)</span></span>
                     <div style="text-align:right">
                         <div style="font-size:20px; font-weight:800; color:#ff453a;" id="gastos-total-real">R$ 0,00</div>
+                        <div style="font-size:11px; color:#8e8e93;" id="gastos-total-orc"></div>
                     </div>
                 </div>
 
@@ -299,7 +300,11 @@
             <div class="page" id="pg-saude">
                 <div id="saude-score-card"></div>
                 
-                <div id="saude-insights" style="margin-top:12px;"></div>
+                <div class="card" style="margin-top:12px;">
+                    <h3 style="font-size:14px; margin-bottom:12px; color:#8e8e93; text-transform:uppercase;">Inteligência Analítica</h3>
+                    <div id="saude-insights"></div>
+                    <div id="saude-categoria-table" style="margin-top:16px;"></div>
+                </div>
 
                 <div class="card" style="margin-top:12px;">
                     <h3 style="font-size:15px; margin-bottom:14px;">Quero comprar. Posso?</h3>
@@ -529,14 +534,13 @@
 <div class="modal-overlay" id="modal-changelog">
   <div class="modal-content">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <h3 style="font-weight:800;">Novidades 1.7 BETA</h3>
+      <h3 style="font-weight:800;">Novidades 1.10 BETA</h3>
       <button class="btn-close-modal" onclick="window.fecharModal('modal-changelog')">&times;</button>
     </div>
     <ul style="font-size:14px; color:#3c3c43; line-height:1.5; padding-left:16px; margin-bottom:24px;">
-        <li style="margin-bottom:10px;"><b>Painel de Gastos Detalhado:</b> Clique em (Ver) no total de gastos para saber exatamente quanto foi para Fixos e Variáveis.</li>
-        <li style="margin-bottom:10px;"><b>Aportes no Topo:</b> O total investido no mês agora tem lugar de destaque no topo da aba de Metas.</li>
-        <li style="margin-bottom:10px;"><b>Análise de Saúde com IA:</b> A aba de saúde agora avalia suas compras (Ifood, Uber, Shopee, etc.) e dá alertas se os gastos estiverem comprometendo sua renda!</li>
-        <li style="margin-bottom:10px;"><b>Gráficos de Pizza no Histórico:</b> Veja para onde seu dinheiro foi ao longo do ano com novos gráficos visuais!</li>
+        <li style="margin-bottom:10px;"><b>Painel de Saúde Completo:</b> Agora a Inteligência Analítica exibe a tabela visual das suas categorias de gastos junto com os conselhos!</li>
+        <li style="margin-bottom:10px;"><b>Gráficos no Histórico:</b> As tabelas de pizza voltaram, mostrando a divisão exata entre Reais e Dólares e suas despesas.</li>
+        <li style="margin-bottom:10px;"><b>Bug Fix Profundo:</b> Correção na engenharia que impedia o painel de carregar e deixava a tela em branco.</li>
     </ul>
     <button class="btn-primary" onclick="window.fecharModal('modal-changelog')">Incrível!</button>
   </div>
@@ -612,7 +616,6 @@
 </script>
 
 <script>
-    // DETECTOR DE WEBVIEW
     window.onload = () => {
         const ua = navigator.userAgent || navigator.vendor || window.opera;
         const isInstagram = (ua.indexOf('Instagram') > -1);
@@ -1287,7 +1290,8 @@
        RECALC, DEBOUNCE E TOTAIS
     ========================================== */
     window.calcTotals = function(dataObj = activeData, m = activeM, y = activeY) {
-      if (!dataObj) return {tBRL:0, tUSD:0, tOrc:0, tReal:0, tAp:0, saldo:0, hasData:false};
+      if (!dataObj) return {tBRL:0, tUSD:0, tOrc:0, tReal:0, tAp:0, saldo:0, hasData:false, realFixos:0, realVar:0};
+      
       const dolarMode = (window.S.config && window.S.config.dolarMode) ? window.S.config.dolarMode : 'none';
       const isUSDMode = dolarMode !== 'none';
       let tBRL = 0, tUSD = 0;
@@ -1591,7 +1595,7 @@
         return {id: "outros", l: "🏷️ Outros", c: "#8e8e93"};
     }
 
-    window.buildSaude = function(){
+    window.buildSaude = function() {
         const { tBRL, tReal, tAp, tOrc, saldo, hasData } = window.calcTotals();
         let pts = 0;
         
@@ -1634,7 +1638,7 @@
                 <div style="flex:1"><div style="font-size:11px;color:#8e8e93;font-weight:600;margin-bottom:4px">SAÚDE FINANCEIRA</div><div style="font-size:20px;font-weight:800;color:${sc.c};margin-bottom:4px">${sc.l}</div><div style="font-size:13px;">${score>=70?"Você está no caminho certo.":score>=40?"Cuidado com o saldo mensal.":"Risco! Saldo da conta negativo."}</div></div>
             </div>`;
 
-        // Inteligência de Insights (IA Analítica)
+        // Inteligência de Insights e Tabela Analítica
         const catTotals = {};
         const activeFixos = (window.S.gastosFixos||[]).filter(gf => window.isItemActive(gf, activeM, activeY));
         activeFixos.forEach(gf => {
@@ -1654,26 +1658,41 @@
         const insights = [];
         if (tBRL > 0) {
             const percFixos = (tOrc / tBRL) * 100;
-            if (percFixos > 60) insights.push({txt: `Seus custos fixos estão consumindo ${percFixos.toFixed(0)}% da renda. Considere renegociar faturas, assinaturas e seguros.`, bg:"#fff3cd", tc:"#856404", bc:"#ffe69c", icon:"⚠️"});
-            
-            if (catTotals['alimentacao'] && (catTotals['alimentacao'].v / tBRL) > 0.20) insights.push({txt: `Alto gasto com Alimentação/Ifood (${((catTotals['alimentacao'].v / tBRL)*100).toFixed(0)}%). Tente cozinhar mais em casa para economizar.`, bg:"#fff3cd", tc:"#856404", bc:"#ffe69c", icon:"🍔"});
-            
-            if (catTotals['online'] && (catTotals['online'].v / tBRL) > 0.15) insights.push({txt: `Atenção aos gastos em Lojas Online (${((catTotals['online'].v / tBRL)*100).toFixed(0)}%). Cuidado com o impulso na Shein/Shopee.`, bg:"#ffe5e5", tc:"#c0392b", bc:"#f5c6cb", icon:"📦"});
-            
-            if (catTotals['transporte'] && (catTotals['transporte'].v / tBRL) > 0.15) insights.push({txt: `Transporte levando ${((catTotals['transporte'].v / tBRL)*100).toFixed(0)}% da renda. O uso de Uber/99 está pesado, verifique alternativas.`, bg:"#fff3cd", tc:"#856404", bc:"#ffe69c", icon:"🚗"});
-
-            if (tAp === 0 && saldo > 0) insights.push({txt: `Você fechou no azul, mas não registrou aportes. Que tal investir esse saldo em uma meta?`, bg:"#e3f0ff", tc:"#0055cc", bc:"#b8daff", icon:"💡"});
-            if (tAp > 0 && (tAp / tBRL) >= 0.1) insights.push({txt: `Parabéns! Você está investindo mais de 10% da sua renda. O caminho da riqueza é esse!`, bg:"#d1f7e0", tc:"#1a6b3a", bc:"#c3e6cb", icon:"🏆"});
+            if (percFixos > 60) insights.push({txt: `Custos fixos consumiram ${percFixos.toFixed(0)}% da renda. Considere renegociar faturas e assinaturas.`, bg:"#fff3cd", tc:"#856404", bc:"#ffe69c", icon:"⚠️"});
+            if (catTotals['alimentacao'] && (catTotals['alimentacao'].v / tBRL) > 0.20) insights.push({txt: `Alto gasto com Alimentação (${((catTotals['alimentacao'].v / tBRL)*100).toFixed(0)}%). Tente cozinhar mais em casa.`, bg:"#fff3cd", tc:"#856404", bc:"#ffe69c", icon:"🍔"});
+            if (catTotals['online'] && (catTotals['online'].v / tBRL) > 0.15) insights.push({txt: `Atenção às Compras Online (${((catTotals['online'].v / tBRL)*100).toFixed(0)}%). Cuidado com impulsos.`, bg:"#ffe5e5", tc:"#c0392b", bc:"#f5c6cb", icon:"📦"});
+            if (catTotals['transporte'] && (catTotals['transporte'].v / tBRL) > 0.15) insights.push({txt: `Transporte levando ${((catTotals['transporte'].v / tBRL)*100).toFixed(0)}% da renda. Avalie alternativas de rotina.`, bg:"#fff3cd", tc:"#856404", bc:"#ffe69c", icon:"🚗"});
+            if (tAp === 0 && saldo > 0) insights.push({txt: `Você fechou no azul, mas não registrou aportes. Que tal investir esse saldo?`, bg:"#e3f0ff", tc:"#0055cc", bc:"#b8daff", icon:"💡"});
+            if (tAp > 0 && (tAp / tBRL) >= 0.1) insights.push({txt: `Parabéns! Você investiu mais de 10% da renda. O caminho da riqueza é esse!`, bg:"#d1f7e0", tc:"#1a6b3a", bc:"#c3e6cb", icon:"🏆"});
         }
-
-        if (saldo < 0) insights.push({txt: `Você está no negativo. Evite usar o limite da conta ou cartão de crédito para não pagar juros abusivos.`, bg:"#ffe5e5", tc:"#c0392b", bc:"#f5c6cb", icon:"🚨"});
+        if (saldo < 0) insights.push({txt: `Você está no negativo. Evite usar o limite da conta para não pagar juros abusivos.`, bg:"#ffe5e5", tc:"#c0392b", bc:"#f5c6cb", icon:"🚨"});
 
         const insightsEl = document.getElementById("saude-insights");
         if(insightsEl) {
             if (insights.length > 0) {
-                insightsEl.innerHTML = `<h4 style="font-size:13px; color:#8e8e93; text-transform:uppercase; margin-bottom:8px;">💡 Inteligência Analítica</h4>` + insights.map(i => `<div style="background:${i.bg}; color:${i.tc}; padding:12px; border-radius:12px; font-size:13px; font-weight:500; margin-bottom:8px; border:1px solid ${i.bc}; line-height:1.4;">${i.icon} ${i.txt}</div>`).join('');
+                insightsEl.innerHTML = insights.map(i => `<div style="background:${i.bg}; color:${i.tc}; padding:10px; border-radius:10px; font-size:13px; font-weight:500; margin-bottom:8px; border:1px solid ${i.bc}; line-height:1.4;">${i.icon} ${i.txt}</div>`).join('');
             } else {
-                insightsEl.innerHTML = `<p style="font-size:13px; color:#8e8e93; text-align:center;">Registre mais gastos e receitas para a IA gerar dicas personalizadas.</p>`;
+                insightsEl.innerHTML = `<p style="font-size:13px; color:#8e8e93; text-align:center;">Sem alertas críticos para este mês.</p>`;
+            }
+        }
+
+        const tableEl = document.getElementById("saude-categoria-table");
+        if(tableEl) {
+            if (tReal > 0) {
+                const catArray = Object.values(catTotals).filter(c => c.v > 0).sort((a,b) => b.v - a.v);
+                tableEl.innerHTML = catArray.map(it => {
+                    const p = (it.v / tReal) * 100;
+                    return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+                        <span style="font-size:12px;color:#1c1c1e;font-weight:600;width:115px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${it.l}</span>
+                        <div style="flex:1;background:#e5e5ea;border-radius:4px;height:6px;overflow:hidden">
+                            <div style="width:${p.toFixed(1)}%;height:100%;background:${it.c};border-radius:4px"></div>
+                        </div>
+                        <span style="font-size:12px;font-weight:700;min-width:65px;text-align:right">${window.R(it.v).replace("R$ ","")}</span>
+                        <span style="font-size:10px;color:#8e8e93;min-width:28px;text-align:right">${p.toFixed(0)}%</span>
+                    </div>`;
+                }).join("");
+            } else {
+                tableEl.innerHTML = "";
             }
         }
     }
