@@ -1080,6 +1080,7 @@
       const val = window.parseMoney(document.getElementById('mg-val').value);
       const pay = document.getElementById('mg-pay').value;
       if(!nome || val <= 0) return alert('Preencha um nome e um valor maior que zero.');
+      
       nome = window.autoEmoji(nome);
 
       if(tipo === 'fixo') {
@@ -1718,6 +1719,26 @@
     }
 
     /* AUXILIARES / UTILIDADES */
+    window.autoEmoji = function(nome) {
+      const n = nome.toLowerCase();
+      if(!/[\uD800-\uDBFF\uDC00-\uDFFF]/.test(nome)) { 
+        if(n.includes("uber")||n.includes("99")||n.includes("ônibus")||n.includes("onibus")||n.includes("van")||n.includes("combustível")||n.includes("gasolina")||n.includes("blablacar")||n.includes("transporte")||n.includes("metrô")||n.includes("metro")||n.includes("passagem")) return "🚗 " + nome;
+        if(n.includes("mercado livre")||n.includes("shopee")||n.includes("shein")||n.includes("amazon")||n.includes("aliexpress")||n.includes("online")) return "📦 " + nome;
+        if(n.includes("mercado")||n.includes("supermercado")||n.includes("atacadão")||n.includes("compras")||n.includes("mercearia")||n.includes("hortifruti")) return "🛒 " + nome;
+        if(n.includes("lanche")||n.includes("comida")||n.includes("fastfood")||n.includes("mcdonalds")||n.includes("ifood")||n.includes("pizza")||n.includes("restaurante")||n.includes("hamburguer")||n.includes("padaria")||n.includes("bar")||n.includes("café")) return "🍔 " + nome;
+        if(n.includes("farmácia")||n.includes("remédio")||n.includes("médico")||n.includes("medico")||n.includes("hospital")||n.includes("saúde")||n.includes("saude")||n.includes("terapia")) return "💊 " + nome;
+        if(n.includes("luz")||n.includes("água")||n.includes("agua")||n.includes("energia")||n.includes("internet")||n.includes("celular")||n.includes("vivo")||n.includes("claro")||n.includes("tim")||n.includes("iptu")||n.includes("aluguel")||n.includes("condomínio")) return "🏠 " + nome;
+        if(n.includes("pet")||n.includes("cachorro")||n.includes("gato")) return "🐶 " + nome;
+        if(n.includes("roupa")||n.includes("shopping")||n.includes("loja")) return "🛍️ " + nome;
+        if(n.includes("academia")||n.includes("musculação")) return "🏋️‍♂️ " + nome;
+        if(n.includes("viagem")||n.includes("passagem")||n.includes("hotel")) return "✈️ " + nome;
+        return "🏷️ " + nome;
+      }
+      return nome;
+    }
+    
+    window.setNeed = function(v){ window.needVal=v; ["sim","talvez","nao"].forEach(k=>document.getElementById("nb-"+k).classList.toggle("active",k===v)); }
+
     window.toggleAccordion = function(id, chev) { 
         const el = document.getElementById(id); const cv = document.getElementById(chev); 
         el.style.display = el.style.display === "none" ? "block" : "none"; 
