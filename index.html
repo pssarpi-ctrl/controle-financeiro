@@ -113,7 +113,7 @@
         .login-btn { width: 100%; height: 54px; border-radius: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; border: none; margin-bottom: 12px; font-family: inherit; font-size: 16px; }
 
         /* INPUTS & BUTTONS - 16px to stop iOS Auto-Zoom */
-        input[type=number], input[type=text], select.form-sel { 
+        input[type=number], input[type=text], input[type=date], select.form-sel { 
             width: 100%; height: 42px; border-radius: 10px; border: 1.5px solid #e5e5ea; padding: 0 10px; font-family: inherit; font-size: 16px; -webkit-appearance: none; background: #fff; color: #1c1c1e;
         }
         .input-group { margin-bottom: 14px; width: 100%; }
@@ -163,7 +163,7 @@
 
         <div style="margin-top: 60px; font-size: 11px; color: #8e8e93; font-weight: 500; line-height: 1.5;">
             Desenvolvido por <span style="color: #007aff; font-weight: 700;">Pedro Sarpi</span><br>
-            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()">Versão 1.7 BETA</span>
+            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()">Versão 1.9 BETA</span>
         </div>
     </div>
 
@@ -287,6 +287,17 @@
 
             <div class="page" id="pg-saude">
                 <div id="saude-score-card"></div>
+                
+                <div class="card" style="margin-top:12px; margin-bottom:0;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                        <h3 style="font-size:15px; margin:0;">🤖 IA Analista de Gastos</h3>
+                        <span class="badge badge-info">BETA</span>
+                    </div>
+                    <p style="font-size:12px; color:#8e8e93; margin-bottom:16px; line-height:1.4;">Nossa inteligência escaneia o padrão dos seus gastos deste mês e descobre para onde seu dinheiro está indo, separando por categorias dinâmicas.</p>
+                    <button class="btn-primary" style="background:#1c1c1e; color:#fff;" onclick="window.analisarGastosIA()">Analisar Padrões Mágicos ✨</button>
+                    <div id="ia-res" style="display:none; margin-top:16px; flex-direction:column; gap:12px;"></div>
+                </div>
+
                 <div class="card" style="margin-top:12px;">
                     <h3 style="font-size:15px; margin-bottom:14px;">Quero comprar. Posso?</h3>
                     <div class="input-group">
@@ -305,7 +316,7 @@
                             <button class="btn-small" id="nb-nao" onclick="window.setNeed('nao')" style="border-radius:22px; color:#3c3c43; border-color:#e5e5ea;">É impulso</button>
                         </div>
                     </div>
-                    <button class="btn-primary" onclick="window.analisarCompra()">Analisar Saúde</button>
+                    <button class="btn-primary" onclick="window.analisarCompra()">Analisar Compra</button>
                     <div id="compra-res"></div>
                 </div>
             </div>
@@ -332,6 +343,26 @@
                 <span class="nav-icon">♥</span><span class="nav-label">Saúde</span>
             </button>
         </nav>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modal-cambio">
+    <div class="modal-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 style="font-weight:800;">Registrar Câmbio</h3>
+            <button class="btn-close-modal" onclick="window.fecharModal('modal-cambio')">&times;</button>
+        </div>
+        <input type="hidden" id="mc-index" value="">
+        <div class="input-group">
+            <label class="input-label">Data do Câmbio</label>
+            <input type="date" id="mc-data" style="font-family:inherit;">
+        </div>
+        <div class="input-group">
+            <label class="input-label">Valor Registrado (R$)</label>
+            <input type="text" id="mc-valor" inputmode="decimal" placeholder="0,00" oninput="this.value=window.formatCambioInput(this.value)">
+        </div>
+        <p style="font-size:12px; color:#8e8e93; line-height:1.4;">Ao salvar a data, você consegue rastrear em qual dia específico o câmbio deste rendimento foi realizado.</p>
+        <button class="btn-primary" onclick="window.salvarCambio()" style="margin-top:20px;">Salvar Câmbio</button>
     </div>
 </div>
 
@@ -515,13 +546,13 @@
 <div class="modal-overlay" id="modal-changelog">
   <div class="modal-content">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <h3 style="font-weight:800;">Novidades 1.7 BETA</h3>
+      <h3 style="font-weight:800;">Novidades 1.9 BETA</h3>
       <button class="btn-close-modal" onclick="window.fecharModal('modal-changelog')">&times;</button>
     </div>
     <ul style="font-size:14px; color:#3c3c43; line-height:1.5; padding-left:16px; margin-bottom:24px;">
-        <li style="margin-bottom:10px;"><b>Detalhes de Gastos:</b> Agora você consegue visualizar rapidamente a divisão entre seus gastos fixos e variáveis clicando em "Ver" no card de total mensal na aba Gastos.</li>
-        <li style="margin-bottom:10px;"><b>Total de Metas no Topo:</b> O valor de Aportes do Mês agora se encontra em destaque no topo da tela de Metas.</li>
-        <li style="margin-bottom:10px;"><b>Melhorias de Layout:</b> Ajustes visuais menores para manter tudo coeso e responsivo.</li>
+        <li style="margin-bottom:10px;"><b>🤖 IA Analista de Gastos:</b> Agora na aba Saúde você tem uma análise automática de onde seu dinheiro está indo, lendo os padrões (iFood, Uber, Luz) e dando dicas!</li>
+        <li style="margin-bottom:10px;"><b>📅 Data no Câmbio (Tracker):</b> No lugar do input direto de câmbio, agora você pode clicar para adicionar a cotação E a data em que o resgate foi feito para não se perder!</li>
+        <li style="margin-bottom:10px;"><b>Total de Metas no Topo:</b> O valor de Aportes do Mês se encontra em destaque no topo da tela de Metas.</li>
     </ul>
     <button class="btn-primary" onclick="window.fecharModal('modal-changelog')">Incrível!</button>
   </div>
@@ -739,11 +770,11 @@
             let linhasIniciais = [];
             
             if (freq === 'mensal') {
-                linhasIniciais = [{n:"Receita do Mês", brl:0, usd:0, cam:5.90, tipos:{}}];
+                linhasIniciais = [{n:"Receita do Mês", brl:0, usd:0, cam:5.90, camData:"", camDataRaw:"", tipos:{}}];
             } else if (freq === 'quinzenal') {
-                linhasIniciais = [{n:"Quinzena 1", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Quinzena 2", brl:0, usd:0, cam:5.90, tipos:{}}];
+                linhasIniciais = [{n:"Quinzena 1", brl:0, usd:0, cam:5.90, camData:"", camDataRaw:"", tipos:{}}, {n:"Quinzena 2", brl:0, usd:0, cam:5.90, camData:"", camDataRaw:"", tipos:{}}];
             } else {
-                linhasIniciais = [{n:"Semana 1", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Semana 2", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Semana 3", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Semana 4", brl:0, usd:0, cam:5.90, tipos:{}}, {n:"Semana 5", brl:0, usd:0, cam:5.90, tipos:{}}];
+                linhasIniciais = [{n:"Semana 1", brl:0, usd:0, cam:5.90, camData:"", camDataRaw:"", tipos:{}}, {n:"Semana 2", brl:0, usd:0, cam:5.90, camData:"", camDataRaw:"", tipos:{}}, {n:"Semana 3", brl:0, usd:0, cam:5.90, camData:"", camDataRaw:"", tipos:{}}, {n:"Semana 4", brl:0, usd:0, cam:5.90, camData:"", camDataRaw:"", tipos:{}}, {n:"Semana 5", brl:0, usd:0, cam:5.90, camData:"", camDataRaw:"", tipos:{}}];
             }
 
             if(!window.S.dataByMonth[activeKey]) window.S.dataByMonth[activeKey] = {};
@@ -774,7 +805,7 @@
     }
 
     /* ==========================================
-       RECEITAS E MODO DÓLAR
+       RECEITAS E MODO DÓLAR + TRACKER
     ========================================== */
     window.toggleCurrency = function(i) {
         activeData.semanas[i].isBRL = !activeData.semanas[i].isBRL;
@@ -807,11 +838,33 @@
         window.recalc();
     };
 
-    window.updateReceitaCam = function(i, val) {
-        activeData.semanas[i].cam = Number(val);
-        const el = document.getElementById(`rec-line-total-${i}`);
-        if(el) el.textContent = window.R((activeData.semanas[i].usd||0) * activeData.semanas[i].cam);
-        window.recalc();
+    // Nova Lógica de Câmbio Modal Tracker
+    window.abrirModalCambio = function(i) {
+        const s = activeData.semanas[i];
+        document.getElementById("mc-index").value = i;
+        document.getElementById("mc-data").value = s.camDataRaw || "";
+        document.getElementById("mc-valor").value = window.toCambioInput(s.cam || 5.90);
+        document.getElementById("modal-cambio").style.display = "flex";
+    };
+
+    window.salvarCambio = function() {
+        const i = document.getElementById("mc-index").value;
+        const dataStr = document.getElementById("mc-data").value;
+        const valStr = document.getElementById("mc-valor").value;
+        if(!valStr) return alert("Preencha o valor do câmbio.");
+
+        let dataFormatada = "";
+        if(dataStr) {
+            let parts = dataStr.split('-');
+            dataFormatada = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+
+        activeData.semanas[i].cam = window.parseMoney(valStr);
+        activeData.semanas[i].camDataRaw = dataStr;
+        activeData.semanas[i].camData = dataFormatada;
+
+        window.fecharModal('modal-cambio');
+        window.renderView();
     };
 
     window.toggleWeek = function(i) {
@@ -899,9 +952,10 @@
                             <input id="wu-${i}" type="text" inputmode="decimal" value="${inputValue}" placeholder="0,00" oninput="${onInputFunc}" style="border:none; background:transparent; height:42px; width:100%; font-weight:600; text-align:left; color:#1c1c1e; font-size:16px;">
                         </div>
                         ${!isBRL ? `
-                        <div style="width:85px; background:#f2f2f7; border-radius:10px; display:flex; align-items:center; padding:0 6px;">
-                            <span style="font-size:10px; color:#8e8e93; margin-right:2px;">Câmbio</span>
-                            <input type="text" inputmode="decimal" value="${window.toCambioInput(s.cam || 5.90)}" oninput="this.value=window.formatCambioInput(this.value); window.updateReceitaCam(${i}, window.parseMoney(this.value))" style="border:none; background:transparent; height:42px; width:100%; font-size:16px; font-weight:600; text-align:right; color:#1c1c1e; padding:0;">
+                        <div style="width:100px; background:#f2f2f7; border-radius:10px; display:flex; flex-direction:column; justify-content:center; padding:4px 8px; cursor:pointer;" onclick="window.abrirModalCambio(${i})">
+                            <span style="font-size:10px; color:#8e8e93; line-height:1;">Câmbio <span style="font-size:9px">✏️</span></span>
+                            <span style="font-size:14px; font-weight:600; color:#1c1c1e; margin-top:2px;">R$ ${window.toCambioInput(s.cam || 5.90)}</span>
+                            ${s.camData ? `<span style="font-size:9px; color:#007aff; margin-top:1px;">${s.camData}</span>` : `<span style="font-size:9px; color:#8e8e93; margin-top:1px;">Definir data</span>`}
                         </div>` : ''}
                         <div style="min-width:80px; display:flex; flex-direction:column; align-items:flex-end;">
                             <span id="rec-line-total-${i}" style="font-weight:800; color:#30d158; font-size:15px;">${displayTotal}</span>
@@ -927,7 +981,7 @@
         });
     }
 
-    window.adicionarReceita = function() { activeData.semanas.push({n: "Nova Receita", brl: 0, usd: 0, cam: 5.90, tipos:{}}); window.renderView(); }
+    window.adicionarReceita = function() { activeData.semanas.push({n: "Nova Receita", brl: 0, usd: 0, cam: 5.90, camData: "", camDataRaw: "", tipos:{}}); window.renderView(); }
     window.removerReceita = function(i) {
         if (activeData.semanas.length <= 1) return alert("Você precisa ter pelo menos uma receita no mês.");
         if (confirm("Apagar esta receita?")) { activeData.semanas.splice(i, 1); window.renderView(); }
@@ -1569,6 +1623,106 @@
       });
     }
 
+    // NOVA FUNÇÃO: IA Analisadora de Gastos
+    window.analisarGastosIA = function() {
+        const resDiv = document.getElementById("ia-res");
+        resDiv.innerHTML = `<div style="text-align:center; padding:20px; font-size:14px; color:#8e8e93;">Consultando a IA para escanear os padrões... 🧠🔍</div>`;
+        resDiv.style.display = "flex";
+
+        // Timeout apenas para dar um efeito lúdico de "processamento"
+        setTimeout(() => {
+            const categorias = {
+                "Transporte 🚗": { keys: ["uber", "99", "blablacar", "onibus", "ônibus", "metrô", "metro", "gasolina", "combustível", "passagem", "transporte"], total: 0, items: [] },
+                "Alimentação 🍔": { keys: ["ifood", "mcdonalds", "burger", "mercado", "supermercado", "padaria", "restaurante", "lanche", "pizza", "comida", "delivery", "zé delivery"], total: 0, items: [] },
+                "Contas Básicas 💡": { keys: ["luz", "agua", "água", "energia", "aluguel", "condomínio", "vivo", "claro", "tim", "internet", "iptu", "plano"], total: 0, items: [] },
+                "Saúde 💊": { keys: ["farmácia", "remédio", "médico", "consulta", "drogaria", "unimed", "terapia"], total: 0, items: [] },
+                "Compras/Lazer 🛍️": { keys: ["netflix", "spotify", "cinema", "shopping", "shein", "shopee", "mercado livre", "amazon", "roupa", "bar", "festa", "cruzeiro"], total: 0, items: [] },
+                "Outros 🏷️": { keys: [], total: 0, items: [] }
+            };
+
+            let totalGastosMes = 0;
+
+            // Variáveis
+            (activeData.gastosV || []).forEach(gv => {
+                totalGastosMes += gv.val;
+                let nome = gv.n.toLowerCase();
+                let catEncontrada = "Outros 🏷️";
+                for(let cat in categorias) {
+                    if(categorias[cat].keys.some(k => nome.includes(k))) {
+                        catEncontrada = cat; break;
+                    }
+                }
+                categorias[catEncontrada].total += gv.val;
+                categorias[catEncontrada].items.push(gv.n);
+            });
+
+            // Fixos
+            const fixosIds = Object.keys(activeData.gastosF || {});
+            fixosIds.forEach(id => {
+                const gfAtivo = activeData.gastosF[id];
+                const val = typeof gfAtivo === 'number' ? gfAtivo : gfAtivo.val;
+                totalGastosMes += val;
+
+                const gfBase = (window.S.gastosFixos || []).find(g => g.id === id);
+                let nome = gfBase ? gfBase.n.toLowerCase() : "Gasto Fixo";
+
+                let catEncontrada = "Outros 🏷️";
+                for(let cat in categorias) {
+                    if(categorias[cat].keys.some(k => nome.includes(k))) {
+                        catEncontrada = cat; break;
+                    }
+                }
+                categorias[catEncontrada].total += val;
+                categorias[catEncontrada].items.push(gfBase ? gfBase.n : "Fixo Desconhecido");
+            });
+
+            if(totalGastosMes === 0) {
+                resDiv.innerHTML = `<div style="text-align:center; font-size:14px; color:#8e8e93; background:#f2f2f7; padding:16px; border-radius:12px;">Nenhum gasto registrado neste mês para ser analisado.</div>`;
+                return;
+            }
+
+            let catArray = Object.keys(categorias).map(c => ({
+                nome: c, total: categorias[c].total, items: categorias[c].items
+            })).filter(c => c.total > 0).sort((a,b) => b.total - a.total);
+
+            let html = ``;
+            catArray.forEach(c => {
+                let pct = Math.round((c.total / totalGastosMes) * 100);
+                html += `
+                <div style="background:#f2f2f7; border-radius:12px; padding:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                        <span style="font-weight:700; font-size:14px;">${c.nome}</span>
+                        <span style="font-weight:800; color:#ff453a;">${window.R(c.total)} (${pct}%)</span>
+                    </div>
+                    <div style="font-size:11px; color:#8e8e93;">Itens lidos: ${c.items.join(", ")}</div>
+                </div>`;
+            });
+
+            // Lógica de dicas
+            let vilao = catArray[0];
+            let dica = "";
+            if(vilao.nome.includes("Alimentação") && (vilao.total / totalGastosMes) > 0.3) {
+                dica = "🍔 <b>Cuidado com as saídas e Deliveries!</b> Mais de 30% da sua verba evaporou em alimentação. Separar um orçamento fixo para 'besteiras' pode ajudar a segurar a onda.";
+            } else if(vilao.nome.includes("Transporte") && (vilao.total / totalGastosMes) > 0.2) {
+                dica = "🚗 <b>Você está morando no Uber?</b> O gasto com transporte está elevado. Verifique se o uso de transporte público, caronas ou até caminhadas curtas não são mais jogo.";
+            } else if(vilao.nome.includes("Compras/Lazer") && (vilao.total / totalGastosMes) > 0.25) {
+                dica = "🛍️ <b>Eita, frete grátis custa caro!</b> Lazer e compras estão consumindo muito do dinheiro. Lembre-se da aba de 'Saúde' antes de fazer uma compra por impulso.";
+            } else if(vilao.nome.includes("Contas Básicas")) {
+                dica = "💡 <b>Custo de vida padrão:</b> O maior peso está no básico. Isso é completamente natural! Dê uma olhada se os planos de internet e celular podem ser renegociados.";
+            } else {
+                dica = "📊 Seus gastos estão bem misturados! Mantenha sempre o acompanhamento para o mês não fechar no vermelho.";
+            }
+
+            html += `
+            <div style="background:#e3f0ff; border:1.5px solid #007aff; border-radius:14px; padding:14px; margin-top:8px;">
+                <div style="font-size:12px; color:#0055cc; font-weight:800; margin-bottom:6px; text-transform:uppercase;">💡 Dica Inteligente</div>
+                <div style="font-size:14px; color:#1c1c1e; line-height:1.4;">${dica}</div>
+            </div>`;
+
+            resDiv.innerHTML = html;
+        }, 800); 
+    }
+
     window.buildSaude = function(){
         const { tBRL, tReal, tAp, saldo, hasData } = window.calcTotals();
         let pts = 0;
@@ -1636,17 +1790,17 @@
     window.autoEmoji = function(nome) {
       const n = nome.toLowerCase();
       if(!/[\uD800-\uDBFF\uDC00-\uDFFF]/.test(nome)) { 
-        if(n.includes("uber")||n.includes("99")||n.includes("ônibus")||n.includes("onibus")||n.includes("van")||n.includes("combustível")||n.includes("gasolina")||n.includes("blablacar")||n.includes("transporte")) return "🚗 " + nome;
+        if(n.includes("uber")||n.includes("99")||n.includes("ônibus")||n.includes("onibus")||n.includes("van")||n.includes("combustível")||n.includes("gasolina")||n.includes("blablacar")||n.includes("transporte")||n.includes("metro")||n.includes("metrô")) return "🚗 " + nome;
         if(n.includes("mercado livre")||n.includes("shopee")||n.includes("shein")||n.includes("amazon")||n.includes("aliexpress")) return "📦 " + nome;
         if(n.includes("mercado")||n.includes("supermercado")||n.includes("atacadão")||n.includes("compras")) return "🛒 " + nome;
         if(n.includes("ifood")||n.includes("lanche")||n.includes("pizza")||n.includes("comida")||n.includes("fastfood")||n.includes("mcdonalds")||n.includes("restaurante")||n.includes("hamburguer")||n.includes("padaria")) return "🍔 " + nome;
-        if(n.includes("farmácia")||n.includes("remédio")||n.includes("medico")) return "💊 " + nome;
+        if(n.includes("farmácia")||n.includes("remédio")||n.includes("medico")||n.includes("terapia")) return "💊 " + nome;
         if(n.includes("luz")||n.includes("energia")) return "💡 " + nome;
         if(n.includes("agua")||n.includes("água")) return "💧 " + nome;
         if(n.includes("pet")||n.includes("cachorro")||n.includes("gato")) return "🐶 " + nome;
         if(n.includes("roupa")||n.includes("shopping")||n.includes("loja")) return "🛍️ " + nome;
         if(n.includes("academia")||n.includes("musculação")) return "🏋️‍♂️ " + nome;
-        if(n.includes("viagem")||n.includes("passagem")||n.includes("hotel")) return "✈️ " + nome;
+        if(n.includes("viagem")||n.includes("passagem")||n.includes("hotel")||n.includes("cruzeiro")) return "✈️ " + nome;
         return "🏷️ " + nome;
       }
       return nome;
