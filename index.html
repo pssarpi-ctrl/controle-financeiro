@@ -27,7 +27,7 @@
         .dark-theme .app-container { background: #000; }
         .dark-theme .top-bar, .dark-theme .bottom-nav, .dark-theme .card, .dark-theme .modal-content, .dark-theme .m-card { background: #1c1c1e; border-color: #333; }
         .dark-theme h1, .dark-theme .card-title, .dark-theme span, .dark-theme .m-label, .dark-theme .gasto-section-title { color: #f2f2f7; }
-        .dark-theme input, .dark-theme select, .dark-theme .form-sel, .dark-theme .gasto-inp { background: #2c2c2e; color: #fff; border-color: #3a3a3c; }
+        .dark-theme input, .dark-theme select, .dark-theme .form-sel, .dark-theme .gasto-inp, .dark-theme input[type=date] { background: #2c2c2e; color: #fff; border-color: #3a3a3c; }
         .dark-theme .welcome { color: #8e8e93; }
         .dark-theme .gastos-total-sticky { background: rgba(28,28,30,0.95); border-bottom-color: #333; }
         .dark-theme .cal-cell.cal-bg-gray { background: #2c2c2e; }
@@ -112,7 +112,7 @@
         .login-screen { position: absolute; top:0; left:0; width:100%; height:100%; background:#fff; z-index:999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; text-align:center; }
         .login-btn { width: 100%; height: 54px; border-radius: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; border: none; margin-bottom: 12px; font-family: inherit; font-size: 16px; }
 
-        /* INPUTS & BUTTONS - 16px to stop iOS Auto-Zoom */
+        /* INPUTS & BUTTONS */
         input[type=number], input[type=text], input[type=date], select.form-sel { 
             width: 100%; height: 42px; border-radius: 10px; border: 1.5px solid #e5e5ea; padding: 0 10px; font-family: inherit; font-size: 16px; -webkit-appearance: none; background: #fff; color: #1c1c1e;
         }
@@ -130,7 +130,7 @@
         .chev { font-size: 12px; color: #c7c7cc; transition: transform 0.2s; display: inline-block; }
         .chev.open { transform: rotate(180deg); }
 
-        /* MODAIS - z-index: 1000 PARA FICAR ACIMA DO LOGIN (999) */
+        /* MODAIS */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(2px); flex-direction: column; }
         .modal-content { background: #fff; border-radius: 24px; width: 100%; max-width: 380px; padding: 24px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column; }
         .btn-close-modal { background: #f2f2f7; border: none; width: 32px; height: 32px; border-radius: 16px; font-size: 18px; font-weight: bold; color: #8e8e93; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -288,36 +288,17 @@
             <div class="page" id="pg-saude">
                 <div id="saude-score-card"></div>
                 
-                <div class="card" style="margin-top:12px; margin-bottom:0;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-                        <h3 style="font-size:15px; margin:0;">🤖 IA Analista de Gastos</h3>
-                        <span class="badge badge-info">BETA</span>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;">
+                    <div class="m-card" style="align-items: center; justify-content: center; text-align: center; padding: 20px 10px; min-height: 120px;" onclick="window.abrirModalIA()">
+                        <div style="font-size: 32px; margin-bottom: 8px;">🤖</div>
+                        <div style="font-size: 13px; font-weight: 700; color: #1c1c1e;">Análise com IA</div>
+                        <div style="font-size: 10px; color: #8e8e93; margin-top: 4px;">Padrões de gastos</div>
                     </div>
-                    <p style="font-size:12px; color:#8e8e93; margin-bottom:16px; line-height:1.4;">Nossa inteligência escaneia o padrão dos seus gastos deste mês e descobre para onde seu dinheiro está indo, separando por categorias dinâmicas.</p>
-                    <button class="btn-primary" style="background:#1c1c1e; color:#fff;" onclick="window.analisarGastosIA()">Analisar Padrões Mágicos ✨</button>
-                    <div id="ia-res" style="display:none; margin-top:16px; flex-direction:column; gap:12px;"></div>
-                </div>
-
-                <div class="card" style="margin-top:12px;">
-                    <h3 style="font-size:15px; margin-bottom:14px;">Quero comprar. Posso?</h3>
-                    <div class="input-group">
-                        <label class="input-label">Nome do item</label>
-                        <input type="text" id="c-nome" placeholder="ex: iPhone, sofá...">
+                    <div class="m-card" style="align-items: center; justify-content: center; text-align: center; padding: 20px 10px; min-height: 120px;" onclick="window.abrirModalComprar()">
+                        <div style="font-size: 32px; margin-bottom: 8px;">🛒</div>
+                        <div style="font-size: 13px; font-weight: 700; color: #1c1c1e;">Quero Comprar</div>
+                        <div style="font-size: 10px; color: #8e8e93; margin-top: 4px;">Análise de risco</div>
                     </div>
-                    <div class="input-row col2">
-                        <div><label class="input-label">Valor total (R$)</label><input type="text" id="c-valor" inputmode="decimal" placeholder="0,00" oninput="this.value=window.formatMoneyInput(this.value)"></div>
-                        <div><label class="input-label">Parcelas</label><input type="number" id="c-parcelas" value="1" min="1"></div>
-                    </div>
-                    <div class="input-group" style="margin-top:14px;">
-                        <label class="input-label">Você realmente precisa?</label>
-                        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
-                            <button class="btn-small active" id="nb-sim" onclick="window.setNeed('sim')" style="border-radius:22px;">Sim, necessário</button>
-                            <button class="btn-small" id="nb-talvez" onclick="window.setNeed('talvez')" style="border-radius:22px; color:#3c3c43; border-color:#e5e5ea;">Quero muito</button>
-                            <button class="btn-small" id="nb-nao" onclick="window.setNeed('nao')" style="border-radius:22px; color:#3c3c43; border-color:#e5e5ea;">É impulso</button>
-                        </div>
-                    </div>
-                    <button class="btn-primary" onclick="window.analisarCompra()">Analisar Compra</button>
-                    <div id="compra-res"></div>
                 </div>
             </div>
 
@@ -343,6 +324,45 @@
                 <span class="nav-icon">♥</span><span class="nav-label">Saúde</span>
             </button>
         </nav>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modal-ia">
+    <div class="modal-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 style="font-weight:800; font-size:18px;">🤖 IA Analista</h3>
+            <button class="btn-close-modal" onclick="window.fecharModal('modal-ia')">&times;</button>
+        </div>
+        <p style="font-size:13px; color:#8e8e93; margin-bottom:16px; line-height:1.4;">Nossa inteligência escaneia o padrão dos seus gastos deste mês e descobre para onde seu dinheiro está indo de verdade.</p>
+        <button class="btn-primary" style="background:#1c1c1e; color:#fff;" onclick="window.analisarGastosIA()">Analisar Padrões Mágicos ✨</button>
+        <div id="ia-res" style="display:none; margin-top:16px; flex-direction:column; gap:12px;"></div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modal-comprar">
+    <div class="modal-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 style="font-weight:800; font-size:18px;">🛒 Quero comprar. Posso?</h3>
+            <button class="btn-close-modal" onclick="window.fecharModal('modal-comprar')">&times;</button>
+        </div>
+        <div class="input-group">
+            <label class="input-label">Nome do item</label>
+            <input type="text" id="c-nome" placeholder="ex: iPhone, sofá...">
+        </div>
+        <div class="input-row col2">
+            <div><label class="input-label">Valor total (R$)</label><input type="text" id="c-valor" inputmode="decimal" placeholder="0,00" oninput="this.value=window.formatMoneyInput(this.value)"></div>
+            <div><label class="input-label">Parcelas</label><input type="number" id="c-parcelas" value="1" min="1"></div>
+        </div>
+        <div class="input-group" style="margin-top:14px;">
+            <label class="input-label">Você realmente precisa?</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+                <button class="btn-small active" id="nb-sim" onclick="window.setNeed('sim')" style="border-radius:22px;">Sim, necessário</button>
+                <button class="btn-small" id="nb-talvez" onclick="window.setNeed('talvez')" style="border-radius:22px; color:#3c3c43; border-color:#e5e5ea;">Quero muito</button>
+                <button class="btn-small" id="nb-nao" onclick="window.setNeed('nao')" style="border-radius:22px; color:#3c3c43; border-color:#e5e5ea;">É impulso</button>
+            </div>
+        </div>
+        <button class="btn-primary" onclick="window.analisarCompra()">Analisar Compra</button>
+        <div id="compra-res"></div>
     </div>
 </div>
 
@@ -553,6 +573,7 @@
         <li style="margin-bottom:10px;"><b>🤖 IA Analista de Gastos:</b> Agora na aba Saúde você tem uma análise automática de onde seu dinheiro está indo, lendo os padrões (iFood, Uber, Luz) e dando dicas!</li>
         <li style="margin-bottom:10px;"><b>📅 Data no Câmbio (Tracker):</b> No lugar do input direto de câmbio, agora você pode clicar para adicionar a cotação E a data em que o resgate foi feito para não se perder!</li>
         <li style="margin-bottom:10px;"><b>Total de Metas no Topo:</b> O valor de Aportes do Mês se encontra em destaque no topo da tela de Metas.</li>
+        <li style="margin-bottom:10px;"><b>Novo Menu Saúde:</b> A aba de Saúde agora exibe pequenos botões dinâmicos que funcionam como apps dentro do app para organizar melhor a tela.</li>
     </ul>
     <button class="btn-primary" onclick="window.fecharModal('modal-changelog')">Incrível!</button>
   </div>
@@ -838,7 +859,6 @@
         window.recalc();
     };
 
-    // Nova Lógica de Câmbio Modal Tracker
     window.abrirModalCambio = function(i) {
         const s = activeData.semanas[i];
         document.getElementById("mc-index").value = i;
@@ -1623,20 +1643,34 @@
       });
     }
 
-    // NOVA FUNÇÃO: IA Analisadora de Gastos
+    // NOVOS MODAIS: ABRIR
+    window.abrirModalIA = function() {
+        document.getElementById('ia-res').style.display = 'none'; // Reseta o estado
+        document.getElementById('modal-ia').style.display = 'flex';
+    }
+
+    window.abrirModalComprar = function() {
+        document.getElementById('c-nome').value = '';
+        document.getElementById('c-valor').value = '';
+        document.getElementById('c-parcelas').value = '1';
+        document.getElementById('compra-res').innerHTML = ''; // Reseta o estado
+        window.setNeed('sim');
+        document.getElementById('modal-comprar').style.display = 'flex';
+    }
+
+    // NOVA FUNÇÃO: IA Analisadora de Gastos com Categorias Atualizadas
     window.analisarGastosIA = function() {
         const resDiv = document.getElementById("ia-res");
         resDiv.innerHTML = `<div style="text-align:center; padding:20px; font-size:14px; color:#8e8e93;">Consultando a IA para escanear os padrões... 🧠🔍</div>`;
         resDiv.style.display = "flex";
 
-        // Timeout apenas para dar um efeito lúdico de "processamento"
         setTimeout(() => {
             const categorias = {
-                "Transporte 🚗": { keys: ["uber", "99", "blablacar", "onibus", "ônibus", "metrô", "metro", "gasolina", "combustível", "passagem", "transporte"], total: 0, items: [] },
-                "Alimentação 🍔": { keys: ["ifood", "mcdonalds", "burger", "mercado", "supermercado", "padaria", "restaurante", "lanche", "pizza", "comida", "delivery", "zé delivery"], total: 0, items: [] },
-                "Contas Básicas 💡": { keys: ["luz", "agua", "água", "energia", "aluguel", "condomínio", "vivo", "claro", "tim", "internet", "iptu", "plano"], total: 0, items: [] },
-                "Saúde 💊": { keys: ["farmácia", "remédio", "médico", "consulta", "drogaria", "unimed", "terapia"], total: 0, items: [] },
-                "Compras/Lazer 🛍️": { keys: ["netflix", "spotify", "cinema", "shopping", "shein", "shopee", "mercado livre", "amazon", "roupa", "bar", "festa", "cruzeiro"], total: 0, items: [] },
+                "Transporte 🚗": { keys: ["uber", "99", "blablacar", "onibus", "ônibus", "metrô", "metro", "van", "gasolina", "combustível", "passagem", "transporte", "moto", "carro"], total: 0, items: [] },
+                "Alimentação 🍔": { keys: ["ifood", "rappi", "mcdonalds", "burger", "mercado", "supermercado", "padaria", "restaurante", "lanche", "pizza", "comida", "delivery", "zé delivery", "almoço", "almoco", "janta", "jantar", "rodízio", "rodizio", "outback"], total: 0, items: [] },
+                "Saúde & Esportes 💊": { keys: ["farmácia", "remédio", "médico", "consulta", "drogaria", "unimed", "terapia", "esporte", "esportes", "personal", "academia", "crossfit", "treino", "pilates", "suplemento", "whey"], total: 0, items: [] },
+                "Contas Básicas 💡": { keys: ["luz", "agua", "água", "energia", "aluguel", "condomínio", "vivo", "claro", "tim", "internet", "iptu", "plano", "seguro"], total: 0, items: [] },
+                "Viagem & Lazer ✈️": { keys: ["netflix", "spotify", "cinema", "shopping", "shein", "shopee", "mercado livre", "amazon", "roupa", "bar", "festa", "cruzeiro", "airbnb", "hotel", "viagem", "passagem", "ingresso", "show"], total: 0, items: [] },
                 "Outros 🏷️": { keys: [], total: 0, items: [] }
             };
 
@@ -1705,8 +1739,10 @@
                 dica = "🍔 <b>Cuidado com as saídas e Deliveries!</b> Mais de 30% da sua verba evaporou em alimentação. Separar um orçamento fixo para 'besteiras' pode ajudar a segurar a onda.";
             } else if(vilao.nome.includes("Transporte") && (vilao.total / totalGastosMes) > 0.2) {
                 dica = "🚗 <b>Você está morando no Uber?</b> O gasto com transporte está elevado. Verifique se o uso de transporte público, caronas ou até caminhadas curtas não são mais jogo.";
-            } else if(vilao.nome.includes("Compras/Lazer") && (vilao.total / totalGastosMes) > 0.25) {
-                dica = "🛍️ <b>Eita, frete grátis custa caro!</b> Lazer e compras estão consumindo muito do dinheiro. Lembre-se da aba de 'Saúde' antes de fazer uma compra por impulso.";
+            } else if(vilao.nome.includes("Viagem & Lazer") && (vilao.total / totalGastosMes) > 0.25) {
+                dica = "✈️ <b>As experiências custam caro!</b> Lazer e viagens estão consumindo muito do dinheiro. Aproveite a vida, mas garanta que isso está dentro do seu orçamento base.";
+            } else if(vilao.nome.includes("Saúde & Esportes") && (vilao.total / totalGastosMes) > 0.2) {
+                dica = "💊 <b>Cuidar de si é um investimento!</b> Gastos altos com saúde, esportes ou farmácia mostram autocuidado. Veja se seu plano de saúde cobre algo ou se dá pra negociar pacotes anuais de treino.";
             } else if(vilao.nome.includes("Contas Básicas")) {
                 dica = "💡 <b>Custo de vida padrão:</b> O maior peso está no básico. Isso é completamente natural! Dê uma olhada se os planos de internet e celular podem ser renegociados.";
             } else {
