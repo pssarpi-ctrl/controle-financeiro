@@ -92,7 +92,7 @@
 
         /* PROGRESS BAR & BADGES */
         .prog-bar { height: 6px; border-radius: 3px; background: #e5e5ea; overflow: hidden; margin-top: 6px; width: 100%; }
-        .prog-fill { height: 100%; border-radius: 3px; background: #30d158; transition: width 0.4s; }
+        .prog-fill { height: 100%; border-radius: 3px; background: #30d158; transition: width 0.4s ease-in-out; }
         .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 8px; margin-left: 6px; vertical-align: middle; }
         .badge-info { background: #e3f0ff; color: #0055cc !important; }
 
@@ -120,7 +120,7 @@
         .input-label { font-size: 13px; font-weight: 500; color: #3c3c43; margin-bottom: 6px; display: block; text-align: left; }
         .input-row.col2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
         .btn-del { background: none; border: none; color: #ff453a; font-size: 22px; cursor: pointer; padding: 4px; font-weight: bold; }
-        .btn-primary { background: #007aff; color: #fff; height: 50px; border-radius: 14px; border: none; font-weight: 600; font-size: 16px; cursor: pointer; width: 100%; }
+        .btn-primary { background: #007aff; color: #fff; height: 50px; border-radius: 14px; border: none; font-weight: 600; font-size: 16px; cursor: pointer; width: 100%; transition: background 0.3s; }
         .btn-small { padding: 6px 14px; border-radius: 10px; border: 1.5px solid #e5e5ea; background: #fff; color: #007aff; font-weight: 600; cursor: pointer; font-size: 13px; }
         .btn-small.active { background: #007aff; color: #fff; border-color: #007aff; }
         .btn-danger { width: 100%; height: 48px; background: #ffe5e5; color: #c0392b; border: none; border-radius: 14px; font-weight: 600; cursor: pointer; }
@@ -163,7 +163,7 @@
 
         <div style="margin-top: 60px; font-size: 11px; color: #8e8e93; font-weight: 500; line-height: 1.5;">
             Desenvolvido por <span style="color: #007aff; font-weight: 700;">Pedro Sarpi</span><br>
-            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()">Versão 1.9 BETA</span>
+            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()">Versão 1.10 BETA</span>
         </div>
     </div>
 
@@ -258,18 +258,18 @@
             </div>
 
             <div class="page" id="pg-metas">
-                <p style="font-size:12px;color:#8e8e93;margin-bottom:12px;line-height:1.4;text-align:center">Adicione o valor investido neste mês. O acumulado é somado automaticamente.</p>
+                <p style="font-size:12px;color:#8e8e93;margin-bottom:12px;line-height:1.4;text-align:center">Acompanhe suas metas de forma rápida. Clique em uma meta para modificar o aporte.</p>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                     <h2 style="font-size:16px; font-weight:700;">Suas Metas</h2>
-                    <button class="btn-small" onclick="window.abrirModalMeta()">+ Meta</button>
+                    <button class="btn-small" onclick="window.abrirModalMeta()">+ Nova</button>
                 </div>
                 
-                <div class="card" style="display:flex;justify-content:space-between;align-items:center; margin-bottom:12px;">
-                    <span style="font-size:15px;font-weight:600">Aportes neste mês</span>
-                    <span style="font-size:20px;font-weight:800;color:#007aff" id="metas-total-val">R$ 0,00</span>
+                <div class="card" style="display:flex;justify-content:space-between;align-items:center; margin-bottom:12px; padding:12px 16px;">
+                    <span style="font-size:14px;font-weight:600;color:#8e8e93;">Aportes neste mês</span>
+                    <span style="font-size:18px;font-weight:800;color:#007aff" id="metas-total-val">R$ 0,00</span>
                 </div>
 
-                <div id="metas-list"></div>
+                <div id="metas-list" style="display:flex; flex-direction:column;"></div>
             </div>
 
             <div class="page" id="pg-historico">
@@ -327,13 +327,56 @@
     </div>
 </div>
 
+<div class="modal-overlay" id="modal-meta-detalhes">
+    <div class="modal-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 style="font-weight:800; font-size:18px;" id="mdet-titulo">Detalhes da Meta</h3>
+            <button class="btn-close-modal" onclick="window.fecharModal('modal-meta-detalhes')">&times;</button>
+        </div>
+        <input type="hidden" id="mdet-id" value="">
+
+        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+           <span style="font-size:13px; color:#8e8e93;">Aportado neste mês: <strong id="mdet-mes-atual" style="color:#1c1c1e;">R$ 0,00</strong></span>
+        </div>
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
+            <div style="background:#f2f2f7; border-radius:10px; padding:10px;">
+                <div style="font-size:11px; color:#8e8e93; margin-bottom:4px; font-weight:600;">Somar Aporte</div>
+                <div style="display:flex; align-items:center;">
+                    <span style="font-size:14px; font-weight:700; color:#30d158; margin-right:4px;">+ R$</span>
+                    <input type="text" id="mdet-aporte" inputmode="decimal" placeholder="0,00" oninput="this.value=window.formatMoneyInput(this.value)" style="background:transparent; border:none; height:28px; padding:0; font-size:16px; font-weight:700; width:100%; color:#1c1c1e; outline:none; font-family:inherit;">
+                </div>
+            </div>
+            <div style="background:#e3f0ff; border-radius:10px; padding:10px;">
+                <div style="font-size:11px; color:#0055cc; margin-bottom:4px; font-weight:600;">Acumulado Total</div>
+                <div id="mdet-acumulado" style="font-size:15px; font-weight:700; color:#007aff;">R$ 0,00</div>
+            </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span id="mdet-objetivo" style="font-size:13px; font-weight:600; color:#3c3c43;">Objetivo: R$ 0,00</span>
+            <span id="mdet-pct" style="font-size:13px; font-weight:800; color:#007aff;">0%</span>
+        </div>
+        <div class="prog-bar" style="margin-top:0; margin-bottom:20px; height:8px;" id="mdet-prog-wrapper">
+            <div id="mdet-prog-fill" class="prog-fill" style="width:0%"></div>
+        </div>
+
+        <button class="btn-primary" id="btn-salvar-aporte" style="margin-bottom:20px; height:46px; font-size:14px;" onclick="window.somarAporte()">Salvar Aporte</button>
+
+        <div style="display:flex; gap:8px;">
+            <button class="btn-small" style="flex:1; height:42px; background:#f2f2f7; border:none; color:#1c1c1e;" onclick="window.editarMetaAtual()">Editar Meta ✏️</button>
+            <button class="btn-small" style="flex:1; height:42px; color:#ff453a; border:none; background:#ffe5e5;" onclick="window.apagarMetaAtual()">Apagar 🗑️</button>
+        </div>
+    </div>
+</div>
+
 <div class="modal-overlay" id="modal-ia">
     <div class="modal-content">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
             <h3 style="font-weight:800; font-size:18px;">🤖 IA Analista</h3>
             <button class="btn-close-modal" onclick="window.fecharModal('modal-ia')">&times;</button>
         </div>
-        <p style="font-size:13px; color:#8e8e93; margin-bottom:16px; line-height:1.4;">Nossa inteligência escaneia o padrão dos seus gastos deste mês e descobre para onde seu dinheiro está indo de verdade.</p>
+        <p style="font-size:13px; color:#8e8e93; margin-bottom:16px; line-height:1.4;">Nossa inteligência escaneia o padrão dos seus gastos deste mês, cruza com seus investimentos, e descobre para onde seu dinheiro está indo.</p>
         <button class="btn-primary" style="background:#1c1c1e; color:#fff;" onclick="window.analisarGastosIA()">Analisar Padrões Mágicos ✨</button>
         <div id="ia-res" style="display:none; margin-top:16px; flex-direction:column; gap:12px;"></div>
     </div>
@@ -486,7 +529,7 @@
     </div>
     <div class="input-row col2">
       <div class="input-group">
-        <label class="input-label">Aporte Mensal</label>
+        <label class="input-label">Aporte Mensal Previsto</label>
         <input type="text" id="mm-ap" inputmode="decimal" placeholder="0,00" oninput="this.value=window.formatMoneyInput(this.value)">
       </div>
       <div class="input-group">
@@ -566,14 +609,13 @@
 <div class="modal-overlay" id="modal-changelog">
   <div class="modal-content">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <h3 style="font-weight:800;">Novidades 1.9 BETA</h3>
+      <h3 style="font-weight:800;">Novidades 1.10 BETA</h3>
       <button class="btn-close-modal" onclick="window.fecharModal('modal-changelog')">&times;</button>
     </div>
     <ul style="font-size:14px; color:#3c3c43; line-height:1.5; padding-left:16px; margin-bottom:24px;">
-        <li style="margin-bottom:10px;"><b>🤖 IA Analista de Gastos:</b> Agora na aba Saúde você tem uma análise automática de onde seu dinheiro está indo, lendo os padrões (iFood, Uber, Luz) e dando dicas!</li>
-        <li style="margin-bottom:10px;"><b>📅 Data no Câmbio (Tracker):</b> No lugar do input direto de câmbio, agora você pode clicar para adicionar a cotação E a data em que o resgate foi feito para não se perder!</li>
-        <li style="margin-bottom:10px;"><b>Total de Metas no Topo:</b> O valor de Aportes do Mês se encontra em destaque no topo da tela de Metas.</li>
-        <li style="margin-bottom:10px;"><b>Novo Menu Saúde:</b> A aba de Saúde agora exibe pequenos botões dinâmicos que funcionam como apps dentro do app para organizar melhor a tela.</li>
+        <li style="margin-bottom:10px;"><b>✨ Visualização Clean nas Metas:</b> Os cards das metas agora são compactos focando só na barra de progresso. Clique na meta para abrir o modo de edição e registro de aportes!</li>
+        <li style="margin-bottom:10px;"><b>💵 Aporte com Soma:</b> Agora o input de metas *soma* o valor. Se você guardar mais dinheiro ao longo do mês, basta adicionar, apertar "Salvar" e a barra de progresso enche na hora.</li>
+        <li style="margin-bottom:10px;"><b>🤖 IA + Investimentos:</b> A IA da aba Saúde agora analisa sua taxa de investimento e diz *exatamente* de onde você deve cortar (qual vilão) para conseguir investir mais dinheiro no mês!</li>
     </ul>
     <button class="btn-primary" onclick="window.fecharModal('modal-changelog')">Incrível!</button>
   </div>
@@ -649,7 +691,7 @@
 </script>
 
 <script>
-    // DETECTOR DE WEBVIEW (WhatsApp/Instagram)
+    // DETECTOR DE WEBVIEW
     window.onload = () => {
         const ua = navigator.userAgent || navigator.vendor || window.opera;
         const isInstagram = (ua.indexOf('Instagram') > -1);
@@ -1162,7 +1204,7 @@
     }
 
     /* ==========================================
-       METAS
+       METAS COM VISUAL CLEAN + MODAL DE APORTE E SOMA
     ========================================== */
     window.buildMetas = function() {
       const list = document.getElementById("metas-list"); list.innerHTML = "";
@@ -1171,7 +1213,6 @@
       if(activeMetas.length === 0) { list.innerHTML = `<p style="font-size:13px;color:#8e8e93;padding:12px 0;text-align:center">Nenhuma meta ativa.</p>`; return; }
 
       activeMetas.forEach(m => {
-        const aporteMes = activeData.metasAcum[m.id] || 0;
         let acumulado = m.acumInicial || 0; 
         
         Object.keys(window.S.dataByMonth).forEach(k => {
@@ -1181,57 +1222,114 @@
         
         const pct = m.obj>0 ? Math.min(100, (acumulado/m.obj)*100) : 0;
         
-        const el = document.createElement("div"); el.className = "card"; el.style.marginBottom = "10px";
+        const el = document.createElement("div"); 
+        el.className = "m-card"; 
+        el.style.marginBottom = "10px"; 
+        el.style.padding = "14px"; 
+        el.style.cursor = "pointer";
+        el.onclick = () => window.abrirMetaDetalhes(m.id);
+
         el.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
-            <div><span style="font-size:16px; font-weight:700;">${m.n}</span><span class="badge badge-info">${m.prazo}</span></div>
-            <div>
-                <button class="btn-small" style="padding:4px 8px; font-size:11px; margin-right:8px;" onclick="window.abrirModalMeta('${m.id}')">Editar ✏️</button>
-                <button class="btn-del" onclick="window.abrirModalDelete('meta', '${m.id}')">&times;</button>
-            </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-size:15px; font-weight:700;">${m.n}</span>
+              ${m.obj > 0 ? `<span style="font-size:14px; font-weight:800; color:#007aff;">${pct.toFixed(1)}%</span>` : ``}
           </div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
-            <div style="background:#f2f2f7; border-radius:10px; padding:10px;">
-              <div style="font-size:11px; color:#8e8e93; margin-bottom:4px;">Aporte neste mês</div>
-              <input type="text" inputmode="decimal" value="${window.toInput(aporteMes)}" placeholder="${window.toInput(m.ap)}" oninput="this.value=window.formatMoneyInput(this.value); window.updateMetaAcum('${m.id}', this.value)" style="background:transparent; border:none; border-bottom:1.5px solid #e5e5ea; height:28px; padding:0; font-size:16px; font-weight:700; width:100%;">
-            </div>
-            <div style="background:#e3f0ff; border-radius:10px; padding:10px;">
-              <div style="font-size:11px; color:#007aff; margin-bottom:4px;">Acumulado</div>
-              <div id="meta-acum-${m.id}" style="font-size:15px; font-weight:700; color:#007aff;">${window.R(acumulado)}</div>
-            </div>
-          </div>
-          ${m.obj>0 ? `<div style="display:flex;justify-content:space-between;font-size:12px;color:#8e8e93;margin-bottom:4px"><span>Objetivo: ${window.R(m.obj)}</span><span id="meta-pct-txt-${m.id}">${pct.toFixed(1)}%</span></div><div class="prog-bar"><div id="meta-prog-${m.id}" class="prog-fill" style="width:${pct}%"></div></div>` : ""}
+          ${m.obj > 0 ? `
+          <div class="prog-bar" style="margin-top:0; margin-bottom:8px;"><div class="prog-fill" style="width:${pct}%"></div></div>
+          <div style="display:flex; justify-content:space-between; font-size:11px; color:#8e8e93; font-weight:500;">
+              <span>Acumulado: ${window.R(acumulado)}</span>
+              <span>Objetivo: ${window.R(m.obj)}</span>
+          </div>` : `
+          <div style="font-size:12px; color:#8e8e93; font-weight:500;">Acumulado: ${window.R(acumulado)}</div>`}
         `;
         list.appendChild(el);
       });
     }
 
-    window.updateMetaAcum = function(id, valStr) { 
-        activeData.metasAcum[id] = window.parseMoney(valStr); 
-        window.recalc(); 
+    window.abrirMetaDetalhes = function(id) {
+        const m = window.S.metas.find(x => x.id === id);
+        if (!m) return;
+
+        document.getElementById('mdet-id').value = id;
+        document.getElementById('mdet-titulo').textContent = m.n;
+        document.getElementById('mdet-aporte').value = ''; // Limpa o input de soma
         
-        const m = (window.S.metas || []).find(x => x.id === id);
-        if (m) {
-            let acumulado = m.acumInicial || 0;
-            Object.keys(window.S.dataByMonth).forEach(k => {
-                const [km, ky] = k.split('-').map(Number);
-                if (ky < activeY || (ky === activeY && km <= activeM)) {
-                    acumulado += ((window.S.dataByMonth[k].metasAcum||{})[m.id] || 0);
-                }
-            });
-            const pct = m.obj > 0 ? Math.min(100, (acumulado/m.obj)*100) : 0;
+        window.atualizarVisualizacaoMetaDetalhes(id);
+        document.getElementById('modal-meta-detalhes').style.display = 'flex';
+    }
 
-            const elAcum = document.getElementById(`meta-acum-${id}`);
-            if(elAcum) elAcum.textContent = window.R(acumulado);
+    window.atualizarVisualizacaoMetaDetalhes = function(id) {
+        const m = window.S.metas.find(x => x.id === id);
+        if (!m) return;
+        
+        const aporteMes = activeData.metasAcum[id] || 0;
+        const elMesAtual = document.getElementById('mdet-mes-atual');
+        if(elMesAtual) elMesAtual.textContent = window.R(aporteMes);
 
-            const elPctTxt = document.getElementById(`meta-pct-txt-${id}`);
-            if(elPctTxt) elPctTxt.textContent = `${pct.toFixed(1)}%`;
+        let acumulado = m.acumInicial || 0;
+        Object.keys(window.S.dataByMonth).forEach(k => {
+            const [km, ky] = k.split('-').map(Number);
+            if (ky < activeY || (ky === activeY && km <= activeM)) {
+                acumulado += ((window.S.dataByMonth[k].metasAcum||{})[id] || 0);
+            }
+        });
+        const pct = m.obj > 0 ? Math.min(100, (acumulado/m.obj)*100) : 0;
 
-            const elProg = document.getElementById(`meta-prog-${id}`);
-            if(elProg) elProg.style.width = `${pct}%`;
+        document.getElementById('mdet-acumulado').textContent = window.R(acumulado);
+        document.getElementById('mdet-objetivo').textContent = m.obj > 0 ? `Objetivo: ${window.R(m.obj)}` : 'Sem objetivo definido';
+        document.getElementById('mdet-pct').textContent = m.obj > 0 ? `${pct.toFixed(1)}%` : '';
+
+        // Atualiza a barra de progresso dentro do Modal
+        const progFill = document.getElementById('mdet-prog-fill');
+        if (progFill) {
+            if (m.obj > 0) {
+                progFill.style.width = `${pct}%`;
+                document.getElementById('mdet-prog-wrapper').style.display = 'block';
+            } else {
+                document.getElementById('mdet-prog-wrapper').style.display = 'none';
+            }
         }
-    };
-    
+    }
+
+    window.somarAporte = function() {
+        const id = document.getElementById('mdet-id').value;
+        const valStr = document.getElementById('mdet-aporte').value;
+        const novoValor = window.parseMoney(valStr);
+        
+        if (novoValor > 0) {
+            const atual = activeData.metasAcum[id] || 0;
+            activeData.metasAcum[id] = atual + novoValor;
+            document.getElementById('mdet-aporte').value = ''; 
+            
+            window.recalc();
+            window.atualizarVisualizacaoMetaDetalhes(id); // Anima a barra dentro do modal
+            window.buildMetas(); // Atualiza a lista na tela principal de fundo
+            
+            // Feedback Visual no botão
+            const btn = document.getElementById('btn-salvar-aporte');
+            const originalText = btn.textContent;
+            btn.style.background = '#30d158';
+            btn.textContent = 'Aporte Salvo! 🎉';
+            
+            setTimeout(() => {
+                btn.style.background = '';
+                btn.textContent = originalText;
+            }, 1500);
+        }
+    }
+
+    window.editarMetaAtual = function() {
+        const id = document.getElementById('mdet-id').value;
+        window.fecharModal('modal-meta-detalhes');
+        window.abrirModalMeta(id);
+    }
+
+    window.apagarMetaAtual = function() {
+        const id = document.getElementById('mdet-id').value;
+        window.fecharModal('modal-meta-detalhes');
+        window.abrirModalDelete('meta', id);
+    }
+
     window.abrirModalMeta = function(id = null) { 
         if(id) {
             const meta = window.S.metas.find(m => m.id === id);
@@ -1658,7 +1756,7 @@
         document.getElementById('modal-comprar').style.display = 'flex';
     }
 
-    // NOVA FUNÇÃO: IA Analisadora de Gastos com Categorias Atualizadas
+    // IA Analisadora de Gastos e Aportes
     window.analisarGastosIA = function() {
         const resDiv = document.getElementById("ia-res");
         resDiv.innerHTML = `<div style="text-align:center; padding:20px; font-size:14px; color:#8e8e93;">Consultando a IA para escanear os padrões... 🧠🔍</div>`;
@@ -1749,6 +1847,22 @@
                 dica = "📊 Seus gastos estão bem misturados! Mantenha sempre o acompanhamento para o mês não fechar no vermelho.";
             }
 
+            // Análise dos Aportes vs Vilão
+            const { tBRL, tAp } = window.calcTotals();
+            let investRate = tBRL > 0 ? (tAp / tBRL) : 0;
+            let dicaInvestimento = "";
+            let nomeVilaoSplit = vilao.nome.split(' ')[0];
+
+            if (tAp === 0) {
+                dicaInvestimento = `<br><br>📈 <b>Foco nas Metas:</b> A IA notou que você ainda não guardou dinheiro este mês! Que tal reduzir os excessos com <b>${nomeVilaoSplit}</b> para começar a investir e não ficar zerado?`;
+            } else if (investRate < 0.1) {
+                dicaInvestimento = `<br><br>📈 <b>Acelere seus Aportes:</b> Você investiu apenas ${Math.round(investRate*100)}% da sua renda. Se você diminuir os custos em <b>${nomeVilaoSplit}</b>, conseguirá bater suas metas muito mais rápido!`;
+            } else {
+                dicaInvestimento = `<br><br>📈 <b>Ótimo ritmo de Metas:</b> Você já investiu ${Math.round(investRate*100)}% do que ganhou! Mantenha os gastos de <b>${nomeVilaoSplit}</b> sob controle para continuar com essa consistência excelente.`;
+            }
+
+            dica += dicaInvestimento;
+
             html += `
             <div style="background:#e3f0ff; border:1.5px solid #007aff; border-radius:14px; padding:14px; margin-top:8px;">
                 <div style="font-size:12px; color:#0055cc; font-weight:800; margin-bottom:6px; text-transform:uppercase;">💡 Dica Inteligente</div>
@@ -1829,14 +1943,14 @@
         if(n.includes("uber")||n.includes("99")||n.includes("ônibus")||n.includes("onibus")||n.includes("van")||n.includes("combustível")||n.includes("gasolina")||n.includes("blablacar")||n.includes("transporte")||n.includes("metro")||n.includes("metrô")) return "🚗 " + nome;
         if(n.includes("mercado livre")||n.includes("shopee")||n.includes("shein")||n.includes("amazon")||n.includes("aliexpress")) return "📦 " + nome;
         if(n.includes("mercado")||n.includes("supermercado")||n.includes("atacadão")||n.includes("compras")) return "🛒 " + nome;
-        if(n.includes("ifood")||n.includes("lanche")||n.includes("pizza")||n.includes("comida")||n.includes("fastfood")||n.includes("mcdonalds")||n.includes("restaurante")||n.includes("hamburguer")||n.includes("padaria")) return "🍔 " + nome;
+        if(n.includes("ifood")||n.includes("lanche")||n.includes("pizza")||n.includes("comida")||n.includes("fastfood")||n.includes("mcdonalds")||n.includes("restaurante")||n.includes("hamburguer")||n.includes("padaria")||n.includes("almoço")||n.includes("rodizio")) return "🍔 " + nome;
         if(n.includes("farmácia")||n.includes("remédio")||n.includes("medico")||n.includes("terapia")) return "💊 " + nome;
         if(n.includes("luz")||n.includes("energia")) return "💡 " + nome;
         if(n.includes("agua")||n.includes("água")) return "💧 " + nome;
         if(n.includes("pet")||n.includes("cachorro")||n.includes("gato")) return "🐶 " + nome;
         if(n.includes("roupa")||n.includes("shopping")||n.includes("loja")) return "🛍️ " + nome;
-        if(n.includes("academia")||n.includes("musculação")) return "🏋️‍♂️ " + nome;
-        if(n.includes("viagem")||n.includes("passagem")||n.includes("hotel")||n.includes("cruzeiro")) return "✈️ " + nome;
+        if(n.includes("academia")||n.includes("musculação")||n.includes("personal")||n.includes("crossfit")) return "🏋️‍♂️ " + nome;
+        if(n.includes("viagem")||n.includes("passagem")||n.includes("hotel")||n.includes("cruzeiro")||n.includes("airbnb")) return "✈️ " + nome;
         return "🏷️ " + nome;
       }
       return nome;
