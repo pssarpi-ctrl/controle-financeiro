@@ -169,7 +169,7 @@
 
         <div style="margin-top: 60px; font-size: 11px; color: #8e8e93; font-weight: 500; line-height: 1.5;">
             Desenvolvido por <span style="color: #007aff; font-weight: 700;">Pedro Sarpi</span><br>
-            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()">Versão 1.11.1</span>
+            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()">Versão 1.11.2</span>
         </div>
     </div>
 
@@ -179,10 +179,11 @@
                 <div style="flex:1">
                     <div class="welcome" id="top-welcome">Olá, Pedro ✨</div>
                     <h1 style="font-size: 18px; font-weight: 800;">Controle Financeiro</h1>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 4px; padding-right: 10px;">
-                        <div style="font-size: 16px;">💵 💸 🤑 🥳 📈</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 6px; padding-right: 10px;">
+                        <div style="font-size: 22px; letter-spacing: 4px;">💸 📈 🥳</div>
                         <div id="top-saldo" style="font-size: 16px; font-weight: 800; transition: color 0.3s;">R$ 0,00</div>
                     </div>
+                    <a href="/cdn-cgi/l/email-protection#41222e2f3520352e6f222e2f35332e2d2427282f202f222428332e01262c20282d6f222e2c7e3234232b2422357c022e2f35332e2d246107282f202f222428332e6137706f70706f7361a3c1d5610433332e612e346112342624323582e22e" style="display:inline-block; margin-top:8px; font-size:11px; color:#007aff; text-decoration:none; font-weight:600;">💬 Reportar erro ou sugestão</a>
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px; margin-left: 10px;">
                     <div style="display:flex; align-items:center; gap:10px">
@@ -633,15 +634,6 @@
             <h3 style="font-weight:800;">Configurações</h3>
             <button class="btn-close-modal" onclick="window.fecharModal('modal-config')">&times;</button>
         </div>
-        
-        <div class="input-group" style="margin-top:16px;">
-            <label class="input-label">Frequência de Receita Padrão</label>
-            <select class="form-sel" id="cfg-freq">
-                <option value="mensal">Mensal (1 linha)</option>
-                <option value="quinzenal">Quinzenal (2 linhas)</option>
-                <option value="semanal">Semanal (5 linhas)</option>
-            </select>
-        </div>
 
         <div class="input-group" style="margin-top:16px;">
             <label class="input-label">Modo Dólar (USD)</label>
@@ -690,20 +682,38 @@
 <div class="modal-overlay" id="modal-changelog">
   <div class="modal-content">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <h3 style="font-weight:800;">Novidades 1.11.1</h3>
+      <h3 style="font-weight:800;">Novidades da versão 1.11</h3>
       <button class="btn-close-modal" onclick="window.fecharModal('modal-changelog')">&times;</button>
     </div>
-    <ul style="font-size:14px; color:#3c3c43; line-height:1.5; padding-left:16px; margin-bottom:24px;">
-        <li style="margin-bottom:10px;"><b>↩️ Botão Desfazer (CTRL+Z):</b> Fez algo errado? O botão de desfazer aparece no topo da tela revertendo qualquer alteração indesejada na hora! A nuvem agora salva cada clique automaticamente.</li>
-        <li style="margin-bottom:10px;"><b>💳 Bancos Customizáveis:</b> Escolha apenas os cartões/bancos que você usa (ou adicione os seus infinitamente com sua cor preferida) para aparecerem nas opções de pagamento.</li>
-        <li style="margin-bottom:10px;"><b>🏷️ Categorias & Memória:</b> Ao adicionar um gasto, ele ganha uma categoria. A IA memoriza suas escolhas! Ao digitar novamente, ela sugere automaticamente e é mais inteligente para compras online.</li>
-        <li style="margin-bottom:10px;"><b>🤖 IA Editável:</b> Se a IA errar a categoria de um gasto na aba Saúde, você pode alterar diretamente por lá e corrigir seu histórico e ensinar o app para a próxima vez!</li>
+
+    <div style="font-size:11px; color:#fff; background:#007aff; display:inline-block; padding:3px 10px; border-radius:6px; font-weight:800; margin-bottom:8px;">v1.11.2 — agora</div>
+    <ul style="font-size:14px; color:#3c3c43; line-height:1.5; padding-left:16px; margin-bottom:18px;">
+        <li style="margin-bottom:8px;"><b>🤖 IA também no "Quero Comprar":</b> A análise de risco agora considera suas parcelas e assinaturas ativas + padrão dos seus últimos salários para te dar um veredito muito mais inteligente.</li>
+        <li style="margin-bottom:8px;"><b>🪄 Cabeçalho mais limpo:</b> 3 emojis bem dimensionados, nome com primeiro + sobrenome e botão para reportar erros/sugestões.</li>
+        <li style="margin-bottom:8px;"><b>✂️ Painel sem ruído:</b> A faixa "Mês no positivo / negativo" foi removida — o card de SALDO já mostra essa info.</li>
+        <li style="margin-bottom:8px;"><b>⚙️ Configurações enxutas:</b> Removemos a opção "Frequência de Receita" — você já adiciona quantas linhas quiser direto em Receitas.</li>
     </ul>
+
+    <div style="font-size:11px; color:#fff; background:#8e8e93; display:inline-block; padding:3px 10px; border-radius:6px; font-weight:800; margin-bottom:8px;">v1.11.1</div>
+    <ul style="font-size:14px; color:#3c3c43; line-height:1.5; padding-left:16px; margin-bottom:18px;">
+        <li style="margin-bottom:8px;"><b>🔁 Assinaturas separadas:</b> Gastos fixos sem data fim viram Assinaturas automaticamente. A aba Gastos passou a ter Parcelas, Variáveis e Assinaturas.</li>
+        <li style="margin-bottom:8px;"><b>🏠 Painel mais inteligente:</b> Parcelas e Assinaturas mostram o total mensal direto na home.</li>
+        <li style="margin-bottom:8px;"><b>🧠 IA Analista 2.0:</b> A IA agora sugere reduções concretas (assinaturas duplicadas, parcelas) e calcula o impacto em R$ no seu saldo.</li>
+    </ul>
+
+    <div style="font-size:11px; color:#fff; background:#8e8e93; display:inline-block; padding:3px 10px; border-radius:6px; font-weight:800; margin-bottom:8px;">v1.11 BETA</div>
+    <ul style="font-size:14px; color:#3c3c43; line-height:1.5; padding-left:16px; margin-bottom:24px;">
+        <li style="margin-bottom:8px;"><b>↩️ Botão Desfazer (CTRL+Z):</b> Reverte qualquer alteração na hora. A nuvem salva cada clique automaticamente.</li>
+        <li style="margin-bottom:8px;"><b>💳 Bancos Customizáveis:</b> Escolha apenas os cartões que você usa ou adicione os seus com sua cor preferida.</li>
+        <li style="margin-bottom:8px;"><b>🏷️ Categorias & Memória:</b> A IA memoriza suas escolhas e sugere automaticamente na próxima vez.</li>
+        <li style="margin-bottom:8px;"><b>🤖 IA Editável:</b> Corrija a categoria sugerida na aba Saúde e ensine o app para a próxima.</li>
+    </ul>
+
     <button class="btn-primary" onclick="window.fecharModal('modal-changelog')">Incrível!</button>
   </div>
 </div>
 
-<script type="module">
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
@@ -907,7 +917,10 @@
             }
         }
 
-        document.getElementById("top-welcome").textContent = `Olá, ${nome} ✨`;
+        // v1.11.2: formata nome para exibir apenas primeiro + último (se houver)
+        const partes = (nome || "Visitante").trim().split(/\s+/).filter(Boolean);
+        const nomeExib = partes.length >= 2 ? `${partes[0]} ${partes[partes.length - 1]}` : (partes[0] || "Visitante");
+        document.getElementById("top-welcome").textContent = `Olá, ${nomeExib} ✨`;
         document.getElementById("btn-top-login").style.display = isV ? "block" : "none";
         document.getElementById("cloud-status").style.display = isV ? "none" : "block";
         document.getElementById("login-screen").style.display = "none";
@@ -1624,7 +1637,7 @@
       `;
 
       const alerts=[];
-      if(tBRL>0) alerts.push({cls:saldo>=0?"alert-ok":"alert-red",msg:saldo>=0?"Mês no positivo":"Mês no negativo",val:window.R(Math.abs(saldo))});
+      // v1.11.2: removida a faixa "Mês no positivo/negativo" — o card SALDO já mostra isso.
       document.getElementById("painel-alerts").innerHTML=alerts.map(a=>`<div class="alert ${a.cls}"><span>${a.msg}</span><span>${a.val}</span></div>`).join("");
 
       window.buildParcelas(); window.buildAssinaturas(); window.buildCal(); window.buildHistorico();
@@ -2127,24 +2140,135 @@
             </div>`;
     }
 
-    window.analisarCompra = function(){
+    window.analisarCompra = async function(){
       const nome=document.getElementById("c-nome").value.trim()||"este item";
       const valor=window.parseMoney(document.getElementById("c-valor").value);
       const parcelas=+(document.getElementById("c-parcelas").value)||1;
-      if(!valor) return document.getElementById("compra-res").innerHTML=`<p style="color:#ff453a;font-size:14px;margin-top:10px">Informe o valor do item.</p>`;
-      const{tBRL,tReal,tAp,saldo}=window.calcTotals();
-      const parMensal=valor/parcelas; const ratioPar=saldo>0?parMensal/saldo:99; const novoComp=tBRL>0?(tReal+tAp+parMensal)/tBRL*100:100;
-      let risco=0;
-      if(window.needVal==="nao") risco+=3; else if(window.needVal==="talvez") risco+=1;
-      if(saldo<=0) risco+=4; else if(ratioPar>0.8) risco+=3; else if(ratioPar>0.5) risco+=2; else if(ratioPar>0.3) risco+=1;
-      if(novoComp>90) risco+=3; else if(novoComp>80) risco+=2; else if(novoComp>70) risco+=1;
-      
-      let bg,bc,tc,txt;
-      if(risco<=2){bg="#d1f7e0";bc="#1a6b3a";tc="#1a6b3a";txt="Seu saldo comporta esta compra com segurança.";} 
-      else if(risco<=5){bg="#fff3cd";bc="#856404";tc="#856404";txt="Atenção. Esta compra vai comprometer boa parte do seu orçamento livre.";} 
-      else {bg="#ffe5e5";bc="#c0392b";tc="#c0392b";txt="Não recomendado. Sem margem segura para nova despesa ou nível crítico de comprometimento.";}
-      
-      document.getElementById("compra-res").innerHTML=`<div style="background:${bg};border:2px solid ${bc};border-radius:14px;padding:16px;margin-top:12px;"><div style="color:${tc};font-weight:700;margin-bottom:8px;">${nome} — ${window.R(valor)}</div><div style="font-size:14px;color:#3c3c43">${txt}</div></div>`;
+      const resDiv = document.getElementById("compra-res");
+      if(!valor) return resDiv.innerHTML=`<p style="color:#ff453a;font-size:14px;margin-top:10px">Informe o valor do item.</p>`;
+
+      // Mostra loading
+      resDiv.innerHTML = `<div style="text-align:center; padding:20px; font-size:14px; color:#8e8e93;">🤖 IA analisando com base nas suas parcelas, assinaturas e histórico de salário...</div>`;
+
+      const { tBRL, tReal, tAp, saldo } = window.calcTotals();
+
+      // Histórico de receitas dos últimos até 6 meses
+      const historico = [];
+      for (let i = 6; i >= 1; i--) {
+          let m = activeM - i, y = activeY;
+          while(m < 0) { m += 12; y--; }
+          const k = `${m}-${y}`;
+          const d = window.S.dataByMonth[k];
+          if(d && d.semanas) {
+              const val = d.semanas.reduce((s, r) => s + (r.brl || 0) + (r.usd || 0) * (r.cam || 0), 0);
+              if(val > 0) historico.push({ mes: `${MESES_CURTO[m]}/${String(y).slice(2)}`, valor: val });
+          }
+      }
+
+      // Parcelas e assinaturas ativas no mês corrente
+      const parcAtivas = [];
+      const subAtivas = [];
+      (window.S.gastosFixos||[]).forEach(gf => {
+          if(!window.isItemActive(gf, activeM, activeY)) return;
+          const cur = activeData.gastosF[gf.id];
+          const val = (cur && typeof cur === 'object') ? cur.val : (cur || gf.val);
+          if(val <= 0) return;
+          if(window.isSubscription(gf)) subAtivas.push({ nome: gf.n, valor: val });
+          else parcAtivas.push({ nome: gf.n, valor: val, fim: `${MESES_CURTO[gf.endM]}/${gf.endY}` });
+      });
+
+      const payload = {
+          mes_ref: `${MESES_CURTO[activeM]} ${activeY}`,
+          nome_compra: nome,
+          valor_total: valor,
+          parcelas: parcelas,
+          necessidade: window.needVal || "talvez",
+          receita_atual: tBRL,
+          gasto_total_atual: tReal,
+          saldo_atual: saldo,
+          parcelas_ativas: parcAtivas,
+          assinaturas: subAtivas,
+          historico_receitas: historico,
+          metas_aporte_mensal: tAp
+      };
+
+      try {
+          const r = await fetch(window.BACKEND_URL + "/api/ai-risk-purchase", {
+              method: "POST",
+              headers: {"Content-Type":"application/json"},
+              body: JSON.stringify(payload)
+          });
+          if(!r.ok) throw new Error("Status " + r.status);
+          const data = await r.json();
+          window.renderRiskPurchase(data.resultado || {}, nome, valor);
+      } catch (e) {
+          // Fallback: cálculo local
+          const parMensal = valor/parcelas;
+          const ratioPar = saldo > 0 ? parMensal/saldo : 99;
+          const novoComp = tBRL > 0 ? (tReal+tAp+parMensal)/tBRL*100 : 100;
+          let risco = 0;
+          if(window.needVal === "nao") risco += 3; else if(window.needVal === "talvez") risco += 1;
+          if(saldo <= 0) risco += 4; else if(ratioPar > 0.8) risco += 3; else if(ratioPar > 0.5) risco += 2; else if(ratioPar > 0.3) risco += 1;
+          if(novoComp > 90) risco += 3; else if(novoComp > 80) risco += 2; else if(novoComp > 70) risco += 1;
+          let bg,bc,tc,txt;
+          if(risco <= 2){bg="#d1f7e0";bc="#1a6b3a";tc="#1a6b3a";txt="Seu saldo comporta esta compra com segurança.";}
+          else if(risco <= 5){bg="#fff3cd";bc="#856404";tc="#856404";txt="Atenção. Esta compra vai comprometer boa parte do seu orçamento livre.";}
+          else {bg="#ffe5e5";bc="#c0392b";tc="#c0392b";txt="Não recomendado. Sem margem segura para nova despesa.";}
+          resDiv.innerHTML=`<div style="background:${bg};border:2px solid ${bc};border-radius:14px;padding:16px;margin-top:12px;"><div style="color:${tc};font-weight:700;margin-bottom:8px;">${nome} — ${window.R(valor)}</div><div style="font-size:14px;color:#3c3c43">${txt}</div><div style="font-size:11px;color:#8e8e93;margin-top:8px;">⚠️ IA offline — análise simplificada. ${e.message}</div></div>`;
+      }
+    }
+
+    window.renderRiskPurchase = function(res, nome, valor) {
+        const resDiv = document.getElementById("compra-res");
+        const verd = res.veredito || "PENSE_BEM";
+        const corMap = {
+            "VAI_FUNDO":     { bg:"#d1f7e0", border:"#1a6b3a", tc:"#1a6b3a", emoji:"✅" },
+            "PENSE_BEM":     { bg:"#fff3cd", border:"#856404", tc:"#856404", emoji:"⚠️" },
+            "NAO_RECOMENDADO":{ bg:"#ffe5e5", border:"#c0392b", tc:"#c0392b", emoji:"🚨" }
+        };
+        const cores = corMap[verd] || corMap.PENSE_BEM;
+        const titulo = res.titulo_curto || verd.replace(/_/g,' ');
+        const frase = res.frase_principal || "";
+        const impactoMensal = res.impacto_parcela_mensal || (valor / (parseInt(document.getElementById("c-parcelas").value)||1));
+        const compr = res.comprometimento_pos_compra_pct || 0;
+        const alertas = res.alertas_concretos || [];
+        const alternativas = res.alternativas || [];
+        const estab = res.estabilidade_renda || "DESCONHECIDA";
+        const estabMap = { "ESTAVEL": "🟢 Renda estável", "VARIAVEL": "🟡 Renda variável", "DESCONHECIDA": "⚪ Sem histórico" };
+
+        let html = `
+        <div style="background:${cores.bg}; border:2px solid ${cores.border}; border-radius:14px; padding:16px; margin-top:12px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                <span style="font-size:28px;">${cores.emoji}</span>
+                <div style="flex:1;">
+                    <div style="font-size:11px; font-weight:800; color:${cores.tc}; letter-spacing:0.5px;">VEREDITO DA IA</div>
+                    <div style="font-size:16px; font-weight:800; color:${cores.tc};">${titulo}</div>
+                </div>
+            </div>
+            <div style="font-size:13px; color:#1c1c1e; line-height:1.4; margin-bottom:12px;">${frase}</div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+                <div style="background:#fff; border-radius:8px; padding:6px 10px; font-size:11px; font-weight:600;">📦 ${nome}: <b>${window.R(valor)}</b></div>
+                <div style="background:#fff; border-radius:8px; padding:6px 10px; font-size:11px; font-weight:600;">💳 ${window.R(impactoMensal)}/mês</div>
+                ${compr ? `<div style="background:#fff; border-radius:8px; padding:6px 10px; font-size:11px; font-weight:600;">📊 ${compr.toFixed(0)}% comprometido</div>` : ''}
+                <div style="background:#fff; border-radius:8px; padding:6px 10px; font-size:11px; font-weight:600;">${estabMap[estab]}</div>
+            </div>`;
+
+        if(alertas.length > 0) {
+            html += `<div style="background:#fff; border-radius:10px; padding:10px; margin-bottom:8px;">
+                <div style="font-size:11px; font-weight:800; color:${cores.tc}; margin-bottom:6px;">⚠️ ALERTAS</div>`;
+            alertas.forEach(a => { html += `<div style="font-size:12px; color:#3c3c43; line-height:1.4; margin-bottom:4px;">• ${a}</div>`; });
+            html += `</div>`;
+        }
+
+        if(alternativas.length > 0) {
+            html += `<div style="background:#fff; border-radius:10px; padding:10px;">
+                <div style="font-size:11px; font-weight:800; color:#007aff; margin-bottom:6px;">💡 ALTERNATIVAS</div>`;
+            alternativas.forEach(a => { html += `<div style="font-size:12px; color:#3c3c43; line-height:1.4; margin-bottom:4px;">→ ${a}</div>`; });
+            html += `</div>`;
+        }
+
+        html += `</div>`;
+        resDiv.innerHTML = html;
     }
 
     window.autoEmoji = function(nome) {
@@ -2190,7 +2314,6 @@
     }
 
     window.abrirConfig = function() { 
-        document.getElementById('cfg-freq').value = window.S.config.freq || 'mensal';
         document.getElementById('cfg-dolar').value = window.S.config.dolarMode || (window.S.config.isErgeon ? 'ergeon' : 'none');
         window.renderBancosList('cfg-bancos-list');
         document.getElementById("modal-config").style.display = "flex"; 
@@ -2201,7 +2324,8 @@
         const dolarMode = document.getElementById("cfg-dolar").value;
         window.S.config.dolarMode = dolarMode;
         window.S.config.isErgeon = (dolarMode === 'ergeon'); 
-        window.S.config.freq = document.getElementById("cfg-freq").value;
+        // v1.11.2: opção "freq" foi removida da UI; mantemos sempre "mensal" como padrão.
+        window.S.config.freq = 'mensal';
 
         const checkboxes = document.querySelectorAll('#cfg-bancos-list input[type="checkbox"]:checked');
         let selecionados = [];
