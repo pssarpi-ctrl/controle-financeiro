@@ -6,6 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>Controle Financeiro</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* BASE & LAYOUT BLINDADO */
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -35,6 +36,7 @@
         .dark-theme .mes-selector { background: #000; }
         .dark-theme .mes-selector button { background: #2c2c2e; color:#fff; box-shadow:none;}
         .dark-theme #total-tipos-det, .dark-theme #total-gastos-det { background: #1c1c1e !important; border-bottom-color: #333 !important; }
+        .dark-theme #hist-toggle-bg { background: #2c2c2e !important; }
 
         /* HEADER */
         .top-bar { background: #fff; padding: 50px 16px 14px; border-bottom: 0.5px solid rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 50; }
@@ -139,7 +141,7 @@
         .alert-ok{background:#d1f7e0;color:#1a6b3a} .alert-red{background:#ffe5e5;color:#c0392b}
 
         /* CHECKBOX BANKS */
-        .bank-check { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 15px; font-weight: 500; }
+        .bank-check { display: flex; align-items: center; gap: 8px; margin-bottom: 0; font-size: 15px; font-weight: 500; }
         .bank-check input[type="checkbox"] { width: 20px; height: 20px; border-radius: 6px; accent-color: #007aff; }
     </style>
 </head>
@@ -184,6 +186,7 @@
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px; margin-left: 10px;">
                     <div style="display:flex; align-items:center; gap:10px">
+                        <button id="btn-undo" onclick="window.undoAction()" style="background:transparent; border:none; font-size:22px; cursor:pointer; display:none;" title="Desfazer Ação">↩️</button>
                         <span id="cloud-status" style="font-size:10px; font-weight:bold; color:#8e8e93"></span>
                         <button class="config-icon" onclick="window.abrirConfig()">⚙️</button>
                     </div>
@@ -220,7 +223,7 @@
 
             <div class="page" id="pg-receitas">
                 <div class="gastos-total-sticky" style="cursor:pointer;" onclick="window.toggleTotalTipos()">
-                    <span style="font-size:15px; font-weight:700; color:#1c1c1e;">TOTAL DE RECEITAS <span style="font-size:10px; color:#8e8e93;" id="btn-ver-detalhes">(Ver)</span></span>
+                    <span style="font-size:16px; font-weight:700; color:#1c1c1e; text-transform:uppercase;">Receitas <span style="font-size:10px; color:#8e8e93; text-transform:none;" id="btn-ver-detalhes">(Ver)</span></span>
                     <div style="text-align:right">
                         <div style="font-size:20px; font-weight:800; color:#30d158" id="total-brl">R$ 0,00</div>
                         <div style="font-size:12px; color:#007aff; font-weight:700; display:none;" id="total-usd">U$ 0,00</div>
@@ -235,7 +238,7 @@
 
             <div class="page" id="pg-gastos">
                 <div class="gastos-total-sticky" style="cursor:pointer;" onclick="window.toggleTotalGastos()">
-                    <span style="font-size:15px; font-weight:700; color:#1c1c1e;">Total do Mês <span style="font-size:10px; color:#8e8e93;" id="btn-ver-det-gastos">(Ver)</span></span>
+                    <span style="font-size:16px; font-weight:700; color:#1c1c1e; text-transform:uppercase;">Gastos <span style="font-size:10px; color:#8e8e93; text-transform:none;" id="btn-ver-det-gastos">(Ver)</span></span>
                     <div style="text-align:right">
                         <div style="font-size:20px; font-weight:800; color:#ff453a;" id="gastos-total-real">R$ 0,00</div>
                         <div style="font-size:11px; color:#8e8e93;" id="gastos-total-orc"></div>
@@ -262,15 +265,15 @@
             </div>
 
             <div class="page" id="pg-metas">
-                <p style="font-size:12px;color:#8e8e93;margin-bottom:12px;line-height:1.4;text-align:center">Acompanhe suas metas de forma rápida. Clique em uma meta para modificar o aporte.</p>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                    <h2 style="font-size:16px; font-weight:700;">Suas Metas</h2>
-                    <button class="btn-small" onclick="window.abrirModalMeta()">+ Nova</button>
-                </div>
-                
-                <div class="card" style="display:flex;justify-content:space-between;align-items:center; margin-bottom:12px; padding:12px 16px;">
-                    <span style="font-size:14px;font-weight:600;color:#8e8e93;">Aportes neste mês</span>
-                    <span style="font-size:18px;font-weight:800;color:#007aff" id="metas-total-val">R$ 0,00</span>
+                <div class="gastos-total-sticky">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="font-size:16px; font-weight:700; color:#1c1c1e; text-transform:uppercase;">Metas</span>
+                        <button class="btn-small" style="padding:4px 8px; font-size:11px;" onclick="window.abrirModalMeta()">+ Nova</button>
+                    </div>
+                    <div style="text-align:right">
+                        <div style="font-size:20px; font-weight:800; color:#007aff" id="metas-total-val">R$ 0,00</div>
+                        <div style="font-size:11px; color:#8e8e93;">Aportes do mês</div>
+                    </div>
                 </div>
 
                 <div id="metas-list" style="display:flex; flex-direction:column;"></div>
@@ -278,14 +281,28 @@
 
             <div class="page" id="pg-historico">
                 <div class="card">
-                    <p style="font-size:12px;color:#8e8e93;margin-bottom:16px;line-height:1.4">O histórico exibe automaticamente os meses onde houve movimentação.</p>
-                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid #e5e5ea; padding-bottom:8px; margin-bottom:8px;">
-                        <span style="font-size:11px;font-weight:600;color:#8e8e93;flex:1;">MÊS</span>
-                        <span style="font-size:11px;font-weight:600;color:#8e8e93;width:70px;text-align:right;">RECEBIDO</span>
-                        <span style="font-size:11px;font-weight:600;color:#8e8e93;width:70px;text-align:right;">GASTOS</span>
-                        <span style="font-size:11px;font-weight:600;color:#8e8e93;width:70px;text-align:right;">SALDO</span>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <span style="font-weight:700; font-size:16px;">Seu Histórico</span>
+                        <div style="display:flex; background:#e5e5ea; border-radius:8px; padding:2px;" id="hist-toggle-bg">
+                            <button id="btn-view-table" onclick="window.toggleHistView('table')" style="background:#fff; border:none; padding:4px 10px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; box-shadow:0 1px 2px rgba(0,0,0,0.1); color:#1c1c1e;">Tabela</button>
+                            <button id="btn-view-chart" onclick="window.toggleHistView('chart')" style="background:transparent; border:none; padding:4px 10px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; color:#8e8e93;">Gráfico</button>
+                        </div>
                     </div>
-                    <div id="hist-list" style="display:flex; flex-direction:column;"></div>
+                    <p style="font-size:12px;color:#8e8e93;margin-bottom:16px;line-height:1.4">O histórico exibe automaticamente os meses onde houve movimentação.</p>
+                    
+                    <div id="hist-view-table">
+                        <div style="display:flex; justify-content:space-between; border-bottom:1px solid #e5e5ea; padding-bottom:8px; margin-bottom:8px;">
+                            <span style="font-size:11px;font-weight:600;color:#8e8e93;flex:1;">MÊS</span>
+                            <span style="font-size:11px;font-weight:600;color:#8e8e93;width:70px;text-align:right;">RECEBIDO</span>
+                            <span style="font-size:11px;font-weight:600;color:#8e8e93;width:70px;text-align:right;">GASTOS</span>
+                            <span style="font-size:11px;font-weight:600;color:#8e8e93;width:70px;text-align:right;">SALDO</span>
+                        </div>
+                        <div id="hist-list" style="display:flex; flex-direction:column;"></div>
+                    </div>
+
+                    <div id="hist-view-chart" style="display:none; width: 100%; height: 260px; position: relative; margin-top: 10px;">
+                        <canvas id="hist-canvas"></canvas>
+                    </div>
                 </div>
             </div>
 
@@ -347,15 +364,12 @@
 
         <div class="input-group" style="margin-top:20px;">
             <label class="input-label" style="font-size:15px; font-weight:700; margin-bottom:12px;">Quais cartões/bancos você usa?</label>
-            <div id="onb-bancos-list">
-                <label class="bank-check"><input type="checkbox" value="inter" checked> Inter 🟠</label>
-                <label class="bank-check"><input type="checkbox" value="nubank" checked> Nubank 🟣</label>
-                <label class="bank-check"><input type="checkbox" value="mercadopago"> Mercado Pago 🔵</label>
-                <label class="bank-check"><input type="checkbox" value="santander"> Santander 🔴</label>
-                <label class="bank-check"><input type="checkbox" value="itau"> Itaú 🟠</label>
-                <label class="bank-check"><input type="checkbox" value="picpay"> PicPay 🟢</label>
-                <label class="bank-check"><input type="checkbox" id="onb-check-outro" onchange="document.getElementById('onb-outro-nome').style.display = this.checked ? 'block' : 'none'"> Outro</label>
-                <input type="text" id="onb-outro-nome" placeholder="Nome do seu banco..." style="display:none; margin-top:8px;">
+            <div id="onb-bancos-list" style="background:#f9f9f9; padding:12px; border-radius:12px; border:1px solid #e5e5ea; max-height:160px; overflow-y:auto; margin-bottom:8px;">
+                </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <input type="text" id="onb-novo-banco-nome" placeholder="Novo banco..." style="flex:1; height:36px; border-radius:8px; border:1px solid #e5e5ea; padding:0 8px; font-size:14px;">
+                <input type="color" id="onb-novo-banco-cor" value="#3c3c43" style="width:36px; height:36px; border:none; padding:0; border-radius:8px; cursor:pointer;">
+                <button class="btn-small" style="height:36px;" onclick="window.adicionarBancoOnb()">OK</button>
             </div>
             <p style="font-size:11px; color:#8e8e93; margin-top:8px;">*O Pix sempre estará disponível.</p>
         </div>
@@ -504,6 +518,7 @@
       <label class="input-label">Categoria (IA / Manual)</label>
       <select class="form-sel" id="mg-cat">
         <option value="Outros 🏷️">Outros 🏷️</option>
+        <option value="Compras Online 📦">Compras Online 📦</option>
         <option value="Transporte 🚗">Transporte 🚗</option>
         <option value="Alimentação 🍔">Alimentação 🍔</option>
         <option value="Saúde & Esportes 💊">Saúde & Esportes 💊</option>
@@ -629,8 +644,13 @@
 
         <div class="input-group" style="margin-top:16px; margin-bottom:20px;">
             <label class="input-label" style="margin-bottom:8px;">Bancos e Cartões Ativos</label>
-            <div id="cfg-bancos-list" style="background:#f9f9f9; padding:12px; border-radius:12px; border:1px solid #e5e5ea; max-height:150px; overflow-y:auto;">
+            <div id="cfg-bancos-list" style="background:#f9f9f9; padding:12px; border-radius:12px; border:1px solid #e5e5ea; max-height:160px; overflow-y:auto; margin-bottom:8px;">
                 </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <input type="text" id="cfg-novo-banco-nome" placeholder="Novo banco..." style="flex:1; height:36px; border-radius:8px; border:1px solid #e5e5ea; padding:0 8px; font-size:14px;">
+                <input type="color" id="cfg-novo-banco-cor" value="#3c3c43" style="width:36px; height:36px; border:none; padding:0; border-radius:8px; cursor:pointer;">
+                <button class="btn-small" style="height:36px;" onclick="window.adicionarBancoCustom('cfg')">OK</button>
+            </div>
             <p style="font-size:11px; color:#8e8e93; margin-top:6px;">*O Pix sempre estará disponível.</p>
         </div>
         
@@ -651,7 +671,7 @@
       <h3 style="font-weight:800;">Histórico de Backups</h3>
       <button class="btn-close-modal" onclick="window.fecharModal('modal-history')">&times;</button>
     </div>
-    <p style="font-size:13px; color:#8e8e93; margin-bottom:16px;">O app salva automaticamente até 7 cópias dos seus dados.</p>
+    <p style="font-size:13px; color:#8e8e93; margin-bottom:16px;">O app salva automaticamente as suas alterações mais recentes.</p>
     <div id="hist-backup-list" style="display:flex; flex-direction:column; max-height:250px; overflow-y:auto; margin-bottom:16px;"></div>
     <button class="btn-primary" style="background:#f2f2f7; color:#1c1c1e;" onclick="window.fecharModal('modal-history')">Voltar</button>
   </div>
@@ -664,9 +684,10 @@
       <button class="btn-close-modal" onclick="window.fecharModal('modal-changelog')">&times;</button>
     </div>
     <ul style="font-size:14px; color:#3c3c43; line-height:1.5; padding-left:16px; margin-bottom:24px;">
-        <li style="margin-bottom:10px;"><b>💳 Bancos Customizáveis:</b> Escolha apenas os cartões/bancos que você usa (ou cadastre os seus próprios) para aparecerem nas opções de pagamento.</li>
-        <li style="margin-bottom:10px;"><b>🏷️ Categorias & Memória:</b> Ao adicionar um gasto, ele ganha uma categoria. A IA agora memoriza suas escolhas! Ao digitar novamente, ela sugere automaticamente.</li>
-        <li style="margin-bottom:10px;"><b>🤖 IA Editável:</b> Dentro da análise da IA (aba Saúde), se ela agrupar algo errado, você pode alterar a categoria diretamente por lá, e isso afeta sua lista de gastos e ensina a IA na hora!</li>
+        <li style="margin-bottom:10px;"><b>↩️ Botão Desfazer (CTRL+Z):</b> Fez algo errado? O botão de desfazer aparece no topo da tela revertendo qualquer alteração indesejada na hora! A nuvem agora salva cada clique automaticamente.</li>
+        <li style="margin-bottom:10px;"><b>💳 Bancos Customizáveis:</b> Escolha apenas os cartões/bancos que você usa (ou adicione os seus infinitamente com sua cor preferida) para aparecerem nas opções de pagamento.</li>
+        <li style="margin-bottom:10px;"><b>🏷️ Categorias & Memória:</b> Ao adicionar um gasto, ele ganha uma categoria. A IA memoriza suas escolhas! Ao digitar novamente, ela sugere automaticamente e é mais inteligente para compras online.</li>
+        <li style="margin-bottom:10px;"><b>🤖 IA Editável:</b> Se a IA errar a categoria de um gasto na aba Saúde, você pode alterar diretamente por lá e corrigir seu histórico e ensinar o app para a próxima vez!</li>
     </ul>
     <button class="btn-primary" onclick="window.fecharModal('modal-changelog')">Incrível!</button>
   </div>
@@ -698,7 +719,7 @@
 
     window.iniciarVisitante = () => {
         window.currentUserUID = null;
-        window.S = { userName: "Visitante", config: {dolarMode: 'none', freq: 'mensal', onboardingDone: false, bancos: []}, gastosFixos: [], metas: [], dataByMonth: {}, backups: [], catDict: {} };
+        window.S = { userName: "Visitante", config: {dolarMode: 'none', freq: 'mensal', onboardingDone: false, bancos: [], customBanks: []}, gastosFixos: [], metas: [], dataByMonth: {}, backups: [], catDict: {} };
         window.iniciarApp("Visitante");
     };
 
@@ -716,7 +737,7 @@
             window.currentUserUID = user.uid;
             document.getElementById("cloud-status").textContent = "☁️...";
             const docSnap = await getDoc(doc(db, "usuarios", user.uid));
-            window.S = docSnap.exists() ? docSnap.data() : { userName: user.displayName, config: {dolarMode: 'none', freq: 'mensal', onboardingDone: false, bancos: []}, gastosFixos: [], metas: [], dataByMonth: {}, backups: [], catDict: {} };
+            window.S = docSnap.exists() ? docSnap.data() : { userName: user.displayName, config: {dolarMode: 'none', freq: 'mensal', onboardingDone: false, bancos: [], customBanks: []}, gastosFixos: [], metas: [], dataByMonth: {}, backups: [], catDict: {} };
             window.isCloudLoading = false;
             window.iniciarApp(user.displayName);
         }
@@ -729,10 +750,14 @@
             let currentDataStr = JSON.stringify({ dataByMonth: window.S.dataByMonth, gastosFixos: window.S.gastosFixos, metas: window.S.metas, config: window.S.config, catDict: window.S.catDict });
             window.S.backups = window.S.backups || [];
             
+            // Auto-save history every time sync happens (debounced)
             if (window.S.backups.length === 0 || window.S.backups[0].dataStr !== currentDataStr) {
                 window.S.backups.unshift({ date: Date.now(), dataStr: currentDataStr });
-                if (window.S.backups.length > 7) window.S.backups.pop();
+                if (window.S.backups.length > 20) window.S.backups.pop(); // Keeps up to 20 states for undo
             }
+
+            const btnUndo = document.getElementById("btn-undo");
+            if(btnUndo) btnUndo.style.display = window.S.backups.length > 1 ? "block" : "none";
 
             setDoc(doc(db, "usuarios", window.currentUserUID), window.S).then(() => {
                 document.getElementById("cloud-status").textContent = "Salvo na Nuvem";
@@ -765,9 +790,13 @@
     let calSelMes = null;
     let delTargetType = ""; let delTargetId = "";
     window.needVal = "sim";
+    
+    // Variável para controle da visualização do Histórico
+    window.currentHistView = 'table';
+    let histChartInstance = null;
 
     const MESES_CURTO = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
-    const CATEGORIAS = ["Transporte 🚗", "Alimentação 🍔", "Saúde & Esportes 💊", "Contas Básicas 💡", "Viagem & Lazer ✈️", "Outros 🏷️"];
+    const CATEGORIAS = ["Compras Online 📦", "Transporte 🚗", "Alimentação 🍔", "Saúde & Esportes 💊", "Contas Básicas 💡", "Viagem & Lazer ✈️", "Outros 🏷️"];
     const BANCOS_BASE = [
         {id: 'inter', l: 'Inter 🟠', c: '#ff7a00'},
         {id: 'nubank', l: 'Nubank 🟣', c: '#8a05be'},
@@ -850,7 +879,7 @@
 
     window.iniciarApp = function(nome) {
         const isV = !window.currentUserUID;
-        window.S.config = window.S.config || {dolarMode: 'none', freq: 'mensal', onboardingDone: false, bancos: []};
+        window.S.config = window.S.config || {dolarMode: 'none', freq: 'mensal', onboardingDone: false, bancos: [], customBanks: []};
         window.S.catDict = window.S.catDict || {};
         
         if (window.S.config.isErgeon && !window.S.config.dolarMode) window.S.config.dolarMode = 'ergeon';
@@ -871,14 +900,62 @@
         document.getElementById("login-screen").style.display = "none";
         document.getElementById("app-main").style.display = "flex";
         
+        const btnUndo = document.getElementById("btn-undo");
+        if(btnUndo) btnUndo.style.display = (window.S.backups && window.S.backups.length > 1) ? "block" : "none";
+
         if(localStorage.getItem('cf_dark_mode') === 'true') document.body.classList.add('dark-theme');
         
         if (!window.S.config.onboardingDone) {
+            window.renderBancosList('onb-bancos-list');
             document.getElementById("modal-onboarding").style.display = "flex";
         } else {
             window.setMonthData(activeM, activeY);
         }
     };
+
+    window.renderBancosList = function(containerId) {
+        let bancosSalvos = window.S.config.bancos || [];
+        let customBanks = window.S.config.customBanks || [];
+        let htmlBancos = "";
+
+        const renderCheck = (b, isCustom) => {
+            let checked = (containerId === 'onb-bancos-list' && !isCustom && (b.id === 'inter' || b.id === 'nubank')) ? "checked" : (bancosSalvos.find(sb => sb.id === b.id) ? "checked" : "");
+            let delBtn = isCustom ? `<span style="color:#ff453a; cursor:pointer; font-weight:bold; margin-left:auto; padding:0 8px;" onclick="window.removerBancoCustom('${b.id}', '${containerId}')">&times;</span>` : "";
+            return `<div style="display:flex; align-items:center; margin-bottom:10px;"><label class="bank-check" style="margin-bottom:0; flex:1;"><input type="checkbox" value="${b.id}" id="cb-bank-${b.id}" ${checked}> <span style="color:${b.c}; font-weight:bold;">●</span> ${b.l}</label>${delBtn}</div>`;
+        };
+
+        BANCOS_BASE.forEach(b => htmlBancos += renderCheck(b, false));
+        customBanks.forEach(b => htmlBancos += renderCheck(b, true));
+
+        document.getElementById(containerId).innerHTML = htmlBancos;
+    }
+
+    window.adicionarBancoCustom = function(context) {
+        const prefix = context === 'onb' ? 'onb' : 'cfg';
+        const nome = document.getElementById(`${prefix}-novo-banco-nome`).value.trim();
+        const cor = document.getElementById(`${prefix}-novo-banco-cor`).value;
+        if(!nome) return;
+        
+        const newId = 'bc_' + Date.now();
+        window.S.config.customBanks = window.S.config.customBanks || [];
+        window.S.config.customBanks.push({id: newId, l: nome, c: cor});
+        
+        window.S.config.bancos = window.S.config.bancos || [];
+        window.S.config.bancos.push({id: newId, l: nome, c: cor});
+        
+        document.getElementById(`${prefix}-novo-banco-nome`).value = '';
+        window.renderBancosList(`${prefix}-bancos-list`);
+        window.scheduleSync();
+    }
+
+    window.adicionarBancoOnb = function() { window.adicionarBancoCustom('onb'); }
+
+    window.removerBancoCustom = function(id, containerId) {
+        window.S.config.customBanks = window.S.config.customBanks.filter(b => b.id !== id);
+        window.S.config.bancos = window.S.config.bancos.filter(b => b.id !== id);
+        window.renderBancosList(containerId);
+        window.scheduleSync();
+    }
 
     window.salvarOnboarding = function() {
         const moeda = document.getElementById("onb-moeda").value;
@@ -887,23 +964,14 @@
 
         const checkboxes = document.querySelectorAll('#onb-bancos-list input[type="checkbox"]:checked');
         let selecionados = [];
+        let baseAndCustom = BANCOS_BASE.concat(window.S.config.customBanks || []);
+        
         checkboxes.forEach(cb => {
-            if (cb.id === 'onb-check-outro') {
-                const outroNome = document.getElementById('onb-outro-nome').value.trim();
-                if(outroNome) {
-                    selecionados.push({id: 'b_' + Date.now(), l: outroNome, c: '#3c3c43'});
-                }
-            } else {
-                const bancoObj = BANCOS_BASE.find(b => b.id === cb.value);
-                if(bancoObj) selecionados.push(bancoObj);
-            }
+            const bancoObj = baseAndCustom.find(b => b.id === cb.value);
+            if(bancoObj) selecionados.push(bancoObj);
         });
 
-        if(selecionados.length === 0) {
-            // Default se o usuário pular sem marcar nada
-            selecionados = [BANCOS_BASE[0], BANCOS_BASE[1]];
-        }
-
+        if(selecionados.length === 0) selecionados = [BANCOS_BASE[0], BANCOS_BASE[1]];
         window.S.config.bancos = selecionados;
         window.S.config.onboardingDone = true;
         
@@ -912,14 +980,30 @@
         window.scheduleSync();
     }
 
-    // Atualiza os dropdowns de pagamento dinamicamente
+    // CTRL+Z / Undo Action
+    window.undoAction = function() {
+        if(window.S.backups && window.S.backups.length > 1) {
+            window.S.backups.shift(); // Remove estado atual quebrado
+            const prevState = JSON.parse(window.S.backups[0].dataStr); // Resgata o anterior
+            
+            window.S.dataByMonth = prevState.dataByMonth || {};
+            window.S.gastosFixos = prevState.gastosFixos || [];
+            window.S.metas = prevState.metas || [];
+            window.S.catDict = prevState.catDict || {};
+            window.S.config = prevState.config || window.S.config;
+
+            window.setMonthData(activeM, activeY);
+            window.scheduleSync(); 
+            document.getElementById("btn-undo").style.display = window.S.backups.length > 1 ? "block" : "none";
+            alert("Ação desfeita com sucesso! ↩️");
+        }
+    }
+
     window.atualizarSelectsPagamento = function() {
         let bancos = window.S.config.bancos || [BANCOS_BASE[0], BANCOS_BASE[1]];
         let html = `<option value="none">Selecione o Cartão...</option>`;
         html += `<option value="pix" style="background:#00b4d8; color:#fff;">Pix 💠</option>`;
-        bancos.forEach(b => {
-            html += `<option value="${b.id}" style="background:${b.c}; color:#fff;">${b.l}</option>`;
-        });
+        bancos.forEach(b => { html += `<option value="${b.id}" style="background:${b.c}; color:#fff;">${b.l}</option>`; });
         document.getElementById("mg-pay").innerHTML = html;
     }
 
@@ -1082,9 +1166,19 @@
        GASTOS
     ========================================== */
     window.renderPaySelect = function(id, currentPay, tipo) {
-      let bancos = window.S.config.bancos || [BANCOS_BASE[0], BANCOS_BASE[1]];
-      let html = `<select class="pay-tag" style="background:${currentPay==='pix'?'#00b4d8':currentPay==='none'?'#8e8e93':(bancos.find(b=>b.id===currentPay)||{c:'#3c3c43'}).c};" onchange="window.updatePay('${id}', this.value, '${tipo}')"><option value="none" ${currentPay==='none'?'selected':''}>Cartão?</option><option value="pix" ${currentPay==='pix'?'selected':''}>Pix</option>`;
-      bancos.forEach(b => { html += `<option value="${b.id}" ${currentPay===b.id?'selected':''}>${b.l}</option>`; });
+      let baseAndCustom = BANCOS_BASE.concat(window.S.config.customBanks || []);
+      let activeBanks = window.S.config.bancos || [BANCOS_BASE[0], BANCOS_BASE[1]];
+      
+      // Cor de fundo do seletor
+      let bgCor = '#8e8e93';
+      if(currentPay === 'pix') bgCor = '#00b4d8';
+      else {
+          const bankObj = baseAndCustom.find(b => b.id === currentPay);
+          if(bankObj) bgCor = bankObj.c;
+      }
+
+      let html = `<select class="pay-tag" style="background:${bgCor};" onchange="window.updatePay('${id}', this.value, '${tipo}')"><option value="none" ${currentPay==='none'?'selected':''}>Cartão?</option><option value="pix" ${currentPay==='pix'?'selected':''}>Pix</option>`;
+      activeBanks.forEach(b => { html += `<option value="${b.id}" ${currentPay===b.id?'selected':''}>${b.l}</option>`; });
       html += `</select>`;
       return html;
     }
@@ -1163,25 +1257,27 @@
       }
     }
 
-    // SUGERIR CATEGORIA AUTOMATICAMENTE
+    // SUGERIR CATEGORIA AUTOMATICAMENTE COM MACHINE LEARNING BÁSICO
     window.sugerirCategoria = function(nome) {
         let n = nome.toLowerCase().trim();
         if(!n) return;
         let catSelect = document.getElementById("mg-cat");
         
-        // Memória do usuário salva no banco
+        // Memória do usuário salva no banco (Machine Learning)
         if (window.S.catDict && window.S.catDict[n]) {
             catSelect.value = window.S.catDict[n];
             return;
         }
 
-        // Regras Hardcoded
+        // Regras Hardcoded (Ordem importa para não sobrepor compras online com mercado)
         let catEncontrada = "Outros 🏷️";
-        if(n.includes("uber")||n.includes("99")||n.includes("ônibus")||n.includes("onibus")||n.includes("van")||n.includes("combustível")||n.includes("gasolina")||n.includes("blablacar")||n.includes("transporte")||n.includes("moto")||n.includes("carro")) catEncontrada = "Transporte 🚗";
-        else if(n.includes("ifood")||n.includes("rappi")||n.includes("mcdonalds")||n.includes("burger")||n.includes("mercado")||n.includes("supermercado")||n.includes("padaria")||n.includes("restaurante")||n.includes("lanche")||n.includes("pizza")||n.includes("comida")||n.includes("delivery")||n.includes("zé delivery")||n.includes("almoço")||n.includes("almoco")||n.includes("janta")||n.includes("jantar")||n.includes("rodízio")||n.includes("rodizio")||n.includes("outback")||n.includes("atacadão")||n.includes("compras")) catEncontrada = "Alimentação 🍔";
+        if(n.includes("mercado livre")||n.includes("shopee")||n.includes("shein")||n.includes("amazon")||n.includes("aliexpress")) catEncontrada = "Compras Online 📦";
+        else if(n.includes("mercado")||n.includes("supermercado")||n.includes("atacadão")||n.includes("compras")) catEncontrada = "Alimentação 🍔";
+        else if(n.includes("uber")||n.includes("99")||n.includes("ônibus")||n.includes("onibus")||n.includes("van")||n.includes("combustível")||n.includes("gasolina")||n.includes("blablacar")||n.includes("transporte")||n.includes("moto")||n.includes("carro")) catEncontrada = "Transporte 🚗";
+        else if(n.includes("ifood")||n.includes("rappi")||n.includes("mcdonalds")||n.includes("burger")||n.includes("padaria")||n.includes("restaurante")||n.includes("lanche")||n.includes("pizza")||n.includes("comida")||n.includes("delivery")||n.includes("zé delivery")||n.includes("almoço")||n.includes("almoco")||n.includes("janta")||n.includes("jantar")||n.includes("rodízio")||n.includes("rodizio")||n.includes("outback")) catEncontrada = "Alimentação 🍔";
         else if(n.includes("farmácia")||n.includes("remédio")||n.includes("médico")||n.includes("medico")||n.includes("consulta")||n.includes("drogaria")||n.includes("unimed")||n.includes("terapia")||n.includes("esporte")||n.includes("esportes")||n.includes("personal")||n.includes("academia")||n.includes("crossfit")||n.includes("treino")||n.includes("pilates")||n.includes("suplemento")||n.includes("whey")) catEncontrada = "Saúde & Esportes 💊";
         else if(n.includes("luz")||n.includes("agua")||n.includes("água")||n.includes("energia")||n.includes("aluguel")||n.includes("condomínio")||n.includes("vivo")||n.includes("claro")||n.includes("tim")||n.includes("internet")||n.includes("iptu")||n.includes("plano")||n.includes("seguro")) catEncontrada = "Contas Básicas 💡";
-        else if(n.includes("netflix")||n.includes("spotify")||n.includes("cinema")||n.includes("shopping")||n.includes("shein")||n.includes("shopee")||n.includes("mercado livre")||n.includes("amazon")||n.includes("aliexpress")||n.includes("roupa")||n.includes("bar")||n.includes("festa")||n.includes("cruzeiro")||n.includes("airbnb")||n.includes("hotel")||n.includes("viagem")||n.includes("passagem")||n.includes("ingresso")||n.includes("show")) catEncontrada = "Viagem & Lazer ✈️";
+        else if(n.includes("netflix")||n.includes("spotify")||n.includes("cinema")||n.includes("shopping")||n.includes("roupa")||n.includes("bar")||n.includes("festa")||n.includes("cruzeiro")||n.includes("airbnb")||n.includes("hotel")||n.includes("viagem")||n.includes("passagem")||n.includes("ingresso")||n.includes("show")) catEncontrada = "Viagem & Lazer ✈️";
         
         catSelect.value = catEncontrada;
     }
@@ -1237,7 +1333,7 @@
         });
       } else { activeData.gastosV.push({ id: 'gv_' + Date.now(), n: emojiName, val, pay, cat }); }
       
-      window.fecharModal('modal-gasto'); window.renderView();
+      window.fecharModal('modal-gasto'); window.renderView(); window.scheduleSync();
     }
 
     /* ==========================================
@@ -1393,7 +1489,7 @@
             window.S.metas.push({ id, n: nome, prazo: prazoStr, pM: parsedM, pY: parsedY, ap, obj, acumInicial: acumIni, endM: null, endY: null, hiddenMonths: [] });
             Object.keys(window.S.dataByMonth).forEach(k => { window.S.dataByMonth[k].metasAcum[id] = 0; });
         }
-        window.fecharModal('modal-meta'); window.renderView();
+        window.fecharModal('modal-meta'); window.renderView(); window.scheduleSync();
     }
 
     window.abrirModalDelete = function(type, id) {
@@ -1409,6 +1505,7 @@
         if (!item.hiddenMonths) item.hiddenMonths = []; item.hiddenMonths.push(activeKey);
         if (delTargetType === 'gastoFixo') delete activeData.gastosF[delTargetId]; if (delTargetType === 'meta') delete activeData.metasAcum[delTargetId];
       } else if (mode === 'this_and_future') {
+        if(!confirm("⚠️ Tem certeza que deseja apagar este item e todos os meses seguintes?")) return;
         item.endY = activeM === 0 ? activeY - 1 : activeY; item.endM = activeM === 0 ? 11 : activeM - 1;
         Object.keys(window.S.dataByMonth).forEach(k => {
           const [km, ky] = k.split('-').map(Number);
@@ -1418,7 +1515,7 @@
           }
         });
       }
-      window.fecharModal('modal-delete'); window.renderView();
+      window.fecharModal('modal-delete'); window.renderView(); window.scheduleSync();
     }
 
     /* ==========================================
@@ -1503,6 +1600,14 @@
 
       window.buildParcelas(); window.buildCal(); window.buildHistorico();
       if(document.getElementById("pg-saude").classList.contains("active")) window.buildSaude();
+    }
+
+    let syncTimer;
+    window.scheduleSync = function() {
+        clearTimeout(syncTimer);
+        syncTimer = setTimeout(() => {
+            if(window.syncFirebase) window.syncFirebase();
+        }, 2000); 
     }
 
     /* HISTÓRICO DE BACKUPS */
@@ -1627,6 +1732,119 @@
         </div>`;
     }
 
+    /* Lógica do toggle entre Tabela e Gráfico no Histórico */
+    window.toggleHistView = function(view) {
+        window.currentHistView = view;
+        const btnTabela = document.getElementById('btn-view-table');
+        const btnGrafico = document.getElementById('btn-view-chart');
+        
+        if(view === 'table') {
+            btnTabela.style.cssText = "background:#fff; border:none; padding:4px 10px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; box-shadow:0 1px 2px rgba(0,0,0,0.1); color:#1c1c1e;";
+            btnGrafico.style.cssText = "background:transparent; border:none; padding:4px 10px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; color:#8e8e93;";
+            document.getElementById('hist-view-table').style.display = 'block';
+            document.getElementById('hist-view-chart').style.display = 'none';
+        } else {
+            btnGrafico.style.cssText = "background:#fff; border:none; padding:4px 10px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; box-shadow:0 1px 2px rgba(0,0,0,0.1); color:#1c1c1e;";
+            btnTabela.style.cssText = "background:transparent; border:none; padding:4px 10px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; color:#8e8e93;";
+            document.getElementById('hist-view-table').style.display = 'none';
+            document.getElementById('hist-view-chart').style.display = 'block';
+            window.renderHistChart();
+        }
+    }
+
+    /* Renderização do Gráfico com Chart.js */
+    window.renderHistChart = function() {
+        const canvas = document.getElementById('hist-canvas');
+        if(!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if(histChartInstance) histChartInstance.destroy();
+        
+        const keys = Object.keys(window.S.dataByMonth).sort((a,b) => { 
+            const [ma,ya]=a.split('-').map(Number); const [mb,yb]=b.split('-').map(Number); return ya!==yb ? ya-yb : ma-mb; 
+        });
+        // Pega as chaves válidas (com movimentação)
+        const validKeys = keys.filter(k => window.calcTotals(window.S.dataByMonth[k], ...k.split('-').map(Number)).hasData);
+        
+        if(validKeys.length === 0) return;
+        
+        const labels = [];
+        const dataRec = [];
+        const dataGastos = [];
+        
+        // Renderiza de forma cronológica (do mais antigo para o mais novo)
+        validKeys.forEach(k => {
+            const mData = window.S.dataByMonth[k]; 
+            const [m, y] = k.split('-'); 
+            const {tBRL, tReal} = window.calcTotals(mData, parseInt(m), parseInt(y));
+            labels.push(`${MESES_CURTO[parseInt(m)]}/${y.slice(2)}`);
+            dataRec.push(tBRL);
+            dataGastos.push(tReal);
+        });
+
+        const isDark = document.body.classList.contains('dark-theme');
+        const textColor = isDark ? '#f2f2f7' : '#1c1c1e';
+        const gridColor = isDark ? '#333' : '#e5e5ea';
+
+        histChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Recebido',
+                        data: dataRec,
+                        borderColor: '#30d158',
+                        backgroundColor: 'rgba(48, 209, 88, 0.1)',
+                        borderWidth: 2.5,
+                        tension: 0.3,
+                        fill: true,
+                        pointRadius: 3
+                    },
+                    {
+                        label: 'Gastos',
+                        data: dataGastos,
+                        borderColor: '#ff453a',
+                        backgroundColor: 'rgba(255, 69, 58, 0.1)',
+                        borderWidth: 2.5,
+                        tension: 0.3,
+                        fill: true,
+                        pointRadius: 3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: textColor, font: {size: 11, family: "inherit"} },
+                        position: 'top'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) label += ': ';
+                                if (context.parsed.y !== null) label += window.R(context.parsed.y);
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { ticks: {color: '#8e8e93', font: {size: 10, family: "inherit"}}, grid: {display: false} },
+                    y: { 
+                        ticks: {
+                            color: '#8e8e93', font: {size: 10, family: "inherit"},
+                            callback: function(value) { return 'R$ ' + value / 1000 + 'k'; } // Formata o eixo Y em "k"
+                        }, 
+                        grid: {color: gridColor} 
+                    }
+                }
+            }
+        });
+    }
+
     window.buildHistorico = function(){
       const list=document.getElementById("hist-list"); list.innerHTML="";
       const keys = Object.keys(window.S.dataByMonth).sort((a,b) => { const [ma,ya]=a.split('-').map(Number); const [mb,yb]=b.split('-').map(Number); return ya!==yb ? ya-yb : ma-mb; });
@@ -1643,6 +1861,11 @@
           <span style="font-size:13px;font-weight:700;color:${saldo>=0?"#30d158":"#ff453a"};width:70px;text-align:right">${(saldo>=0?"+":"-")}${window.R(Math.abs(saldo)).replace("R$ ","")}</span>`;
         list.appendChild(el);
       });
+      
+      // Atualiza o gráfico caso o usuário esteja com essa visualização ativa
+      if (window.currentHistView === 'chart') {
+          window.renderHistChart();
+      }
     }
 
     // NOVOS MODAIS: ABRIR
@@ -1672,7 +1895,7 @@
         }
 
         window.scheduleSync();
-        window.analisarGastosIA(false); // Re-render sem timeout
+        window.analisarGastosIA(false); // Re-render sem delay visual
     }
 
     window.analisarGastosIA = function(comAnimacao = true) {
@@ -1684,6 +1907,7 @@
 
         const renderLogic = () => {
             const categorias = {
+                "Compras Online 📦": { total: 0, itemsHtml: "" },
                 "Transporte 🚗": { total: 0, itemsHtml: "" },
                 "Alimentação 🍔": { total: 0, itemsHtml: "" },
                 "Saúde & Esportes 💊": { total: 0, itemsHtml: "" },
@@ -1698,35 +1922,33 @@
                 totalGastosMes += val;
                 let catEncontrada = catSalva;
                 
-                // Se não tiver categoria salva (dados velhos), tenta deduzir pela memória ou regras
                 if (!catEncontrada) {
                     let n = nome.toLowerCase().trim();
                     if (window.S.catDict && window.S.catDict[n]) {
                         catEncontrada = window.S.catDict[n];
                     } else {
-                        // Fallback Hardcoded
                         catEncontrada = "Outros 🏷️";
-                        if(n.includes("uber")||n.includes("99")||n.includes("ônibus")||n.includes("onibus")||n.includes("van")||n.includes("combustível")||n.includes("gasolina")||n.includes("blablacar")||n.includes("transporte")||n.includes("moto")||n.includes("carro")) catEncontrada = "Transporte 🚗";
-                        else if(n.includes("ifood")||n.includes("rappi")||n.includes("mcdonalds")||n.includes("burger")||n.includes("mercado")||n.includes("supermercado")||n.includes("padaria")||n.includes("restaurante")||n.includes("lanche")||n.includes("pizza")||n.includes("comida")||n.includes("delivery")||n.includes("zé delivery")||n.includes("almoço")||n.includes("almoco")||n.includes("janta")||n.includes("jantar")||n.includes("rodízio")||n.includes("rodizio")||n.includes("outback")||n.includes("atacadão")||n.includes("compras")) catEncontrada = "Alimentação 🍔";
+                        if(n.includes("mercado livre")||n.includes("shopee")||n.includes("shein")||n.includes("amazon")||n.includes("aliexpress")) catEncontrada = "Compras Online 📦";
+                        else if(n.includes("mercado")||n.includes("supermercado")||n.includes("atacadão")||n.includes("compras")) catEncontrada = "Alimentação 🍔";
+                        else if(n.includes("uber")||n.includes("99")||n.includes("ônibus")||n.includes("onibus")||n.includes("van")||n.includes("combustível")||n.includes("gasolina")||n.includes("blablacar")||n.includes("transporte")||n.includes("moto")||n.includes("carro")) catEncontrada = "Transporte 🚗";
+                        else if(n.includes("ifood")||n.includes("rappi")||n.includes("mcdonalds")||n.includes("burger")||n.includes("padaria")||n.includes("restaurante")||n.includes("lanche")||n.includes("pizza")||n.includes("comida")||n.includes("delivery")||n.includes("zé delivery")||n.includes("almoço")||n.includes("almoco")||n.includes("janta")||n.includes("jantar")||n.includes("rodízio")||n.includes("rodizio")||n.includes("outback")) catEncontrada = "Alimentação 🍔";
                         else if(n.includes("farmácia")||n.includes("remédio")||n.includes("médico")||n.includes("medico")||n.includes("consulta")||n.includes("drogaria")||n.includes("unimed")||n.includes("terapia")||n.includes("esporte")||n.includes("esportes")||n.includes("personal")||n.includes("academia")||n.includes("crossfit")||n.includes("treino")||n.includes("pilates")||n.includes("suplemento")||n.includes("whey")) catEncontrada = "Saúde & Esportes 💊";
                         else if(n.includes("luz")||n.includes("agua")||n.includes("água")||n.includes("energia")||n.includes("aluguel")||n.includes("condomínio")||n.includes("vivo")||n.includes("claro")||n.includes("tim")||n.includes("internet")||n.includes("iptu")||n.includes("plano")||n.includes("seguro")) catEncontrada = "Contas Básicas 💡";
-                        else if(n.includes("netflix")||n.includes("spotify")||n.includes("cinema")||n.includes("shopping")||n.includes("shein")||n.includes("shopee")||n.includes("mercado livre")||n.includes("amazon")||n.includes("aliexpress")||n.includes("roupa")||n.includes("bar")||n.includes("festa")||n.includes("cruzeiro")||n.includes("airbnb")||n.includes("hotel")||n.includes("viagem")||n.includes("passagem")||n.includes("ingresso")||n.includes("show")) catEncontrada = "Viagem & Lazer ✈️";
+                        else if(n.includes("netflix")||n.includes("spotify")||n.includes("cinema")||n.includes("shopping")||n.includes("roupa")||n.includes("bar")||n.includes("festa")||n.includes("cruzeiro")||n.includes("airbnb")||n.includes("hotel")||n.includes("viagem")||n.includes("passagem")||n.includes("ingresso")||n.includes("show")) catEncontrada = "Viagem & Lazer ✈️";
                     }
                 }
 
                 if(!categorias[catEncontrada]) categorias[catEncontrada] = { total: 0, itemsHtml: "" };
                 categorias[catEncontrada].total += val;
                 
-                let selectHtml = `<select class="form-sel-sm" onchange="window.mudarCategoriaIA('${tipo}', '${id}', '${nome}', this.value)" style="width:130px; border:1px solid #e5e5ea; background:transparent;">`;
-                CATEGORIAS.forEach(c => {
-                    selectHtml += `<option value="${c}" ${c === catEncontrada ? 'selected' : ''}>${c}</option>`;
-                });
+                let selectHtml = `<select class="form-sel-sm" onchange="window.mudarCategoriaIA('${tipo}', '${id}', '${nome}', this.value)" style="width:145px; border:1px solid #e5e5ea; background:transparent;">`;
+                CATEGORIAS.forEach(c => { selectHtml += `<option value="${c}" ${c === catEncontrada ? 'selected' : ''}>${c}</option>`; });
                 selectHtml += `</select>`;
 
                 categorias[catEncontrada].itemsHtml += `
-                    <div style="display:flex; justify-content:space-between; align-items:center; padding:4px 0; border-bottom:0.5px solid rgba(0,0,0,0.05);">
-                        <div style="display:flex; flex-direction:column;">
-                            <span style="font-size:13px; font-weight:600; color:#3c3c43;">${nome}</span>
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:0.5px solid rgba(0,0,0,0.05);">
+                        <div style="display:flex; flex-direction:column; max-width:55%;">
+                            <span style="font-size:13px; font-weight:600; color:#3c3c43; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${nome}</span>
                             <span style="font-size:11px; color:#8e8e93;">${window.R(val)}</span>
                         </div>
                         ${selectHtml}
@@ -1734,12 +1956,7 @@
                 `;
             };
 
-            // Variáveis
-            (activeData.gastosV || []).forEach(gv => {
-                processarGasto(gv.id, gv.n, gv.val, gv.cat, 'var');
-            });
-
-            // Fixos
+            (activeData.gastosV || []).forEach(gv => { processarGasto(gv.id, gv.n, gv.val, gv.cat, 'var'); });
             const fixosIds = Object.keys(activeData.gastosF || {});
             fixosIds.forEach(id => {
                 const gfAtivo = activeData.gastosF[id];
@@ -1762,19 +1979,17 @@
                 let pct = Math.round((c.total / totalGastosMes) * 100);
                 html += `
                 <div style="background:#f2f2f7; border-radius:12px; padding:12px; margin-bottom:8px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; cursor:pointer;" onclick="window.toggleAccordion('ia-cat-${idx}', 'ia-chev-${idx}')">
+                    <div style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="window.toggleAccordion('ia-cat-${idx}', 'ia-chev-${idx}')">
                         <span style="font-weight:700; font-size:14px;">${c.nome} <span class="chev" id="ia-chev-${idx}">▼</span></span>
                         <span style="font-weight:800; color:#ff453a;">${window.R(c.total)} (${pct}%)</span>
                     </div>
-                    <div id="ia-cat-${idx}" style="display:none; margin-top:8px;">
+                    <div id="ia-cat-${idx}" style="display:none; margin-top:10px;">
                         ${c.itemsHtml}
                     </div>
                 </div>`;
             });
 
-            // Lógica de dicas baseada no Vilão
-            let vilao = catArray[0];
-            let dica = "";
+            let vilao = catArray[0]; let dica = "";
             if(vilao.nome.includes("Alimentação") && (vilao.total / totalGastosMes) > 0.3) {
                 dica = "🍔 <b>Cuidado com as saídas e Deliveries!</b> Mais de 30% da sua verba evaporou em alimentação. Separar um orçamento fixo para 'besteiras' pode ajudar a segurar a onda.";
             } else if(vilao.nome.includes("Transporte") && (vilao.total / totalGastosMes) > 0.2) {
@@ -1785,6 +2000,8 @@
                 dica = "💊 <b>Cuidar de si é um investimento!</b> Gastos altos com saúde, esportes ou farmácia mostram autocuidado. Veja se seu plano de saúde cobre algo ou se dá pra negociar pacotes anuais de treino.";
             } else if(vilao.nome.includes("Contas Básicas")) {
                 dica = "💡 <b>Custo de vida padrão:</b> O maior peso está no básico. Isso é completamente natural! Dê uma olhada se os planos de internet e celular podem ser renegociados.";
+            } else if(vilao.nome.includes("Compras Online")) {
+                dica = "📦 <b>Eita, o carrinho está lotado!</b> Cuidado com as promoções online. Desinstalar apps de compra por um tempo ajuda a diminuir a impulsividade.";
             } else {
                 dica = "📊 Seus gastos estão bem misturados! Mantenha sempre o acompanhamento para o mês não fechar no vermelho.";
             }
@@ -1917,21 +2134,16 @@
         window.goTo('painel');
     }
     
-    window.toggleDarkMode = function() { document.body.classList.toggle("dark-theme"); localStorage.setItem('cf_dark_mode', document.body.classList.contains('dark-theme')); }
+    window.toggleDarkMode = function() { 
+        document.body.classList.toggle("dark-theme"); 
+        localStorage.setItem('cf_dark_mode', document.body.classList.contains('dark-theme'));
+        if (window.currentHistView === 'chart') window.renderHistChart();
+    }
+
     window.abrirConfig = function() { 
         document.getElementById('cfg-freq').value = window.S.config.freq || 'mensal';
         document.getElementById('cfg-dolar').value = window.S.config.dolarMode || (window.S.config.isErgeon ? 'ergeon' : 'none');
-        
-        let bancosSalvos = window.S.config.bancos || [];
-        let htmlBancos = "";
-        BANCOS_BASE.forEach(b => {
-            let checked = bancosSalvos.find(sb => sb.id === b.id) ? "checked" : "";
-            htmlBancos += `<label class="bank-check"><input type="checkbox" value="${b.id}" ${checked}> ${b.l}</label>`;
-        });
-        htmlBancos += `<label class="bank-check"><input type="checkbox" id="cfg-check-outro" onchange="document.getElementById('cfg-outro-nome').style.display = this.checked ? 'block' : 'none'"> Outro Banco</label>`;
-        htmlBancos += `<input type="text" id="cfg-outro-nome" placeholder="Digite o nome..." style="display:none; margin-top:8px;">`;
-        document.getElementById('cfg-bancos-list').innerHTML = htmlBancos;
-
+        window.renderBancosList('cfg-bancos-list');
         document.getElementById("modal-config").style.display = "flex"; 
     }
     window.fecharModal = function(id) { document.getElementById(id).style.display = "none"; }
@@ -1944,22 +2156,18 @@
 
         const checkboxes = document.querySelectorAll('#cfg-bancos-list input[type="checkbox"]:checked');
         let selecionados = [];
+        let baseAndCustom = BANCOS_BASE.concat(window.S.config.customBanks || []);
+        
         checkboxes.forEach(cb => {
-            if (cb.id === 'cfg-check-outro') {
-                const outroNome = document.getElementById('cfg-outro-nome').value.trim();
-                if(outroNome) { selecionados.push({id: 'b_' + Date.now(), l: outroNome, c: '#3c3c43'}); }
-            } else {
-                const bancoObj = BANCOS_BASE.find(b => b.id === cb.value);
-                if(bancoObj) selecionados.push(bancoObj);
-            }
+            const bancoObj = baseAndCustom.find(b => b.id === cb.value);
+            if(bancoObj) selecionados.push(bancoObj);
         });
         
-        // Pega também os "outros" antigos que já estavam salvos e o user não excluiu (para não perder o q já tem, se quiser simplificar, só sobrescreve). 
-        // Aqui sobrescreve as opções do menu dropdown.
         if(selecionados.length > 0) window.S.config.bancos = selecionados;
 
         window.fecharModal('modal-config'); 
         window.setMonthData(activeM, activeY); 
+        window.scheduleSync();
     }
     
     window.abrirModalParcelas = function() { document.getElementById("modal-parcelas").style.display = "flex"; }
