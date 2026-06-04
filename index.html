@@ -15,6 +15,8 @@
         .content { display: flex !important; flex-direction: column !important; flex: 1; width: 100%; padding: 14px 16px 140px; overflow-y: auto; }
         .page { display: none !important; flex-direction: column !important; width: 100%; }
         .page.active { display: flex !important; }
+        html { color-scheme: light; }
+        body.dark-theme { color-scheme: dark; }
         body.dark-theme { background: #000; color: #fff; }
         .dark-theme .app-container { background: #000; }
         .dark-theme .top-bar, .dark-theme .bottom-nav, .dark-theme .card, .dark-theme .modal-content, .dark-theme .m-card { background: #1c1c1e; border-color: #333; }
@@ -225,7 +227,7 @@
         <button class="login-btn" style="background: #f2f2f7; color: #8e8e93;" onclick="window.iniciarVisitante()">👤 Acessar como Visitante</button>
         <div style="margin-top: 60px; font-size: 11px; color: #8e8e93; font-weight: 500; line-height: 1.5;">
             Desenvolvido por <span style="color: #007aff; font-weight: 700;">Pedro Sarpi</span><br>
-            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()">Versão 1.12</span>
+            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()" title="Ver novidades">Versão 1.12</span>
         </div>
     </div>
 
@@ -239,7 +241,7 @@
                     <div class="top-header-emojis" aria-hidden="true">
                         <span>💸</span><span>📈</span><span>🥳</span>
                     </div>
-                    <a class="top-header-report" href="https://wa.me/5521990260472" target="_blank" rel="noopener">💬 Reportar erro</a>
+                    <a class="top-header-report" href="#" onclick="window.reportarWhatsApp(event)">💬 Reportar erro ou sugestão</a>
                 </div>
                 <div class="top-header-right">
                     <div style="display:flex; align-items:center; gap:8px;">
@@ -756,23 +758,11 @@
     </div>
     <div style="font-size:11px; color:#fff; background:#007aff; display:inline-block; padding:3px 10px; border-radius:6px; font-weight:800; margin-bottom:8px;">v1.12 — agora</div>
     <ul style="font-size:14px; color:#3c3c43; line-height:1.5; padding-left:16px; margin-bottom:18px;">
-        <li style="margin-bottom:8px;"><b>💰 Painel:</b> Atalhos <i>Novo ganho</i> (Receitas) e <i>Novo gasto</i> (menu com os 3 tipos).</li>
-        <li style="margin-bottom:8px;"><b>📅 Histórico:</b> Relatório anual abaixo do seu histórico mensal.</li>
-        <li style="margin-bottom:8px;"><b>🎯 Metas:</b> Salvamento na nuvem corrigido; botão volta ao normal após salvar.</li>
-        <li style="margin-bottom:8px;"><b>🌙 Modo noturno:</b> Textos e títulos legíveis em todas as telas.</li>
-        <li style="margin-bottom:8px;"><b>⬆️ Voltar ao início:</b> Botão ao rolar páginas longas.</li>
-        <li style="margin-bottom:8px;"><b>🩺 Diagnóstico sem repetição:</b> Resumo no topo; detalhes das parcelas só na lista (maior → menor).</li>
-        <li style="margin-bottom:8px;"><b>🧠 IA local avançada:</b> Cenários, opinião direta e projeções — tudo no aparelho, sem enviar dados.</li>
-        <li style="margin-bottom:8px;"><b>🔒 IA privada:</b> Análise feita no aparelho — seus dados não saem para terceiros.</li>
-        <li style="margin-bottom:8px;"><b>📊 Painel ordenado:</b> Assinaturas por valor; parcelas por quem termina mais tarde.</li>
-        <li style="margin-bottom:8px;"><b>💳 Lista de gastos:</b> Pagamento fixo abaixo do título; parcela/mensal embaixo.</li>
-        <li style="margin-bottom:8px;"><b>✏️ Só edita no lápis:</b> Nome, banco e valor não mudam mais direto na lista — use o ✏️.</li>
-        <li style="margin-bottom:8px;"><b>🔒 IA no aparelho:</b> Diagnóstico legível, histórico dos últimos 3 meses e projeção dos próximos 3.</li>
-        <li style="margin-bottom:8px;"><b>🔁 Popup de assinaturas:</b> No painel, toque no card de assinaturas para ver a lista (como nas parcelas).</li>
-        <li style="margin-bottom:8px;"><b>🔍 Busca em Gastos:</b> Lupa no topo — filtre por nome ou valor.</li>
-        <li style="margin-bottom:8px;"><b>📐 Cabeçalho:</b> Emojis fixos em uma linha; Reportar abaixo; saldo à direita.</li>
-        <li style="margin-bottom:8px;"><b>🔐 Segurança:</b> Chave de API removida do código — sem risco de vazamento no GitHub.</li>
-        <li style="margin-bottom:8px;"><b>➕ FAB, parcelas e cartão:</b> Novo fluxo para cadastrar gastos parcelados, únicos e assinaturas.</li>
+        <li style="margin-bottom:8px;"><b>💰 Painel:</b> Atalhos <i>Novo ganho</i> e <i>Novo gasto</i> (menu com 3 tipos).</li>
+        <li style="margin-bottom:8px;"><b>📅 Histórico:</b> Relatório anual abaixo do resumo mensal.</li>
+        <li style="margin-bottom:8px;"><b>🎯 Metas:</b> Salvamento na nuvem corrigido.</li>
+        <li style="margin-bottom:8px;"><b>🌙 Modo noturno:</b> Textos legíveis em todas as telas.</li>
+        <li style="margin-bottom:8px;"><b>💬 Suporte:</b> Reporte erros ou sugestões pelo WhatsApp.</li>
     </ul>
     <button class="btn-primary" onclick="window.fecharModal('modal-changelog')">Incrível!</button>
   </div>
@@ -804,7 +794,7 @@
 
     window.iniciarVisitante = () => {
         window.currentUserUID = null;
-        window.S = { userName: "Visitante", config: {dolarMode: 'none', freq: 'mensal', onboardingDone: false, bancos: [], customBanks: []}, gastosFixos: [], metas: [], dataByMonth: {}, backups: [], catDict: {} };
+        window.S = { userName: "Visitante", config: {dolarMode: 'none', freq: 'mensal', onboardingDone: false, bancos: [], customBanks: [], darkMode: false}, gastosFixos: [], metas: [], dataByMonth: {}, backups: [], catDict: {} };
         window.iniciarApp("Visitante");
     };
 
@@ -821,7 +811,9 @@
             window.currentUserUID = user.uid;
             document.getElementById("cloud-status").textContent = "☁️...";
             const docSnap = await getDoc(doc(db, "usuarios", user.uid));
-            window.S = docSnap.exists() ? docSnap.data() : { userName: user.displayName, config: {dolarMode: 'none', freq: 'mensal', onboardingDone: false, bancos: [], customBanks: []}, gastosFixos: [], metas: [], dataByMonth: {}, backups: [], catDict: {} };
+            window.S = docSnap.exists() ? docSnap.data() : { userName: user.displayName, config: {dolarMode: 'none', freq: 'mensal', onboardingDone: false, bancos: [], customBanks: [], darkMode: false}, gastosFixos: [], metas: [], dataByMonth: {}, backups: [], catDict: {} };
+            if(!window.S.config) window.S.config = {};
+            if(window.S.config.darkMode !== true) window.S.config.darkMode = false;
             window.isCloudLoading = false;
             window.iniciarApp(user.displayName);
         }
@@ -862,6 +854,7 @@
 
 <script>
     window.onload = () => {
+        try { document.body.classList.remove('dark-theme'); } catch(e) {}
         const ua = navigator.userAgent || navigator.vendor || window.opera;
         if(/(Instagram|WhatsApp|FBAV)/.test(ua) || /(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(ua) || /wv/.test(ua)) {
             const warn = document.getElementById('webview-warning');
@@ -977,13 +970,19 @@
         const ter=document.getElementById('mg-tipo-edit-row');if(ter)ter.style.display='none';
     };
     window.abrirChangelog = () => document.getElementById('modal-changelog').style.display='flex';
+    window.reportarWhatsApp = function(e) {
+        if (e) e.preventDefault();
+        const msg = encodeURIComponent('Olá, quero reportar um erro ou dar uma sugestão');
+        window.open('https://wa.me/5521990260472?text=' + msg, '_blank', 'noopener');
+    };
     window.abrirExplicacaoFechamento = () => document.getElementById('modal-fechamento').style.display='flex';
     window.toggleAccordion = (id, chev) => { const el=document.getElementById(id); const cv=document.getElementById(chev); el.style.display=el.style.display==="none"?"block":"none"; cv.classList.toggle('open'); };
 
     // ===== INIT APP =====
     window.iniciarApp = function(nome) {
         const isV = !window.currentUserUID;
-        window.S.config = window.S.config || {dolarMode:'none', freq:'mensal', onboardingDone:false, bancos:[], customBanks:[]};
+        window.S.config = window.S.config || {dolarMode:'none', freq:'mensal', onboardingDone:false, bancos:[], customBanks:[], darkMode:false};
+        if(window.S.config.darkMode !== true) window.S.config.darkMode = false;
         window.S.catDict = window.S.catDict || {};
         if(window.S.config.isErgeon && !window.S.config.dolarMode) window.S.config.dolarMode='ergeon';
         else if(!window.S.config.dolarMode) window.S.config.dolarMode='none';
@@ -1003,7 +1002,7 @@
         document.getElementById("app-main").style.display="flex";
         const btnUndo=document.getElementById("btn-undo");
         if(btnUndo) btnUndo.style.display=(window.S.backups&&window.S.backups.length>1)?"block":"none";
-        if(localStorage.getItem('cf_dark_mode')==='true') document.body.classList.add('dark-theme');
+        window.aplicarTemaUsuario();
 
         if(!window.S.config.onboardingDone) {
             window.renderBancosList('onb-bancos-list');
@@ -2151,7 +2150,21 @@
         const content=document.querySelector('.content');if(content)content.scrollTop=0;
     };
     window.jumpToMonth=k=>{const[m,y]=k.split('-');window.setMonthData(parseInt(m),parseInt(y));window.goTo('painel');};
-    window.toggleDarkMode=()=>{document.body.classList.toggle("dark-theme");localStorage.setItem('cf_dark_mode',document.body.classList.contains('dark-theme'));if(window.currentHistView==='chart')window.renderHistChart();};
+    window.aplicarTemaUsuario=function(){
+        document.body.classList.remove('dark-theme');
+        if(!window.currentUserUID) return;
+        if(window.S.config&&window.S.config.darkMode===true) document.body.classList.add('dark-theme');
+    };
+    window.toggleDarkMode=()=>{
+        const dark=!document.body.classList.contains('dark-theme');
+        document.body.classList.toggle('dark-theme',dark);
+        if(window.currentUserUID){
+            window.S.config=window.S.config||{};
+            window.S.config.darkMode=dark;
+            window.scheduleSync();
+        }
+        if(window.currentHistView==='chart')window.renderHistChart();
+    };
     window.abrirConfig=()=>{
         document.getElementById('cfg-dolar').value=window.S.config.dolarMode||(window.S.config.isErgeon?'ergeon':'none');
         window.renderBancosList('cfg-bancos-list');document.getElementById("modal-config").style.display="flex";
