@@ -103,6 +103,62 @@
         .fab-menu.open { display: flex; }
         .fab-menu-item { display: flex; align-items: center; gap: 10px; background: #fff; border: none; border-radius: 14px; padding: 10px 16px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.12); color: #1c1c1e; white-space: nowrap; }
         .fab-menu-item .fab-icon { font-size: 20px; }
+        .btn-edit-gasto { background: none; border: none; font-size: 16px; cursor: pointer; padding: 4px 6px; line-height: 1; }
+        .gastos-search-wrap { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; padding: 8px 12px; background: #fff; border-radius: 12px; border: 1.5px solid #e5e5ea; }
+        .gastos-search-wrap input { flex: 1; border: none; background: transparent; height: 36px; font-size: 15px; outline: none; font-family: inherit; }
+        .gasto-tipo-tag { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
+        .gasto-nome-titulo { display: block; font-size: 16px; font-weight: 600; line-height: 1.25; word-break: break-word; }
+        .gasto-nome-pagto { display: block; font-size: 11px; font-weight: 600; color: #8e8e93; margin-top: 4px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+        .gasto-nome-badge { margin-top: 5px; display: block; }
+        .tag-parcelado { background: #e3f0ff; color: #0055cc; }
+        .tag-unico { background: #f3e5f5; color: #6b2d8b; }
+        .tag-assinatura { background: #fff3cd; color: #856404; }
+
+        /* IA Analista — menu estilo app */
+        .ia-app-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+        .ia-app-tile { border: none; border-radius: 16px; padding: 14px 10px; min-height: 96px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; font-family: inherit; transition: transform 0.12s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .ia-app-tile:active { transform: scale(0.96); }
+        .ia-app-tile-emoji { font-size: 28px; line-height: 1; }
+        .ia-app-tile-titulo { font-size: 12px; font-weight: 800; text-align: center; line-height: 1.25; }
+        .ia-btn-voltar { background: #f2f2f7; border: none; width: 36px; height: 36px; border-radius: 18px; font-size: 20px; font-weight: 700; color: #007aff; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; line-height: 1; padding: 0; }
+        .ia-detalhe-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 0.5px solid #e5e5ea; }
+        .ia-detalhe-header h4 { flex: 1; font-size: 16px; font-weight: 800; margin: 0; }
+        .ia-detalhe-body { overflow-y: auto; max-height: min(58vh, 480px); display: flex; flex-direction: column; gap: 12px; }
+        .ia-bloco { border-radius: 14px; padding: 14px; line-height: 1.5; font-size: 14px; color: #1c1c1e; }
+        .dark-theme .ia-app-tile { box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
+        .dark-theme .ia-detalhe-header { border-bottom-color: #333; }
+
+        /* Cabeçalho v1.11.14 — emojis fixos, report abaixo */
+        .top-header-left { flex: 1; min-width: 0; }
+        .top-header-emojis {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            font-size: 22px;
+            line-height: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            max-width: 100%;
+        }
+        .top-header-emojis span { flex-shrink: 0; }
+        .top-header-report {
+            display: inline-block;
+            margin-top: 6px;
+            font-size: 11px;
+            color: #007aff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .top-header-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            flex-shrink: 0;
+            margin-left: 10px;
+        }
+        #top-saldo { margin-top: 14px; }
     </style>
 </head>
 <body>
@@ -123,29 +179,28 @@
         <button class="login-btn" style="background: #f2f2f7; color: #8e8e93;" onclick="window.iniciarVisitante()">👤 Acessar como Visitante</button>
         <div style="margin-top: 60px; font-size: 11px; color: #8e8e93; font-weight: 500; line-height: 1.5;">
             Desenvolvido por <span style="color: #007aff; font-weight: 700;">Pedro Sarpi</span><br>
-            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()">Versão 1.11.13</span>
+            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()">Versão 1.11.16</span>
         </div>
     </div>
 
     <div id="app-main">
         <div class="top-bar">
-            <!-- CABEÇALHO v1.11.13: saldo movido para direita, emojis fixos no centro-esquerdo -->
+            <!-- CABEÇALHO v1.11.14: emojis em linha fixa; report abaixo; saldo mais abaixo à direita -->
             <div style="display:flex; justify-content:space-between; align-items:flex-start">
-                <div style="flex:1">
+                <div class="top-header-left">
                     <div class="welcome" id="top-welcome">Olá ✨</div>
                     <h1 style="font-size: 18px; font-weight: 800;">Controle Financeiro</h1>
-                    <div style="display:flex; align-items:center; margin-top: 6px; gap: 8px;">
-                        <div style="font-size: 22px; letter-spacing: 4px;">💸 📈 🥳</div>
-                        <a href="https://wa.me/5521990260472" target="_blank" style="display:inline-block; font-size:11px; color:#007aff; text-decoration:none; font-weight:600;">💬 Reportar erro</a>
+                    <div class="top-header-emojis" aria-hidden="true">
+                        <span>💸</span><span>📈</span><span>🥳</span>
                     </div>
+                    <a class="top-header-report" href="https://wa.me/5521990260472" target="_blank" rel="noopener">💬 Reportar erro</a>
                 </div>
-                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px; margin-left: 10px;">
+                <div class="top-header-right">
                     <div style="display:flex; align-items:center; gap:8px;">
                         <button id="btn-undo" onclick="window.undoAction()" style="background:transparent; border:none; font-size:22px; cursor:pointer; display:none;" title="Desfazer Ação">↩️</button>
                         <span id="cloud-status" style="font-size:10px; font-weight:bold; color:#8e8e93"></span>
                         <button class="config-icon" onclick="window.abrirConfig()">⚙️</button>
                     </div>
-                    <!-- Saldo no canto direito -->
                     <div id="top-saldo" style="font-size: 18px; font-weight: 800; transition: color 0.3s; text-align:right;">R$ 0,00</div>
                     <button id="btn-top-login" onclick="window.fazerLogout()" style="display:none; padding:6px 12px; border-radius:10px; border:1.5px solid #007aff; color:#007aff; background:white; font-size:11px; font-weight:700; cursor:pointer;">Fazer Login 🔒</button>
                 </div>
@@ -202,6 +257,13 @@
                 </div>
                 <div id="total-gastos-det" style="display:none; background:#fff; margin:-16px -16px 16px -16px; padding:12px 16px; border-bottom:0.5px solid rgba(0,0,0,0.1); border-radius:0 0 16px 16px;"></div>
 
+                <div class="gastos-search-wrap">
+                    <span style="font-size:18px;" aria-hidden="true">🔍</span>
+                    <input type="search" id="gastos-search-inp" placeholder="Buscar por nome ou valor..." oninput="window.onGastosSearch(this.value)" autocomplete="off">
+                </div>
+                <div id="gastos-search-results" class="card" style="display:none; padding:4px 16px; margin-bottom:12px;"></div>
+
+                <div id="gastos-sections-wrap">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; cursor:pointer; padding:8px 0;" onclick="window.toggleAccordion('wrap-fixos', 'chev-fixos')">
                     <span style="font-weight:700; font-size:16px;">Compras Parceladas <span class="chev" id="chev-fixos">▼</span></span>
                 </div>
@@ -221,6 +283,7 @@
                 </div>
                 <div id="wrap-subs" style="display:none">
                     <div class="card" id="gastos-sub-list" style="padding:4px 16px;"></div>
+                </div>
                 </div>
             </div>
 
@@ -374,13 +437,21 @@
 
 <div class="modal-overlay" id="modal-ia">
     <div class="modal-content" style="max-height: 95vh;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
             <h3 style="font-weight:800; font-size:18px;">🤖 IA Analista</h3>
             <button class="btn-close-modal" onclick="window.fecharModal('modal-ia')">&times;</button>
         </div>
-        <p style="font-size:13px; color:#8e8e93; margin-bottom:16px; line-height:1.4;">Nossa inteligência escaneia o padrão dos seus gastos deste mês, cruza com seus investimentos, e descobre para onde seu dinheiro está indo.</p>
-        <button class="btn-primary" style="background:#1c1c1e; color:#fff;" onclick="window.analisarGastosIA()">Analisar Padrões Mágicos ✨</button>
-        <div id="ia-res" style="display:none; margin-top:16px; flex-direction:column; gap:12px;"></div>
+        <div id="ia-menu-wrap">
+            <p style="font-size:13px; color:#8e8e93; margin-bottom:4px; line-height:1.4;">Toque em uma análise. Tudo roda no seu aparelho — nada é enviado para a internet.</p>
+            <div id="ia-menu" class="ia-app-grid"></div>
+        </div>
+        <div id="ia-detalhe" style="display:none;">
+            <div class="ia-detalhe-header">
+                <button type="button" class="ia-btn-voltar" onclick="window.voltarIAMenu()" title="Voltar" aria-label="Voltar">←</button>
+                <h4 id="ia-detalhe-titulo">Análise</h4>
+            </div>
+            <div id="ia-detalhe-body" class="ia-detalhe-body"></div>
+        </div>
     </div>
 </div>
 
@@ -434,6 +505,18 @@
     </div>
 </div>
 
+<div class="modal-overlay" id="modal-assinaturas">
+    <div class="modal-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 style="font-weight:800;">Suas Assinaturas 🔁</h3>
+            <button class="btn-close-modal" onclick="window.fecharModal('modal-assinaturas')">&times;</button>
+        </div>
+        <div id="aviso-assinaturas" style="background:#fff3cd; color:#856404; padding:12px; border-radius:12px; font-size:13px; margin-bottom:15px; line-height:1.4; display:none;"></div>
+        <div id="lista-assinaturas-detalhes" style="display:flex; flex-direction:column; gap:10px; margin-bottom: 20px;"></div>
+        <button class="btn-primary" onclick="window.fecharModal('modal-assinaturas')">Entendi</button>
+    </div>
+</div>
+
 <!-- MODAL DE GASTO v1.11.13: título dinâmico, sem "tipo", número de parcelas, pergunta do mês -->
 <div class="modal-overlay" id="modal-gasto">
   <div class="modal-content">
@@ -441,8 +524,17 @@
       <h3 style="font-weight:800;" id="mg-titulo">Nova Compra Parcelada</h3>
       <button class="btn-close-modal" onclick="window.fecharModal('modal-gasto')">&times;</button>
     </div>
-    <!-- tipo escondido — preenchido programaticamente -->
     <input type="hidden" id="mg-tipo" value="fixo">
+    <input type="hidden" id="mg-edit-id" value="">
+    <input type="hidden" id="mg-edit-orig-tipo" value="">
+    <div class="input-group" id="mg-tipo-edit-row" style="display:none;">
+      <label class="input-label">Tipo do gasto</label>
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button type="button" class="btn-small" id="mg-tbtn-fixo" onclick="window.setMgTipo('fixo')">💳 Parcelado</button>
+        <button type="button" class="btn-small" id="mg-tbtn-var" onclick="window.setMgTipo('var')">🧾 Parcela única</button>
+        <button type="button" class="btn-small" id="mg-tbtn-sub" onclick="window.setMgTipo('sub')">🔁 Assinatura</button>
+      </div>
+    </div>
     <div class="input-group">
       <label class="input-label">Forma de Pagamento</label>
       <select class="form-sel" id="mg-pay" onchange="window.onPayChange()"></select>
@@ -473,19 +565,6 @@
       <label class="input-label">Número de parcelas</label>
       <input type="number" id="mg-numparc" min="1" max="240" placeholder="ex: 12">
       <p style="font-size:11px; color:#8e8e93; margin-top:4px;">O app calcula automaticamente até quando vai.</p>
-    </div>
-
-    <!-- Início (visível para fixo e sub) -->
-    <div class="input-group" id="mg-start-div" style="display:none;">
-      <label class="input-label">Início do Gasto/Parcela (Opcional)</label>
-      <div class="input-row col2">
-        <select class="form-sel" id="mg-start-m">
-          <option value="">Mês Atual</option>
-          <option value="0">Jan</option><option value="1">Fev</option><option value="2">Mar</option><option value="3">Abr</option><option value="4">Mai</option><option value="5">Jun</option><option value="6">Jul</option><option value="7">Ago</option><option value="8">Set</option><option value="9">Out</option><option value="10">Nov</option><option value="11">Dez</option>
-        </select>
-        <select class="form-sel" id="mg-start-y"><option value="">Ano Atual</option></select>
-      </div>
-      <p style="font-size:11px; color:#8e8e93; margin-top:4px;">Deixe em branco para iniciar no mês que você está visualizando.</p>
     </div>
 
     <!-- Pergunta "quando começa a pagar?" — oculto para PIX, visível para fixo e var com cartão -->
@@ -614,17 +693,23 @@
 <div class="modal-overlay" id="modal-changelog">
   <div class="modal-content">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <h3 style="font-weight:800;">Novidades da versão 1.11</h3>
+      <h3 style="font-weight:800;">Novidades — v1.11.16</h3>
       <button class="btn-close-modal" onclick="window.fecharModal('modal-changelog')">&times;</button>
     </div>
-    <div style="font-size:11px; color:#fff; background:#007aff; display:inline-block; padding:3px 10px; border-radius:6px; font-weight:800; margin-bottom:8px;">v1.11.13 — agora</div>
+    <div style="font-size:11px; color:#fff; background:#007aff; display:inline-block; padding:3px 10px; border-radius:6px; font-weight:800; margin-bottom:8px;">v1.11.16 — agora</div>
     <ul style="font-size:14px; color:#3c3c43; line-height:1.5; padding-left:16px; margin-bottom:18px;">
-        <li style="margin-bottom:8px;"><b>📐 Saldo no canto direito:</b> O saldo do mês foi para o lado direito do cabeçalho, para os emojis nunca saírem do lugar.</li>
-        <li style="margin-bottom:8px;"><b>💬 Reportar erro:</b> Botão de reporte agora abre direto no WhatsApp.</li>
-        <li style="margin-bottom:8px;"><b>💳 Popup de gasto renovado:</b> Título dinâmico, sem campo "tipo", campo de número de parcelas, e nova pergunta sobre fechamento do cartão.</li>
-        <li style="margin-bottom:8px;"><b>➕ FAB na aba Gastos:</b> Botão flutuante (+) para selecionar o tipo de gasto antes de abrir o popup.</li>
-        <li style="margin-bottom:8px;"><b>🏷️ Títulos atualizados:</b> "Compras Parceladas", "Compras de Parcela Única" e "Assinaturas 🔁".</li>
-        <li style="margin-bottom:8px;"><b>🤖 IA agora via Gemini:</b> Análise de gastos e compras usando Google Gemini, integrado diretamente no app.</li>
+        <li style="margin-bottom:8px;"><b>🩺 Diagnóstico sem repetição:</b> Resumo no topo; detalhes das parcelas só na lista (maior → menor).</li>
+        <li style="margin-bottom:8px;"><b>🧠 IA local avançada:</b> Cenários, opinião direta e projeções — tudo no aparelho, sem enviar dados.</li>
+        <li style="margin-bottom:8px;"><b>🔒 IA privada:</b> Análise feita no aparelho — seus dados não saem para terceiros.</li>
+        <li style="margin-bottom:8px;"><b>📊 Painel ordenado:</b> Assinaturas por valor; parcelas por quem termina mais tarde.</li>
+        <li style="margin-bottom:8px;"><b>💳 Lista de gastos:</b> Pagamento fixo abaixo do título; parcela/mensal embaixo.</li>
+        <li style="margin-bottom:8px;"><b>✏️ Só edita no lápis:</b> Nome, banco e valor não mudam mais direto na lista — use o ✏️.</li>
+        <li style="margin-bottom:8px;"><b>🔒 IA no aparelho:</b> Diagnóstico legível, histórico dos últimos 3 meses e projeção dos próximos 3.</li>
+        <li style="margin-bottom:8px;"><b>🔁 Popup de assinaturas:</b> No painel, toque no card de assinaturas para ver a lista (como nas parcelas).</li>
+        <li style="margin-bottom:8px;"><b>🔍 Busca em Gastos:</b> Lupa no topo — filtre por nome ou valor.</li>
+        <li style="margin-bottom:8px;"><b>📐 Cabeçalho:</b> Emojis fixos em uma linha; Reportar abaixo; saldo à direita.</li>
+        <li style="margin-bottom:8px;"><b>🔐 Segurança:</b> Chave de API removida do código — sem risco de vazamento no GitHub.</li>
+        <li style="margin-bottom:8px;"><b>➕ FAB, parcelas e cartão:</b> Novo fluxo para cadastrar gastos parcelados, únicos e assinaturas.</li>
     </ul>
     <button class="btn-primary" onclick="window.fecharModal('modal-changelog')">Incrível!</button>
   </div>
@@ -706,25 +791,6 @@
         }
     };
 
-    // Gemini AI — chave pública para uso client-side (apenas leitura)
-    const GEMINI_API_KEY = "AIzaSyD-9tSrke72GpFpTlQyMG1xfWuVXmOqnTs"; // chave demo pública
-    const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-
-    window.callGemini = async function(prompt) {
-        const r = await fetch(GEMINI_URL, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: { responseMimeType: "application/json" }
-            })
-        });
-        if(!r.ok) throw new Error("Gemini HTTP " + r.status);
-        const data = await r.json();
-        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
-        return JSON.parse(text);
-    };
-
     let activeM = new Date().getMonth();
     let activeY = new Date().getFullYear();
     let calYear = activeY;
@@ -755,12 +821,11 @@
         {k:"bonus", l:"Bônus", bg:"#fff3cd", tc:"#856404"}
     ];
 
-    const anoSel = document.getElementById("mg-start-y");
     const anoSelMeta = document.getElementById("mm-prazo-y");
     for(let i = activeY - 5; i <= activeY + 15; i++){
-        anoSel.innerHTML += `<option value="${i}">${i}</option>`;
         anoSelMeta.innerHTML += `<option value="${i}">${i}</option>`;
     }
+    window.gastosSearchQuery = "";
 
     const BASE_FIXOS_PEDRO = [
       { id: "gf_1", n: "📱 Plano Vivo + Seguro", val: 90, pay: "nubank", cat: "Contas Básicas 💡", endM: null, endY: null, hiddenMonths: [] },
@@ -804,6 +869,20 @@
         return false;
     };
     window.isSubscription = gf => gf.endY===null||gf.endY===undefined;
+    window.offsetMonth=function(m,y,delta){let nm=m+delta,ny=y;while(nm<0){nm+=12;ny--;}while(nm>11){nm-=12;ny++;}return{m:nm,y:ny};};
+    window.getPayLabel=function(pay){if(pay==='pix')return'Pix';if(!pay||pay==='none')return'—';const all=BANCOS_BASE.concat(window.S.config.customBanks||[]);const b=all.find(x=>x.id===pay);return b?b.l:pay;};
+    window.renderGastoLinhaHtml=function(opts){
+        const{nome,val,pay,badgeHtml,editTipo,id,onDelete,cor='#1c1c1e'}=opts;
+        const payLbl=window.getPayLabel(pay||'none');
+        const badge=badgeHtml?`<div class="gasto-nome-badge">${badgeHtml}</div>`:'';
+        const del=onDelete==='var'
+            ?`<button class="btn-del" onclick="window.removerGastoVar('${id}')">&times;</button>`
+            :`<button class="btn-del" onclick="window.abrirModalDelete('gastoFixo','${id}')">&times;</button>`;
+        return`<div class="gasto-nome" style="flex:1;min-width:0;"><span class="gasto-nome-titulo" style="color:${cor};">${nome}</span><span class="gasto-nome-pagto">${payLbl}</span>${badge}</div><div class="gasto-ctrl"><div style="font-size:16px;font-weight:700;min-width:72px;text-align:right;color:${cor};">${window.R(val)}</div><button type="button" class="btn-edit-gasto" title="Editar gasto" onclick="window.abrirModalGastoEdit('${editTipo}','${id}')">✏️</button>${del}</div>`;
+    };
+    window.normalizarNomeGasto=function(nome){return(nome||"").replace(/[^a-zA-Z0-9\s\u00C0-\u024F]/g," ").replace(/\s+/g," ").trim().toLowerCase();};
+    window.nomesGastosSimilares=function(a,b){if(!a||!b)return false;if(a===b)return true;if(a.length>4&&b.length>4&&(a.includes(b)||b.includes(a)))return true;const pa=a.split(" ").filter(w=>w.length>2),pb=b.split(" ").filter(w=>w.length>2);return pa.filter(w=>pb.includes(w)).length>=2;};
+    window.agruparItensGastos=function(itens){const grupos=[];itens.forEach(it=>{const ch=window.normalizarNomeGasto(it.nome);let g=grupos.find(x=>window.nomesGastosSimilares(x.chave,ch));if(!g){g={chave:ch,nomeExib:it.nome,valor:0,itens:[],tipos:{},cat:it.cat};grupos.push(g);}g.valor+=it.valor;g.itens.push(it);g.tipos[it.tipo]=true;if(it.valor>=Math.max(...g.itens.map(x=>x.valor)))g.nomeExib=it.nome;});return grupos.sort((a,b)=>b.valor-a.valor);};
     window.fecharModal = id => { document.getElementById(id).style.display="none"; };
     window.abrirChangelog = () => document.getElementById('modal-changelog').style.display='flex';
     window.abrirExplicacaoFechamento = () => document.getElementById('modal-fechamento').style.display='flex';
@@ -1011,35 +1090,83 @@
     window.updateGastoVarVal=(id,valStr)=>{const gv=activeData.gastosV.find(g=>g.id===id);if(gv){gv.val=window.parseMoney(valStr);window.recalc();}};
     window.removerGastoVar=id=>{if(confirm("Tem certeza que deseja apagar este gasto?")){activeData.gastosV=activeData.gastosV.filter(v=>v.id!==id);window.renderView();}};
 
+    window.getGastoTipoLabel=function(tipo){return tipo==='sub'||tipo==='assinatura'?'Assinatura':tipo==='var'||tipo==='unico'?'Parcela única':'Parcelado';};
+    window.getGastoTipoTagClass=function(tipo){return tipo==='sub'||tipo==='assinatura'?'tag-assinatura':tipo==='var'||tipo==='unico'?'tag-unico':'tag-parcelado';};
+    window.gastoMatchesSearch=function(q,nome,val){
+        if(!q)return true;
+        const n=(nome||'').toLowerCase();
+        const vStr=String(val||0).replace('.','');
+        const qNum=q.replace(/[^\d]/g,'');
+        return n.includes(q)||(qNum&&vStr.includes(qNum))||window.R(val).toLowerCase().includes(q);
+    };
+    window.onGastosSearch=function(val){window.gastosSearchQuery=(val||'').trim().toLowerCase();window.buildGastos();};
+
     window.buildGastos=function(){
+        const q=window.gastosSearchQuery||'';
+        const sectionsWrap=document.getElementById('gastos-sections-wrap');
+        const searchPanel=document.getElementById('gastos-search-results');
         const fList=document.getElementById("gastos-fixos-list");
         const vList=document.getElementById("gastos-var-list");
         const sList=document.getElementById("gastos-sub-list");
+        if(q&&searchPanel){
+            sectionsWrap.style.display='none';
+            searchPanel.style.display='block';
+            searchPanel.innerHTML='';
+            const hits=[];
+            (window.S.gastosFixos||[]).filter(gf=>window.isItemActive(gf,activeM,activeY)).forEach(gf=>{
+                const tipo=window.isSubscription(gf)?'sub':'fixo';
+                let ga=activeData.gastosF[gf.id]||{val:gf.val,pay:gf.pay};
+                if(typeof ga==='number')ga={val:ga,pay:'none'};
+                if(window.gastoMatchesSearch(q,gf.n,ga.val))hits.push({tipo,id:gf.id,nome:gf.n,val:ga.val,pay:ga.pay,gf});
+            });
+            (activeData.gastosV||[]).forEach(gv=>{if(window.gastoMatchesSearch(q,gv.n,gv.val))hits.push({tipo:'var',id:gv.id,nome:gv.n,val:gv.val,pay:gv.pay});});
+            if(hits.length===0){searchPanel.innerHTML=`<p style="font-size:13px;color:#8e8e93;padding:12px 0;text-align:center">Nenhum gasto encontrado para "${q}".</p>`;return;}
+            hits.forEach(h=>{
+                const tipoLbl=window.getGastoTipoLabel(h.tipo);
+                const tagCls=window.getGastoTipoTagClass(h.tipo);
+                const el=document.createElement('div');el.className='gasto-row';
+                const editTipo=h.tipo==='sub'?'sub':h.tipo==='var'?'var':'fixo';
+                const badgeSearch=h.tipo==='sub'?`<span class="badge badge-info" style="font-size:10px;background:#f3e5f5;color:#6b2d8b;">🔁 mensal</span>`:(h.tipo==='fixo'&&h.gf&&h.gf.endY?`<span class="badge badge-info" style="font-size:10px">até ${MESES_CURTO[h.gf.endM]}/${String(h.gf.endY).slice(2)}</span>`:`<span class="gasto-tipo-tag ${tagCls}">${tipoLbl}</span>`);
+                el.innerHTML=window.renderGastoLinhaHtml({nome:h.nome,val:h.val,pay:h.pay,badgeHtml:badgeSearch,editTipo,id:h.id,onDelete:h.tipo==='var'?'var':'fixo',cor:h.tipo==='var'?'#007aff':'#1c1c1e'});
+                searchPanel.appendChild(el);
+            });
+            return;
+        }
+        if(sectionsWrap)sectionsWrap.style.display='block';
+        if(searchPanel){searchPanel.style.display='none';searchPanel.innerHTML='';}
         fList.innerHTML="";vList.innerHTML="";if(sList)sList.innerHTML="";
         const allActive=(window.S.gastosFixos||[]).filter(gf=>window.isItemActive(gf,activeM,activeY));
         const parcelasFixas=allActive.filter(gf=>!window.isSubscription(gf));
         const assinaturas=allActive.filter(gf=>window.isSubscription(gf));
-        const renderFixoRow=(gf,container)=>{
-            const el=document.createElement("div");el.className="gasto-row";
+        const renderFixoRow=(gf,container,listTipo)=>{
             let ga=activeData.gastosF[gf.id]||{val:gf.val,pay:gf.pay};
             if(typeof ga==='number')ga={val:ga,pay:'none'};
-            const diff=ga.val-gf.val;const dc=diff>0?"#ff453a":diff<0?"#30d158":"#8e8e93";
-            const dtBadge=gf.endY?`<span class="badge badge-info" style="font-size:10px">até ${MESES_CURTO[gf.endM]}/${String(gf.endY).slice(2)}</span>`:`<span class="badge badge-info" style="font-size:10px;background:#f3e5f5;color:#6b2d8b;">🔁 mensal</span>`;
-            el.innerHTML=`<div class="gasto-nome"><div style="display:flex;align-items:center;gap:6px;"><input type="text" value="${gf.n}" oninput="window.updateGastoFixoNome('${gf.id}',this.value)" style="border:none;background:transparent;font-size:16px;font-weight:600;color:inherit;padding:0;outline:none;width:100%;"></div><div class="gasto-tags">${window.renderPaySelect(gf.id,ga.pay||'none','fixo')}<div class="gasto-orc">Padrão: ${window.R(gf.val)} ${dtBadge}</div></div></div><div class="gasto-ctrl"><input class="gasto-inp" type="text" inputmode="decimal" value="${window.toInput(ga.val)}" placeholder="0,00" oninput="this.value=window.formatMoneyInput(this.value);window.updateGastoFixoVal('${gf.id}',this.value)"><div id="gf-diff-${gf.id}" class="gasto-diff" style="color:${ga.val>0?dc:"#c7c7cc"}">${ga.val>0?(diff>=0?"+":"")+window.R(Math.abs(diff)).replace("R$ ",""):"—"}</div><button class="btn-del" onclick="window.abrirModalDelete('gastoFixo','${gf.id}')">&times;</button></div>`;
+            if(!window.gastoMatchesSearch(q,gf.n,ga.val))return;
+            const editTipo=listTipo==='sub'?'sub':'fixo';
+            const el=document.createElement("div");el.className="gasto-row";
+            const dtBadge=listTipo==='sub'
+                ?`<span class="badge badge-info" style="font-size:10px;background:#f3e5f5;color:#6b2d8b;">🔁 Cobrança mensal</span>`
+                :(gf.endY!=null&&gf.endY!==undefined
+                    ?`<span class="badge badge-info" style="font-size:10px">Última parcela em ${MESES_CURTO[gf.endM]}/${String(gf.endY).slice(2)}</span>`
+                    :`<span class="badge badge-info" style="font-size:10px">Compra parcelada</span>`);
+            el.innerHTML=window.renderGastoLinhaHtml({nome:gf.n,val:ga.val,pay:ga.pay,badgeHtml:dtBadge,editTipo,id:gf.id,onDelete:'fixo'});
             container.appendChild(el);
         };
-        if(parcelasFixas.length===0)fList.innerHTML=`<p style="font-size:13px;color:#8e8e93;padding:12px 0;text-align:center">Nenhuma compra parcelada ativa neste mês.</p>`;
-        else parcelasFixas.forEach(gf=>renderFixoRow(gf,fList));
+        let fc=0;parcelasFixas.forEach(gf=>{const b=fList.children.length;renderFixoRow(gf,fList,'fixo');if(fList.children.length>b)fc++;});
+        if(fc===0)fList.innerHTML=`<p style="font-size:13px;color:#8e8e93;padding:12px 0;text-align:center">${q?'Nenhuma parcela encontrada.':'Nenhuma compra parcelada ativa neste mês.'}</p>`;
         if(sList){
-            if(assinaturas.length===0)sList.innerHTML=`<p style="font-size:13px;color:#8e8e93;padding:12px 0;text-align:center">Nenhuma assinatura cadastrada.</p>`;
-            else assinaturas.forEach(gf=>renderFixoRow(gf,sList));
+            let sc=0;assinaturas.forEach(gf=>{const b=sList.children.length;renderFixoRow(gf,sList,'sub');if(sList.children.length>b)sc++;});
+            if(sc===0)sList.innerHTML=`<p style="font-size:13px;color:#8e8e93;padding:12px 0;text-align:center">${q?'Nenhuma assinatura encontrada.':'Nenhuma assinatura cadastrada.'}</p>`;
         }
-        if(activeData.gastosV.length===0)vList.innerHTML=`<p style="font-size:13px;color:#8e8e93;padding:12px 0;text-align:center">Nenhuma compra de parcela única.</p>`;
-        else activeData.gastosV.forEach(gv=>{
+        let vc=0;
+        activeData.gastosV.forEach(gv=>{
+            if(!window.gastoMatchesSearch(q,gv.n,gv.val))return;
+            vc++;
             const el=document.createElement("div");el.className="gasto-row";
-            el.innerHTML=`<div class="gasto-nome"><div style="display:flex;align-items:center;gap:6px;"><input type="text" value="${gv.n}" oninput="window.updateGastoVarNome('${gv.id}',this.value)" style="border:none;background:transparent;font-size:16px;font-weight:600;color:#007aff;padding:0;outline:none;width:100%;"></div><div class="gasto-tags">${window.renderPaySelect(gv.id,gv.pay||'none','var')}</div></div><div class="gasto-ctrl"><input type="text" inputmode="decimal" value="${window.toInput(gv.val)}" placeholder="0,00" oninput="this.value=window.formatMoneyInput(this.value);window.updateGastoVarVal('${gv.id}',this.value)" class="gasto-inp" style="width:90px;text-align:right;"><button class="btn-del" onclick="window.removerGastoVar('${gv.id}')">&times;</button></div>`;
+            el.innerHTML=window.renderGastoLinhaHtml({nome:gv.n,val:gv.val,pay:gv.pay,badgeHtml:'<span class="gasto-tipo-tag tag-unico">Parcela única neste mês</span>',editTipo:'var',id:gv.id,onDelete:'var',cor:'#007aff'});
             vList.appendChild(el);
         });
+        if(vc===0)vList.innerHTML=`<p style="font-size:13px;color:#8e8e93;padding:12px 0;text-align:center">${q?'Nenhuma compra única encontrada.':'Nenhuma compra de parcela única.'}</p>`;
     };
 
     // SUGERIR CATEGORIA
@@ -1058,27 +1185,34 @@
         catSelect.value=cat;
     };
 
-    // MODAL GASTO: abre com título correto, sem campo tipo, com número de parcelas
-    window.abrirModalGasto=function(tipo='fixo'){
-        document.getElementById('mg-tipo').value=tipo;
-        // Título dinâmico
+    window.configureMgTipoFields=function(tipo){
         const titulos={fixo:"Nova Compra Parcelada",var:"Nova Compra (Parcela Única)",sub:"Nova Assinatura 🔁"};
-        document.getElementById('mg-titulo').textContent=titulos[tipo]||"Novo Gasto";
-        // Label do valor
+        const editId=document.getElementById('mg-edit-id').value;
+        if(editId){
+            const t={fixo:"Editar — Parcelado",var:"Editar — Parcela única",sub:"Editar — Assinatura 🔁"};
+            document.getElementById('mg-titulo').textContent=t[tipo]||"Editar Gasto";
+        }else document.getElementById('mg-titulo').textContent=titulos[tipo]||"Novo Gasto";
         document.getElementById('label-mg-val').textContent=(tipo==='fixo')?'Valor por Parcela (R$)':(tipo==='sub')?'Valor Mensal (R$)':'Valor Total (R$)';
-        // Mostrar/ocultar campos
         document.getElementById('mg-numparc-div').style.display=(tipo==='fixo')?'block':'none';
-        document.getElementById('mg-start-div').style.display=(tipo==='fixo'||tipo==='sub')?'block':'none';
-        document.getElementById('mg-mes-pgto-div').style.display='none'; // será controlado por onPayChange
-        // Limpar campos
+        document.getElementById('mg-mes-pgto-div').style.display='none';
+        ['fixo','var','sub'].forEach(t=>{
+            const b=document.getElementById('mg-tbtn-'+t);
+            if(b){b.classList.toggle('active',t===tipo);if(t===tipo){b.style.background='#007aff';b.style.color='#fff';b.style.borderColor='#007aff';}else{b.style.background='';b.style.color='';b.style.borderColor='';}}
+        });
+        window.onPayChange();
+    };
+    window.setMgTipo=function(tipo){document.getElementById('mg-tipo').value=tipo;window.configureMgTipoFields(tipo);};
+
+    window.abrirModalGasto=function(tipo='fixo'){
+        document.getElementById('mg-edit-id').value='';
+        document.getElementById('mg-edit-orig-tipo').value='';
+        document.getElementById('mg-tipo-edit-row').style.display='none';
+        document.getElementById('mg-tipo').value=tipo;
         document.getElementById('mg-nome').value='';
         document.getElementById('mg-cat').value='Outros 🏷️';
         document.getElementById('mg-val').value='';
-        document.getElementById('mg-start-m').value='';
-        document.getElementById('mg-start-y').value='';
         if(document.getElementById('mg-numparc'))document.getElementById('mg-numparc').value='';
         document.getElementById('mg-pay').value='none';
-        // Botão próximo mês: nome dinâmico
         let proxM=activeM+1,proxY=activeY;
         if(proxM>11){proxM=0;proxY++;}
         const btnProx=document.getElementById('mg-pgto-prox');
@@ -1086,8 +1220,91 @@
         window.mgMesPgto='este';
         document.getElementById('mg-pgto-este').classList.add('active');
         if(btnProx)btnProx.classList.remove('active');
+        window.configureMgTipoFields(tipo);
         window.atualizarSelectsPagamento();
         document.getElementById('modal-gasto').style.display='flex';
+    };
+
+    window.abrirModalGastoEdit=function(tipo,id){
+        document.getElementById('mg-edit-id').value=id;
+        document.getElementById('mg-edit-orig-tipo').value=tipo;
+        document.getElementById('mg-tipo-edit-row').style.display='block';
+        document.getElementById('mg-tipo').value=tipo;
+        let nome='',cat='Outros 🏷️',val=0,pay='none',numParc='';
+        if(tipo==='var'){
+            const gv=(activeData.gastosV||[]).find(g=>g.id===id);
+            if(!gv)return alert('Gasto não encontrado neste mês.');
+            nome=gv.n;cat=gv.cat||cat;val=gv.val;pay=gv.pay||'none';
+        }else{
+            const gf=(window.S.gastosFixos||[]).find(g=>g.id===id);
+            if(!gf)return alert('Gasto não encontrado.');
+            nome=gf.n;cat=gf.cat||cat;val=gf.val;pay=gf.pay||'none';
+            if(tipo==='fixo'&&gf.endY!=null&&gf.endY!==undefined){
+                const totalMeses=(gf.endY-gf.startY)*12+(gf.endM-gf.startM)+1;
+                if(totalMeses>0)numParc=String(totalMeses);
+            }
+        }
+        document.getElementById('mg-nome').value=nome.replace(/^[\uD800-\uDBFF][\uDC00-\uDFFF]\s*/u,'').trim()||nome;
+        document.getElementById('mg-cat').value=cat;
+        document.getElementById('mg-val').value=window.toInput(val);
+        document.getElementById('mg-numparc').value=numParc;
+        window.mgMesPgto='este';
+        document.getElementById('mg-pgto-este').classList.add('active');
+        const btnProx=document.getElementById('mg-pgto-prox');
+        if(btnProx)btnProx.classList.remove('active');
+        window.configureMgTipoFields(tipo);
+        window.atualizarSelectsPagamento();
+        document.getElementById('mg-pay').value=pay;
+        window.onPayChange();
+        document.getElementById('modal-gasto').style.display='flex';
+    };
+
+    window.removerGastoCompleto=function(tipo,id){
+        if(tipo==='var'){
+            Object.keys(window.S.dataByMonth).forEach(k=>{
+                const md=window.S.dataByMonth[k];
+                if(md.gastosV)md.gastosV=md.gastosV.filter(g=>g.id!==id);
+            });
+        }else{
+            window.S.gastosFixos=(window.S.gastosFixos||[]).filter(g=>g.id!==id);
+            Object.keys(window.S.dataByMonth).forEach(k=>{if(window.S.dataByMonth[k].gastosF)delete window.S.dataByMonth[k].gastosF[id];});
+        }
+    };
+
+    window.calcStartMesPgto=function(tipo,pay){
+        let startM=activeM,startY=activeY;
+        if(window.mgMesPgto==='prox'&&pay!=='pix'&&pay!=='none'&&(tipo==='fixo'||tipo==='var')){
+            startM=activeM+1;startY=activeY;
+            if(startM>11){startM=0;startY++;}
+        }
+        return {startM,startY};
+    };
+
+    window.criarGastoFixoOuSub=function(tipo,emojiName,val,pay,cat,startM,startY,endM,endY,idOpt){
+        const id=idOpt||('gf_'+Date.now());
+        const item={id,n:emojiName,val,pay,cat,startM,startY,endM,endY,hiddenMonths:[]};
+        window.S.gastosFixos.push(item);
+        Object.keys(window.S.dataByMonth).forEach(k=>{
+            const[km,ky]=k.split('-').map(Number);
+            if(window.isItemActive(item,km,ky)){
+                if(!window.S.dataByMonth[k].gastosF)window.S.dataByMonth[k].gastosF={};
+                window.S.dataByMonth[k].gastosF[id]={val,pay};
+            }
+        });
+        return id;
+    };
+
+    window.criarGastoVar=function(emojiName,val,pay,cat,startM,startY,idOpt){
+        const id=idOpt||('gv_'+Date.now());
+        const gv={id,n:emojiName,val,pay,cat};
+        const key=`${startM}-${startY}`;
+        if(key===activeKey)activeData.gastosV.push(gv);
+        else{
+            if(!window.S.dataByMonth[key])window.S.dataByMonth[key]={semanas:[{n:"Receita do Mês",brl:0,usd:0,cam:5.90,camData:"",camDataRaw:"",tipos:{}}],gastosF:{},gastosV:[],metasAcum:{}};
+            if(!window.S.dataByMonth[key].gastosV)window.S.dataByMonth[key].gastosV=[];
+            window.S.dataByMonth[key].gastosV.push(gv);
+        }
+        return id;
     };
 
     window.salvarGasto=function(){
@@ -1099,56 +1316,37 @@
         if(!nome||val<=0)return alert('Preencha um nome e um valor maior que zero.');
         const emojiName=window.autoEmoji(nome);
         window.S.catDict[emojiName.toLowerCase()]=cat;
+        const editId=document.getElementById('mg-edit-id').value;
+        const origTipo=document.getElementById('mg-edit-orig-tipo').value;
+        const {startM,startY}=window.calcStartMesPgto(tipo,pay);
 
-        // Determinar mês de início considerando "próximo mês"
-        let startM=activeM,startY=activeY;
-        const stM=document.getElementById('mg-start-m').value;
-        const stY=document.getElementById('mg-start-y').value;
-        if(stM!==''&&stY!==''){startM=parseInt(stM);startY=parseInt(stY);}
-        else if(window.mgMesPgto==='prox'&&pay!=='pix'&&pay!=='none'&&(tipo==='fixo'||tipo==='var')){
-            // Redireciona para o próximo mês
-            startM=activeM+1;startY=activeY;
-            if(startM>11){startM=0;startY++;}
-        }
-
-        if(tipo==='fixo'){
-            // Calcular endM/endY a partir do número de parcelas
+        if(editId){
+            let sm=startM,sy=startY;
+            if(origTipo!=='var'){
+                const oldGf=(window.S.gastosFixos||[]).find(g=>g.id===editId);
+                if(oldGf&&(tipo==='fixo'||tipo==='sub')){sm=oldGf.startM;sy=oldGf.startY;}
+            }else if(tipo==='var'){sm=activeM;sy=activeY;}
+            window.removerGastoCompleto(origTipo,editId);
+            startM=sm;startY=sy;
+            if(tipo==='fixo'){
+                let endM=null,endY=null;
+                const numParc=parseInt(document.getElementById('mg-numparc').value);
+                if(numParc>=1){let totalMeses=startM+(numParc-1);endY=startY+Math.floor(totalMeses/12);endM=totalMeses%12;}
+                window.criarGastoFixoOuSub('fixo',emojiName,val,pay,cat,startM,startY,endM,endY,editId);
+            }else if(tipo==='sub'){
+                window.criarGastoFixoOuSub('sub',emojiName,val,pay,cat,startM,startY,null,null,editId);
+            }else{
+                window.criarGastoVar(emojiName,val,pay,cat,startM,startY,editId);
+            }
+        }else if(tipo==='fixo'){
             let endM=null,endY=null;
-            const numParcStr=document.getElementById('mg-numparc').value;
-            const numParc=parseInt(numParcStr);
-            if(numParc>=1){
-                // A última parcela = startM + (numParc-1) meses
-                let totalMeses=startM+(numParc-1);
-                endY=startY+Math.floor(totalMeses/12);
-                endM=totalMeses%12;
-            }
-            const id='gf_'+Date.now();
-            window.S.gastosFixos.push({id,n:emojiName,val,pay,cat,startM,startY,endM,endY,hiddenMonths:[]});
-            Object.keys(window.S.dataByMonth).forEach(k=>{
-                const[km,ky]=k.split('-').map(Number);
-                if(window.isItemActive({startM,startY,endM,endY,hiddenMonths:[]},km,ky)){
-                    window.S.dataByMonth[k].gastosF[id]={val,pay};
-                }
-            });
-        } else if(tipo==='sub'){
-            const id='gf_'+Date.now();
-            window.S.gastosFixos.push({id,n:emojiName,val,pay,cat,startM,startY,endM:null,endY:null,hiddenMonths:[]});
-            Object.keys(window.S.dataByMonth).forEach(k=>{
-                const[km,ky]=k.split('-').map(Number);
-                if(window.isItemActive({startM,startY,endM:null,endY:null,hiddenMonths:[]},km,ky)){
-                    window.S.dataByMonth[k].gastosF[id]={val,pay};
-                }
-            });
-        } else {
-            // var: parcela única. Se mês próximo, adiciona no próximo mês
-            if(window.mgMesPgto==='prox'&&pay!=='pix'&&pay!=='none'){
-                const proxKey=`${startM}-${startY}`;
-                if(!window.S.dataByMonth[proxKey])window.S.dataByMonth[proxKey]={semanas:[{n:"Receita do Mês",brl:0,usd:0,cam:5.90,camData:"",camDataRaw:"",tipos:{}}],gastosF:{},gastosV:[],metasAcum:{}};
-                if(!window.S.dataByMonth[proxKey].gastosV)window.S.dataByMonth[proxKey].gastosV=[];
-                window.S.dataByMonth[proxKey].gastosV.push({id:'gv_'+Date.now(),n:emojiName,val,pay,cat});
-            } else {
-                activeData.gastosV.push({id:'gv_'+Date.now(),n:emojiName,val,pay,cat});
-            }
+            const numParc=parseInt(document.getElementById('mg-numparc').value);
+            if(numParc>=1){let totalMeses=startM+(numParc-1);endY=startY+Math.floor(totalMeses/12);endM=totalMeses%12;}
+            window.criarGastoFixoOuSub('fixo',emojiName,val,pay,cat,startM,startY,endM,endY);
+        }else if(tipo==='sub'){
+            window.criarGastoFixoOuSub('sub',emojiName,val,pay,cat,startM,startY,null,null);
+        }else{
+            window.criarGastoVar(emojiName,val,pay,cat,startM,startY);
         }
         window.fecharModal('modal-gasto');window.renderView();window.scheduleSync();
     };
@@ -1280,8 +1478,9 @@
     // ===== PARCELAS / ASSINATURAS =====
     window.buildParcelas=function(){
         const div=document.getElementById("painel-parcelas");
-        const ativas=(window.S.gastosFixos||[]).filter(gf=>gf.endY!==null&&gf.endY!==undefined&&window.isItemActive(gf,activeM,activeY));
+        let ativas=(window.S.gastosFixos||[]).filter(gf=>gf.endY!==null&&gf.endY!==undefined&&window.isItemActive(gf,activeM,activeY));
         if(ativas.length===0){div.innerHTML="";return;}
+        ativas.sort((a,b)=>(b.endY*12+b.endM)-(a.endY*12+a.endM));
         let maxDate=0,dlStr="";let total=0;
         const listaHtml=ativas.map(p=>{const d=new Date(p.endY,p.endM,1).getTime();if(d>maxDate){maxDate=d;dlStr=`${MESES_CURTO[p.endM]}/${p.endY}`;}const valAtual=(activeData.gastosF[p.id]&&typeof activeData.gastosF[p.id]==='object')?activeData.gastosF[p.id].val:(activeData.gastosF[p.id]||p.val);total+=valAtual;return`<div style="display:flex;justify-content:space-between;align-items:center;font-size:14px;border-bottom:0.5px solid #e5e5ea;padding-bottom:8px;"><span style="font-weight:600;color:#3c3c43;">${p.n}</span><div style="text-align:right;"><div style="font-size:13px;font-weight:700;color:#ff453a;">${window.R(valAtual)}</div><div style="font-size:11px;color:#8e8e93;">Até ${MESES_CURTO[p.endM]}/${p.endY}</div></div></div>`;}).join('');
         const alerta=ativas.length>3;
@@ -1291,11 +1490,16 @@
     };
     window.buildAssinaturas=function(){
         const div=document.getElementById("painel-assinaturas");if(!div)return;
-        const ativas=(window.S.gastosFixos||[]).filter(gf=>window.isSubscription(gf)&&window.isItemActive(gf,activeM,activeY));
+        let ativas=(window.S.gastosFixos||[]).filter(gf=>window.isSubscription(gf)&&window.isItemActive(gf,activeM,activeY));
         if(ativas.length===0){div.innerHTML="";return;}
-        let total=0;ativas.forEach(s=>{const v=(activeData.gastosF[s.id]&&typeof activeData.gastosF[s.id]==='object')?activeData.gastosF[s.id].val:(activeData.gastosF[s.id]||s.val);total+=v;});
+        ativas=ativas.map(s=>{const valAtual=(activeData.gastosF[s.id]&&typeof activeData.gastosF[s.id]==='object')?activeData.gastosF[s.id].val:(activeData.gastosF[s.id]||s.val);return{s,valAtual};}).sort((a,b)=>b.valAtual-a.valAtual);
+        let total=0;ativas.forEach(({valAtual})=>{total+=valAtual;});
         const alerta=ativas.length>=5;
-        div.innerHTML=`<div class="card" style="cursor:pointer;border:${alerta?'1.5px solid #ffcc00':'none'};background:${alerta?'#fffdf0':'inherit'}" onclick="window.goTo('gastos');setTimeout(()=>{const el=document.getElementById('wrap-subs');if(el&&el.style.display==='none')window.toggleAccordion('wrap-subs','chev-subs');},200);"><div style="display:flex;justify-content:space-between;align-items:center;"><div style="display:flex;align-items:center;gap:12px;"><span style="font-size:24px;">🔁</span><div><div style="font-size:14px;font-weight:800;color:${alerta?'#856404':'#1c1c1e'};">${ativas.length} Assinatura${ativas.length>1?'s':''} Ativa${ativas.length>1?'s':''}</div><div style="font-size:11px;color:#8e8e93;">Recorrentes sem data fim</div></div></div><div style="text-align:right;"><div style="font-size:16px;font-weight:800;color:#ff453a;">${window.R(total)}</div><div style="font-size:10px;color:#8e8e93;">total/mês</div></div></div></div>`;
+        const listaHtml=ativas.map(({s,valAtual})=>`<div style="display:flex;justify-content:space-between;align-items:center;font-size:14px;border-bottom:0.5px solid #e5e5ea;padding-bottom:8px;"><span style="font-weight:600;color:#3c3c43;">${s.n}</span><div style="text-align:right;"><div style="font-size:13px;font-weight:700;color:#ff453a;">${window.R(valAtual)}</div><div style="font-size:11px;color:#8e8e93;">Todo mês</div></div></div>`).join('');
+        div.innerHTML=`<div class="card" style="cursor:pointer;border:${alerta?'1.5px solid #ffcc00':'none'};background:${alerta?'#fffdf0':'inherit'}" onclick="window.abrirModalAssinaturas()"><div style="display:flex;justify-content:space-between;align-items:center;"><div style="display:flex;align-items:center;gap:12px;"><span style="font-size:24px;">${alerta?'⚠️':'🔁'}</span><div><div style="font-size:14px;font-weight:800;color:${alerta?'#856404':'#1c1c1e'};">${ativas.length} Assinatura${ativas.length>1?'s':''} Ativa${ativas.length>1?'s':''}</div><div style="font-size:11px;color:#8e8e93;">Recorrentes sem data fim</div></div></div><div style="text-align:right;"><div style="font-size:16px;font-weight:800;color:#ff453a;">${window.R(total)}</div><div style="font-size:10px;color:#8e8e93;">total/mês</div></div></div></div>`;
+        const ml=document.getElementById("lista-assinaturas-detalhes");const ma=document.getElementById("aviso-assinaturas");
+        if(ml)ml.innerHTML=listaHtml;
+        if(ma){if(alerta){ma.innerHTML="🚨 <b>Muitas assinaturas!</b><br>Você tem 5 ou mais cobranças fixas por mês. Vale revisar o que ainda faz sentido manter. 🛑";ma.style.display="block";}else ma.style.display="none";}
     };
 
     // ===== CALENDÁRIO =====
@@ -1350,52 +1554,285 @@
         if(window.currentHistView==='chart')window.renderHistChart();
     };
 
-    // ===== IA (GEMINI) =====
-    window.abrirModalIA=()=>{document.getElementById('ia-res').style.display='none';document.getElementById('modal-ia').style.display='flex';};
+    // ===== IA local (privada — sem envio à nuvem) =====
+    window.IA_APP_IDS=['diagnostico','opiniao','indicadores','cenarios','acoes','tendencia'];
+    window.IA_APP_DEFS={
+        diagnostico:{titulo:'Diagnóstico',emoji:'🩺',cor:'#007aff',bg:'#e8f4fd',bd:'#b3d7ff'},
+        opiniao:{titulo:'Opinião',emoji:'💬',cor:'#5856d6',bg:'#eeeef9',bd:'#c7c5f5'},
+        indicadores:{titulo:'Indicadores',emoji:'📊',cor:'#00897b',bg:'#e0f2f1',bd:'#80cbc4'},
+        cenarios:{titulo:'Cenários',emoji:'📋',cor:'#e67e22',bg:'#fff3e0',bd:'#ffcc80'},
+        acoes:{titulo:'Ações',emoji:'🎯',cor:'#007aff',bg:'#e3f0ff',bd:'#64b5f6'},
+        tendencia:{titulo:'Tendências',emoji:'📅',cor:'#3c3c43',bg:'#f9f9f9',bd:'#e5e5ea'}
+    };
+    window.getIAAppsDisponiveis=function(){
+        return window.IA_APP_IDS.map(id=>({id,...window.IA_APP_DEFS[id]}));
+    };
+    window.abrirModalIA=function(){
+        document.getElementById('modal-ia').style.display='flex';
+        window._iaCacheRes=window.analisarGastosLocal();
+        window.voltarIAMenu();
+    };
+    window.voltarIAMenu=function(){
+        document.getElementById('ia-menu-wrap').style.display='block';
+        document.getElementById('ia-detalhe').style.display='none';
+        window.renderIAMenu(window._iaCacheRes);
+    };
+    window.renderIAMenu=function(res){
+        const menu=document.getElementById('ia-menu');
+        if(!menu)return;
+        const apps=window.getIAAppsDisponiveis();
+        menu.innerHTML=apps.map(a=>`<button type="button" class="ia-app-tile" style="background:${a.bg};border:1.5px solid ${a.bd};" onclick="window.abrirIADetalhe('${a.id}')"><span class="ia-app-tile-emoji">${a.emoji}</span><span class="ia-app-tile-titulo" style="color:${a.cor};">${a.titulo}</span></button>`).join('');
+    };
+    window.abrirIADetalhe=function(id){
+        const def=window.IA_APP_DEFS[id];
+        if(!def||!window._iaCacheRes)return;
+        document.getElementById('ia-menu-wrap').style.display='none';
+        document.getElementById('ia-detalhe').style.display='block';
+        document.getElementById('ia-detalhe-titulo').innerHTML=`${def.emoji} ${def.titulo}`;
+        document.getElementById('ia-detalhe-body').innerHTML=window.renderIAConteudo(id,window._iaCacheRes);
+    };
+    window.renderIAConteudo=function(id,res){
+        const corCenario={risco:{bg:'#ffe5e5',bd:'#ff453a',tc:'#c0392b',ico:'🚨'},atencao:{bg:'#fff3cd',bd:'#ffcc00',tc:'#856404',ico:'⚠️'},oportunidade:{bg:'#d1f7e0',bd:'#1a6b3a',tc:'#1a6b3a',ico:'✅'},neutro:{bg:'#f2f2f7',bd:'#e5e5ea',tc:'#3c3c43',ico:'ℹ️'}};
+        const diag=res.diagnostico||'';
+        const acoes=res.acoes||[];
+        if(id==='diagnostico'){
+            let h=`<div class="ia-bloco" style="background:#e8f4fd;border:1.5px solid #b3d7ff;">${diag}</div>`;
+            if(res.maior_categoria)h+=`<div class="ia-bloco" style="background:#fff;border:1px solid #e5e5ea;">Categoria que mais pesa: <b>${res.maior_categoria.nome}</b> (${window.R(res.maior_categoria.valor)}).</div>`;
+            if(res.resumo_parcelas){
+                h+=`<div class="ia-bloco" style="background:#f3e5f5;border:1px solid #ce93d8;"><div style="font-size:12px;font-weight:800;color:#6b2d8b;margin-bottom:8px;">💳 ${res.resumo_parcelas.texto}</div>`;
+                res.resumo_parcelas.itens.forEach(p=>{h+=`<div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:0.5px solid rgba(0,0,0,0.06);"><span>${p.nome}</span><b>${window.R(p.valor)}/mês</b></div>`;});
+                h+='</div>';
+            }
+            if(res.parcelas_alerta)h+=`<div class="ia-bloco" style="background:#ffe5e5;border:1px solid #ff453a;font-size:13px;">${res.parcelas_alerta}</div>`;
+            return h;
+        }
+        if(id==='opiniao')return`<div class="ia-bloco" style="background:#eeeef9;border:1.5px solid #c7c5f5;">${res.opiniao||'Cadastre mais dados neste mês para uma opinião mais precisa.'}</div>`;
+        if(id==='indicadores'){
+            let h='';
+            (res.indicadores||[]).forEach(ind=>{h+=`<div class="ia-bloco" style="background:#fff;border:1px solid #e5e5ea;display:flex;justify-content:space-between;align-items:center;"><span style="font-weight:600;color:#3c3c43;">${ind.rotulo}</span><span style="font-size:20px;font-weight:800;color:${ind.cor};">${ind.valor}</span></div>`;});
+            return h||'<p style="color:#8e8e93;">Cadastre receitas e gastos para ver os indicadores.</p>';
+        }
+        if(id==='cenarios'){
+            if(!(res.cenarios||[]).length)return'<p style="color:#8e8e93;">Nenhum cenário especial neste mês — situação dentro do padrão.</p>';
+            let h='';
+            res.cenarios.forEach(c=>{const st=corCenario[c.tipo]||corCenario.neutro;h+=`<div class="ia-bloco" style="background:${st.bg};border:1px solid ${st.bd};"><div style="font-size:12px;font-weight:800;color:${st.tc};margin-bottom:6px;">${st.ico} ${c.titulo}</div><div style="font-size:13px;">${c.texto}</div></div>`;});
+            return h;
+        }
+        if(id==='tendencia')return`<div class="ia-bloco" style="background:#f9f9f9;border:1px solid #e5e5ea;"><div style="font-size:11px;font-weight:800;color:#8e8e93;margin-bottom:8px;">ÚLTIMOS MESES</div><div style="margin-bottom:14px;">${res.historico_texto||'—'}</div><div style="font-size:11px;font-weight:800;color:#8e8e93;margin-bottom:8px;">PRÓXIMOS MESES</div><div>${res.projecao_texto||'—'}</div></div>`;
+        if(id==='acoes'){
+            if(!acoes.length)return'<p style="color:#8e8e93;">Nenhuma ação urgente — continue registrando seus gastos.</p>';
+            let h='';
+            acoes.forEach((a,idx)=>{h+=`<div class="ia-bloco" style="background:#e3f0ff;border:1px solid #64b5f6;display:flex;gap:10px;"><div style="background:#007aff;color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;">${idx+1}</div><div><div style="font-weight:700;">${a.titulo}</div><div style="font-size:13px;margin-top:4px;">${a.detalhe}</div></div></div>`;});
+            return h;
+        }
+        return '<p style="color:#8e8e93;">Análise não disponível.</p>';
+    };
     window.abrirModalComprar=()=>{document.getElementById('c-nome').value='';document.getElementById('c-valor').value='';document.getElementById('c-parcelas').value='1';document.getElementById('compra-res').innerHTML='';window.setNeed('sim');document.getElementById('modal-comprar').style.display='flex';};
 
-    window.analisarGastosIA=async function(){
-        const resDiv=document.getElementById("ia-res");resDiv.style.display="flex";
-        resDiv.innerHTML=`<div style="text-align:center;padding:20px;font-size:14px;color:#8e8e93;">🤖 Consultando Gemini para escanear os padrões e gerar sugestões... ✨</div>`;
-        const{tBRL,tReal,tAp,saldo}=window.calcTotals();
-        const gastos=[];
-        (window.S.gastosFixos||[]).forEach(gf=>{if(!window.isItemActive(gf,activeM,activeY))return;const cur=activeData.gastosF[gf.id];const val=(cur&&typeof cur==='object')?cur.val:(cur||gf.val);if(val>0)gastos.push({nome:gf.n,valor:val,tipo:window.isSubscription(gf)?'assinatura':'parcela',categoria:gf.cat||''});});
-        (activeData.gastosV||[]).forEach(g=>{if(g.val>0)gastos.push({nome:g.n,valor:g.val,tipo:'variavel',categoria:g.cat||''}); });
-        const prompt=`Você é um consultor financeiro pessoal brasileiro. Analise os dados financeiros abaixo e retorne um JSON com o seguinte schema:
-{
-  "diagnostico": "string (2-3 frases sobre a saúde financeira)",
-  "vilao": "string (maior gasto ou categoria problemática)",
-  "assinaturas_sugeridas_cortar": [{"nome":"string","valor_mensal":number,"motivo":"string","economia_anual":number}],
-  "parcelas_alerta": "string ou null",
-  "acoes": [{"titulo":"string","detalhe":"string"}],
-  "impacto_saldo_estimado": number
-}
-
-Dados do mês ${MESES_CURTO[activeM]}/${activeY}:
-- Receita: R$ ${tBRL.toFixed(2)}
-- Gastos: R$ ${tReal.toFixed(2)}
-- Aportes: R$ ${tAp.toFixed(2)}
-- Saldo: R$ ${saldo.toFixed(2)}
-- Gastos detalhados: ${JSON.stringify(gastos.slice(0,40))}
-
-Seja direto e use valores reais. Máximo 3 ações. Responda APENAS o JSON.`;
-        try {
-            const res=await window.callGemini(prompt);
-            window.renderIAResult(res);
-        } catch(e) {
-            resDiv.innerHTML=`<div style="background:#ffe5e5;color:#c0392b;padding:14px;border-radius:12px;font-size:13px;">❌ Erro ao consultar a IA: ${e.message}<br><br>Verifique sua conexão e tente novamente.</div>`;
+    window.mesesEntre=function(m1,y1,m2,y2){return(y2-y1)*12+(m2-m1);};
+    window.coletarContextoFinanceiro=function(){
+        const{tBRL,tReal,tAp,saldo,hasData,realFixos,realVar}=window.calcTotals();
+        const itens=[];
+        (window.S.gastosFixos||[]).forEach(gf=>{
+            if(!window.isItemActive(gf,activeM,activeY))return;
+            const cur=activeData.gastosF[gf.id];
+            const val=(cur&&typeof cur==='object')?cur.val:(cur||gf.val);
+            if(val<=0)return;
+            const parcelado=!window.isSubscription(gf);
+            itens.push({nome:gf.n,valor:val,tipo:parcelado?'parcelado':'assinatura',cat:gf.cat||'Outros 🏷️',gf});
+        });
+        (activeData.gastosV||[]).forEach(g=>{if(g.val>0)itens.push({nome:g.n,valor:g.val,tipo:'unico',cat:g.cat||'Outros 🏷️'});});
+        const parcItens=itens.filter(i=>i.tipo==='parcelado');
+        const assinItens=itens.filter(i=>i.tipo==='assinatura');
+        const unicoItens=itens.filter(i=>i.tipo==='unico');
+        const parcTotal=parcItens.reduce((a,i)=>a+i.valor,0);
+        const assinTotal=assinItens.reduce((a,i)=>a+i.valor,0);
+        const unicoTotal=unicoItens.reduce((a,i)=>a+i.valor,0);
+        const fixosTotal=parcTotal+assinTotal;
+        const pctLivre=tBRL>0?Math.round(saldo/tBRL*100):0;
+        const pctFixos=tBRL>0?Math.round(fixosTotal/tBRL*100):0;
+        const pctParc=tBRL>0?Math.round(parcTotal/tBRL*100):0;
+        const pctVar=tBRL>0?Math.round(realVar/tBRL*100):0;
+        const pctAp=tBRL>0?Math.round(tAp/tBRL*100):0;
+        const parcelasDet=parcItens.map(p=>{
+            const gf=p.gf;
+            const mesesFim=gf&&gf.endY!=null?window.mesesEntre(activeM,activeY,gf.endM,gf.endY):null;
+            return{nome:p.nome,valor:p.valor,mesesFim,fimStr:gf&&gf.endY!=null?`${MESES_CURTO[gf.endM]}/${gf.endY}`:null};
+        }).sort((a,b)=>b.valor-a.valor);
+        const parcelasTerminando3m=parcelasDet.filter(p=>p.mesesFim!=null&&p.mesesFim>=0&&p.mesesFim<=3);
+        const parcelasTerminando6m=parcelasDet.filter(p=>p.mesesFim!=null&&p.mesesFim>=0&&p.mesesFim<=6);
+        const alivio3m=parcelasTerminando3m.reduce((a,p)=>a+p.valor,0);
+        const hist=[];
+        for(let d=-6;d<=-1;d++){
+            const{m,y}=window.offsetMonth(activeM,activeY,d);
+            const data=window.S.dataByMonth[`${m}-${y}`];
+            const t=data?window.calcTotals(data,m,y):{tBRL:0,tReal:0,saldo:0,realVar:0,hasData:false};
+            hist.push({label:`${MESES_CURTO[m]}/${y}`,...t});
         }
+        const comDados=hist.filter(h=>h.hasData);
+        const mediaSaldo=comDados.length?comDados.reduce((a,h)=>a+h.saldo,0)/comDados.length:0;
+        const mediaGastos=comDados.length?comDados.reduce((a,h)=>a+h.tReal,0)/comDados.length:0;
+        const mediaReceita=comDados.length?comDados.reduce((a,h)=>a+h.tBRL,0)/comDados.length:0;
+        const mediaVar=comDados.length?comDados.reduce((a,h)=>a+h.realVar,0)/comDados.length:0;
+        const mesesNegativos=comDados.filter(h=>h.saldo<0).length;
+        const mesesPositivos=comDados.filter(h=>h.saldo>0).length;
+        return{tBRL,tReal,tAp,saldo,hasData,realFixos,realVar,parcTotal,assinTotal,unicoTotal,fixosTotal,pctLivre,pctFixos,pctParc,pctVar,pctAp,qtdParcelas:parcItens.length,qtdAssin:assinItens.length,parcItens,assinItens,unicoItens,parcelasDet,parcelasTerminando3m,parcelasTerminando6m,alivio3m,hist,comDados,mediaSaldo,mediaGastos,mediaReceita,mediaVar,mesesNegativos,mesesPositivos,itens};
     };
 
-    window.renderIAResult=function(res){
-        const resDiv=document.getElementById("ia-res");const diag=res.diagnostico||"";const vilao=res.vilao||"";const subs=res.assinaturas_sugeridas_cortar||[];const parcAlerta=res.parcelas_alerta||"";const acoes=res.acoes||[];const impacto=res.impacto_saldo_estimado||0;
-        let html=`<div style="background:#1c1c1e;color:#fff;border-radius:14px;padding:14px;"><div style="font-size:11px;opacity:0.7;font-weight:700;letter-spacing:0.5px;margin-bottom:6px;">🩺 DIAGNÓSTICO</div><div style="font-size:15px;font-weight:600;line-height:1.4;">${diag}</div>${vilao?`<div style="margin-top:10px;font-size:12px;opacity:0.8;">Maior peso: <b style="color:#ff9f43;">${vilao}</b></div>`:''}</div>`;
-        if(subs.length>0){html+=`<div style="background:#fff3cd;border:1.5px solid #ffcc00;border-radius:14px;padding:14px;"><div style="font-size:12px;font-weight:800;color:#856404;margin-bottom:10px;">🔁 ASSINATURAS QUE VOCÊ PODE CORTAR</div>`;subs.forEach(s=>{html+=`<div style="background:#fff;border-radius:10px;padding:10px;margin-bottom:8px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;"><span style="font-weight:700;font-size:14px;">${s.nome||'—'}</span><span style="font-size:13px;font-weight:800;color:#ff453a;">${window.R(s.valor_mensal||0)}/mês</span></div><div style="font-size:12px;color:#3c3c43;line-height:1.4;">${s.motivo||''}</div>${s.economia_anual?`<div style="font-size:11px;color:#1a6b3a;font-weight:700;margin-top:4px;">Economia anual: ${window.R(s.economia_anual)}</div>`:''}</div>`;});html+=`</div>`;}
-        if(parcAlerta){html+=`<div style="background:#ffe5e5;border:1.5px solid #ff453a;border-radius:14px;padding:14px;"><div style="font-size:12px;font-weight:800;color:#c0392b;margin-bottom:6px;">💳 ALERTA DE PARCELAS</div><div style="font-size:13px;color:#1c1c1e;line-height:1.4;">${parcAlerta}</div></div>`;}
-        if(acoes.length>0){html+=`<div style="background:#e3f0ff;border:1.5px solid #007aff;border-radius:14px;padding:14px;"><div style="font-size:12px;font-weight:800;color:#0055cc;margin-bottom:10px;">🎯 AÇÕES PARA MELHORAR SEU SALDO</div>`;acoes.forEach((a,idx)=>{html+=`<div style="display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;"><div style="background:#007aff;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;">${idx+1}</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#1c1c1e;">${a.titulo||''}</div><div style="font-size:12px;color:#3c3c43;line-height:1.4;margin-top:2px;">${a.detalhe||''}</div></div></div>`;});html+=`</div>`;}
-        if(impacto>0){html+=`<div style="background:#d1f7e0;border-radius:14px;padding:14px;text-align:center;"><div style="font-size:11px;font-weight:700;color:#1a6b3a;">💰 IMPACTO POTENCIAL NO SEU SALDO</div><div style="font-size:26px;font-weight:900;color:#1a6b3a;margin-top:4px;">+ ${window.R(impacto)}/mês</div><div style="font-size:11px;color:#1a6b3a;opacity:0.8;margin-top:2px;">Se você aplicar todas as ações sugeridas</div></div>`;}
-        resDiv.innerHTML=html;
+    window.analisarTendenciaMeses=function(ctxIn){
+        const ctx=ctxIn||window.coletarContextoFinanceiro();
+        const{tReal}=window.calcTotals();
+        const hist=ctx.hist.slice(-3);
+        const comDados=hist.filter(h=>h.hasData);
+        const proj=[];
+        for(let d=1;d<=3;d++){
+            const{m,y}=window.offsetMonth(activeM,activeY,d);
+            let fixo=0;
+            (window.S.gastosFixos||[]).filter(gf=>window.isItemActive(gf,m,y)).forEach(gf=>{
+                const cur=window.S.dataByMonth[`${m}-${y}`];
+                const gv=cur&&cur.gastosF&&cur.gastosF[gf.id];
+                fixo+=(gv&&typeof gv==='object')?gv.val:(gv||gf.val);
+            });
+            const mediaReal=ctx.mediaGastos||0;
+            const mediaRec=ctx.mediaReceita||0;
+            const gastoEst=Math.max(fixo,mediaReal);
+            proj.push({m,y,label:`${MESES_CURTO[m]}/${y}`,gastoEst,recEst:mediaRec,saldoEst:mediaRec-gastoEst});
+        }
+        let historico_texto='';
+        if(!comDados.length)historico_texto='Sem histórico nos últimos meses — cadastre receitas e gastos para comparar tendências.';
+        else{
+            const ult=comDados[comDados.length-1];
+            const prim=comDados[0];
+            const varGastos=ult.tReal-prim.tReal;
+            historico_texto=`Nos últimos ${comDados.length} meses registrados, `;
+            if(varGastos>prim.tReal*0.1)historico_texto+=`seus gastos subiram cerca de ${window.R(varGastos)} em relação ao início do período — ritmo que, se continuar, comprime o saldo.`;
+            else if(varGastos<-prim.tReal*0.08)historico_texto+=`seus gastos caíram no período — sinal de ajuste ou de lançamentos incompletos; confira se está tudo registrado.`;
+            else historico_texto+=`gastos e receitas ficaram relativamente estáveis.`;
+            if(ctx.mesesNegativos>=2)historico_texto+=` ${ctx.mesesNegativos} dos últimos ${ctx.comDados.length} meses fecharam negativos: o problema não é pontual, é padrão.`;
+            else if(ctx.mesesPositivos===comDados.length&&comDados.length>=2)historico_texto+=` Todos os meses recentes fecharam no azul — mantenha o mesmo cuidado.`;
+            if(ctx.mediaSaldo!==0&&ctx.saldo<ctx.mediaSaldo*0.7&&tReal>0)historico_texto+=` Este mês está pior que sua média de saldo recente (${window.R(ctx.mediaSaldo)}).`;
+        }
+        let projecao_texto='';
+        const projNeg=proj.filter(p=>p.saldoEst<0&&p.recEst>0);
+        const projApertado=proj.filter(p=>p.recEst>0&&p.gastoEst/p.recEst>0.9);
+        if(!ctx.tBRL&&ctx.fixosTotal>0)projecao_texto='Cadastre receitas para projetar os próximos meses com mais precisão.';
+        else if(projNeg.length>=2)projecao_texto=`Cenário provável: ${projNeg.length} dos próximos 3 meses fecham negativos se a receita ficar na média e os gastos não caírem. Priorize não assumir novas parcelas.`;
+        else if(projApertado.length>=2)projecao_texto='Cenário provável: margem muito fina nos próximos meses — qualquer compra extra ou queda de receita vira vermelho.';
+        else if(ctx.alivio3m>0)projecao_texto=`Cenário misto: apertado agora, mas ${window.R(ctx.alivio3m)}/mês em parcelas podem sair nos próximos 3 meses — use esse alívio para recompor reserva, não para novas dívidas.`;
+        else if(proj.some(p=>p.saldoEst>0&&p.recEst>0))projecao_texto='Cenário favorável: projeção indica saldo positivo nos próximos meses, desde que a receita se mantenha e você evite parcelar compras novas.';
+        else projecao_texto='Projeção limitada por falta de histórico — continue registrando para antecipar meses difíceis.';
+        const dicas_tendencia=[];
+        if(ctx.mediaGastos>0&&tReal>ctx.mediaGastos*1.12)dicas_tendencia.push(`Gastos deste mês (${window.R(tReal)}) estão ~${Math.round((tReal/ctx.mediaGastos-1)*100)}% acima da sua média recente.`);
+        if(ctx.mediaVar>0&&ctx.realVar>ctx.mediaVar*1.25)dicas_tendencia.push(`Compras variáveis explodiram: ${window.R(ctx.realVar)} vs média de ${window.R(ctx.mediaVar)} — é aqui que dá para cortar mais rápido.`);
+        if(ctx.mediaReceita>0&&ctx.tBRL<ctx.mediaReceita*0.9)dicas_tendencia.push('Receita lançada abaixo da média — se não faltou lançamento, o mês já começa em desvantagem.');
+        proj.forEach(p=>{if(p.recEst>0&&p.gastoEst/p.recEst>0.88)dicas_tendencia.push(`${p.label}: quase toda a receita prevista já está comprometida.`);});
+        return{historico_texto,projecao_texto,dicas_tendencia:dicas_tendencia.slice(0,4),historico_detalhe:hist,projecao_detalhe:proj};
     };
+
+    window.gerarCenariosLocal=function(ctx){
+        const c=[];
+        const add=(tipo,titulo,texto,prioridade)=>c.push({tipo,titulo,texto,prioridade});
+        if(!ctx.hasData||(!ctx.tBRL&&!ctx.tReal))add('neutro','Dados insuficientes','Cadastre receitas e gastos deste mês. Sem isso, qualquer “análise” seria chute.',1);
+        if(ctx.tBRL<=0&&ctx.tReal>0)add('risco','Sem receita lançada',`Há ${window.R(ctx.tReal)} em gastos, mas nenhuma entrada registrada. O saldo real pode estar pior do que parece.`,9);
+        if(ctx.saldo<0&&ctx.tBRL>0)add('risco','Vivendo acima da renda (neste mês)',`Faltam ${window.R(Math.abs(ctx.saldo))} para fechar — ou você corta gastos agora, ou compensa com entrada extra. Repetir isso vira dívida.`,10);
+        if(ctx.pctFixos>=65&&ctx.tBRL>0)add('risco','Renda engessada',`${ctx.pctFixos}% da receita já vai para parcelas e assinaturas (${window.R(ctx.fixosTotal)}). Sobra pouco para imprevistos — nova parcela agora é arriscado.`,8);
+        if(ctx.qtdParcelas>=4)add('atencao','Bola de neve de parcelas',`${ctx.qtdParcelas} parcelas ativas somam ${window.R(ctx.parcTotal)}/mês. Na prática, cada compra parcelada novo compete com as que você já paga.`,7);
+        if(ctx.qtdAssin>=5)add('atencao','Muitas assinaturas',`${ctx.qtdAssin} cobranças recorrentes (${window.R(ctx.assinTotal)}/mês). Quase sempre dá para cancelar ou trocar 1–2 sem sentir falta.`,6);
+        if(ctx.pctVar>=25&&ctx.realVar>300)add('atencao','Compras do mês pesadas',`Gastos variáveis somam ${window.R(ctx.realVar)} (${ctx.pctVar}% da receita). Esse é o primeiro lugar para cortar se precisar equilibrar.`,6);
+        if(ctx.mesesNegativos>=2)add('risco','Histórico no vermelho',`${ctx.mesesNegativos} dos últimos meses registrados fecharam negativos. Não é “mês ruim”; é hábito ou renda insuficiente para o estilo de vida.`,8);
+        if(ctx.parcelasTerminando3m.length)add('oportunidade','Alívio chegando',`Em até 3 meses você libera ~${window.R(ctx.alivio3m)}/mês quando ${ctx.parcelasTerminando3m.length===1?'terminar':'terminarem'}: ${ctx.parcelasTerminando3m.map(p=>p.nome).join(', ')}. Planeje usar esse espaço, não preencher com nova dívida.`,5);
+        if(ctx.pctLivre>=20&&ctx.saldo>0)add('oportunidade','Margem saudável',`Sobram ~${ctx.pctLivre}% da receita (${window.R(ctx.saldo)}). Realista: guarde parte para reserva antes de aumentar gastos fixos.`,4);
+        if(ctx.pctLivre>0&&ctx.pctLivre<8&&ctx.saldo>0)add('atencao','Margem frágil',`Sobra só ${window.R(ctx.saldo)} (${ctx.pctLivre}%). Uma conta inesperada ou um jantar a mais zera o mês.`,7);
+        if(ctx.tAp>0&&ctx.pctAp>=15&&ctx.saldo>0)add('neutro','Metas consumindo folga',`${ctx.pctAp}% da receita vai para aportes (${window.R(ctx.tAp)}). Ótimo para o futuro — mas confira se não está apertando o presente.`,3);
+        if(ctx.mediaGastos>0&&ctx.tReal<ctx.mediaGastos*0.88&&ctx.tBRL>0)add('oportunidade','Mês mais leve que a média',`Gastos abaixo da sua média recente. Se não faltou lançar nada, aproveite para reforçar reserva em vez de aumentar consumo.`,4);
+        if(ctx.unicoTotal>ctx.parcTotal&&ctx.unicoTotal>ctx.assinTotal&&ctx.unicoTotal>500)add('atencao','Impulso no mês',`Compras pontuais (${window.R(ctx.unicoTotal)}) superam parcelas neste mês — vale revisar o que foi realmente necessário.`,5);
+        c.sort((a,b)=>b.prioridade-a.prioridade);
+        return c.slice(0,5);
+    };
+
+    window.gerarOpiniaoLocal=function(ctx,cenarios){
+        if(!ctx.tBRL&&!ctx.tReal)return 'Comece registrando o que entrou e o que saiu neste mês. Sem números, não dá para opinar com honestidade.';
+        if(ctx.tBRL<=0)return 'Minha leitura: você está analisando gastos sem registrar receitas. Isso distorce tudo — pode parecer que “sobra” ou “falta” de forma errada.';
+        const top=cenarios[0];
+        if(ctx.saldo<0){
+            const cortavel=ctx.unicoTotal+ctx.assinTotal*0.3;
+            return `Opinião direta: este mês você está no vermelho (${window.R(Math.abs(ctx.saldo))}). Parcelas (${window.R(ctx.parcTotal)}) são contrato — o corte realístico está em compras do mês (${window.R(ctx.unicoTotal)}) e em 1–2 assinaturas. ${cortavel>100?`Só em variáveis + uma assinatura média daria para recuperar ~${window.R(Math.min(cortavel,Math.abs(ctx.saldo)+200))}.`:''}`;
+        }
+        if(ctx.pctFixos>=60)return `Opinião direta: sua renda já está “alugada” — ${ctx.pctFixos}% comprometida com fixos. Não é hora de parcelar mais nada; é hora de esperar parcelas terminarem${ctx.parcelasTerminando6m.length?` (${ctx.parcelasTerminando6m.length} nos próximos 6 meses)`:""} ou cortar recorrentes.`;
+        if(ctx.pctLivre>=15)return `Opinião direta: o mês fecha bem (sobra ${window.R(ctx.saldo)}, ~${ctx.pctLivre}%). O erro comum agora é achar que “sobrou” e parcelar algo novo — use parte para reserva antes de comprometer a renda dos próximos meses.`;
+        if(top&&top.tipo==='oportunidade'&&ctx.alivio3m>0)return `Opinião direta: está apertado, mas não desesperador — ${window.R(ctx.alivio3m)}/mês deve sair de parcelas em breve. Aguenta sem novas dívidas; quando liberar, não trate como “dinheiro extra”, trate como chance de respirar.`;
+        return `Opinião direta: mês no limite (${ctx.pctLivre}% livre). Você até fecha positivo, mas qualquer imprevisto vira problema. Priorize estabilidade, não novas compras parceladas.`;
+    };
+
+    window.gerarDiagnosticoLocal=function(ctx){
+        const mes=`${MESES_CURTO[activeM]} de ${activeY}`;
+        if(ctx.tBRL<=0)return `Em ${mes} ainda não há receitas lançadas. Cadastre entradas para ver se o mês fecha no azul ou no vermelho.`;
+        const partes=[];
+        partes.push(`Em ${mes}, entrou ${window.R(ctx.tBRL)}, saiu ${window.R(ctx.tReal)}${ctx.tAp>0?` (+ ${window.R(ctx.tAp)} em metas)`:""}, saldo ${ctx.saldo>=0?"+":""}${window.R(ctx.saldo)}.`);
+        if(ctx.fixosTotal>0)partes.push(`Compromissos fixos: ${window.R(ctx.fixosTotal)}/mês (${ctx.pctFixos}% da receita) — ${ctx.qtdParcelas} parcela(s), ${ctx.qtdAssin} assinatura(s).`);
+        if(ctx.realVar>0)partes.push(`Compras do mês (variáveis): ${window.R(ctx.realVar)}.`);
+        if(ctx.resumo_parcelas_hint)partes.push(ctx.resumo_parcelas_hint);
+        return partes.join(' ');
+    };
+
+    window.montarAcoesLocal=function(ctx,tend){
+        const acoes=[...tend.dicas_tendencia.map(d=>({titulo:'Tendência',detalhe:d,prioridade:7}))];
+        if(ctx.saldo<0){
+            acoes.push({titulo:'Plano de recuperação',detalhe:`Meta realista: cortar ${window.R(Math.min(ctx.unicoTotal,Math.abs(ctx.saldo)))} em compras variáveis este mês e revisar a assinatura mais cara.`,prioridade:10});
+        }
+        if(ctx.qtdParcelas>=3)acoes.push({titulo:'Priorize quitar',detalhe:`Maior parcela: ${ctx.parcelasDet[0]?ctx.parcelasDet[0].nome:"—"} (${ctx.parcelasDet[0]?window.R(ctx.parcelasDet[0].valor):"—"}). Foque em terminar ou renegociar as maiores antes de comprar de novo.`,prioridade:8});
+        if(ctx.parcelasTerminando3m.length)acoes.push({titulo:'Use o alívio com inteligência',detalhe:`Quando ${ctx.parcelasTerminando3m.map(p=>p.nome).join(", ")} terminarem, direcione os ${window.R(ctx.alivio3m)} para reserva — não para nova parcela.`,prioridade:6});
+        if(ctx.qtdAssin>=3)acoes.push({titulo:'Auditoria de assinaturas',detalhe:'Cancele o que não usou nos últimos 30 dias. Troque plano anual por mensal só se realmente usar o ano todo.',prioridade:7});
+        if(ctx.pctLivre>=15&&ctx.saldo>0&&ctx.tAp===0)acoes.push({titulo:'Crie colchão',detalhe:`Separe pelo menos ${window.R(Math.max(ctx.saldo*0.3,100))} para reserva de emergência antes de gastar o restante.`,prioridade:5});
+        if(ctx.mesesNegativos>=2)acoes.push({titulo:'Ajuste estrutural',detalhe:'Dois ou mais meses no vermelho indicam que cortar “só este mês” não basta — revise parcelas, assinaturas e padrão de compras variáveis.',prioridade:9});
+        if(!acoes.length)acoes.push({titulo:'Manter disciplina',detalhe:'Continue lançando tudo. O controle vem da consistência, não de um mês perfeito.',prioridade:3});
+        acoes.sort((a,b)=>b.prioridade-a.prioridade);
+        return acoes.slice(0,5).map(({titulo,detalhe})=>({titulo,detalhe}));
+    };
+
+    window.analisarGastosLocal=function(){
+        const ctx=window.coletarContextoFinanceiro();
+        const{tBRL,tReal,tAp,saldo}=ctx;
+        const gruposOutros=window.agruparItensGastos([...ctx.assinItens,...ctx.unicoItens]);
+        const parcOrdenados=[...ctx.parcItens].sort((a,b)=>b.valor-a.valor);
+        const resumo_parcelas=ctx.parcItens.length?{qtd:ctx.parcItens.length,total:ctx.parcTotal,itens:parcOrdenados.map(p=>({nome:p.nome,valor:p.valor})),texto:`${ctx.parcItens.length} compromisso(s) fixo(s) — total ${window.R(ctx.parcTotal)}/mês. Lista do maior para o menor:`}:null;
+        ctx.resumo_parcelas_hint=ctx.parcItens.length?`Você tem ${ctx.parcItens.length} parcelas ativas; detalhes na lista abaixo.`:'';
+        const maiores_pesos=gruposOutros.slice(0,3).map(g=>{
+            let rotulo='Outro gasto',texto='';
+            if(g.tipos.assinatura){rotulo='Assinatura recorrente';texto='Cobrança mensal fixa — avalie se ainda usa com frequência.';}
+            else if(g.tipos.unico){rotulo='Compra pontual';texto='Gasto único deste mês; é o mais fácil de evitar no próximo.';}
+            if(g.itens.length>1)texto+=' Itens parecidos foram agrupados.';
+            const pct=ctx.tBRL>0?Math.round(g.valor/ctx.tBRL*100):0;
+            if(pct>=15)texto+=` Representa ~${pct}% da receita — peso alto para um único grupo.`;
+            return{nome:g.nomeExib,valor:g.valor,rotulo,texto};
+        });
+        const byCat={};
+        ctx.itens.forEach(i=>{byCat[i.cat]=(byCat[i.cat]||0)+i.valor;});
+        const topCat=Object.entries(byCat).sort((a,b)=>b[1]-a[1])[0];
+        const tend=window.analisarTendenciaMeses(ctx);
+        const cenarios=window.gerarCenariosLocal(ctx);
+        const opiniao=window.gerarOpiniaoLocal(ctx,cenarios);
+        const diagnostico=window.gerarDiagnosticoLocal(ctx);
+        const subsKw=['netflix','spotify','amazon','disney','hbo','youtube','icloud','plano','vivo','claro','tim','assinatura','premium'];
+        const assinaturas_sugeridas_cortar=ctx.itens.filter(i=>i.tipo==='assinatura'||(i.tipo==='unico'&&subsKw.some(k=>i.nome.toLowerCase().includes(k)))).sort((a,b)=>b.valor-a.valor).slice(0,3).map(s=>{
+            const pct=ctx.tBRL>0?Math.round(s.valor/ctx.tBRL*100):0;
+            let motivo='Recorrente todo mês — se não usou nos últimos 30 dias, considere cancelar.';
+            if(pct>=5)motivo=`Consome ~${pct}% da sua receita sozinha. ${motivo}`;
+            return{nome:s.nome,valor_mensal:s.valor,motivo,economia_anual:s.valor*12};
+        });
+        let parcelas_alerta=null;
+        if(ctx.parcTotal>0&&ctx.tBRL>0&&ctx.pctParc>=35)parcelas_alerta=`Parcelas fixas consomem ${ctx.pctParc}% da receita (${window.R(ctx.parcTotal)}/mês). ${ctx.parcelasTerminando3m.length?`Alívio de ${window.R(ctx.alivio3m)} nos próximos 3 meses se não criar dívidas novas.`:'Antes de parcelar algo novo, veja o que já está comprometido.'}`;
+        const acoes=window.montarAcoesLocal(ctx,tend);
+        const impacto_saldo_estimado=assinaturas_sugeridas_cortar.reduce((a,s)=>a+s.valor_mensal,0);
+        const indicadores=[
+            {rotulo:'Comprometido (fixos)',valor:`${ctx.pctFixos}%`,cor:ctx.pctFixos>=60?'#c0392b':ctx.pctFixos>=40?'#856404':'#1a6b3a'},
+            {rotulo:'Margem livre',valor:ctx.tBRL>0?`${ctx.pctLivre}%`:'—',cor:ctx.pctLivre>=15?'#1a6b3a':ctx.pctLivre>=5?'#856404':'#c0392b'},
+            {rotulo:'Compras variáveis',valor:ctx.tBRL>0?`${ctx.pctVar}%`:'—',cor:ctx.pctVar>=30?'#856404':'#3c3c43'}
+        ];
+        return{diagnostico,opiniao,cenarios,indicadores,maiores_pesos,maior_categoria:topCat?{nome:topCat[0],valor:topCat[1]}:null,resumo_parcelas,assinaturas_sugeridas_cortar,parcelas_alerta,acoes,impacto_saldo_estimado,historico_texto:tend.historico_texto,projecao_texto:tend.projecao_texto};
+    };
+
+    window.analisarGastosIA=function(){window.abrirModalIA();};
 
     window.buildSaude=function(){
         const{tBRL,tReal,tAp,saldo,hasData}=window.calcTotals();let pts=0;
@@ -1404,54 +1841,58 @@ Seja direto e use valores reais. Máximo 3 ações. Responda APENAS o JSON.`;
         document.getElementById("saude-score-card").innerHTML=`<div class="card" style="display:flex;align-items:center;gap:16px;"><div style="width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;border:3px solid ${sc.bc};background:${sc.bg};color:${sc.c}">${score}</div><div style="flex:1"><div style="font-size:11px;color:#8e8e93;font-weight:600;margin-bottom:4px">SAÚDE FINANCEIRA</div><div style="font-size:20px;font-weight:800;color:${sc.c};margin-bottom:4px">${sc.l}</div><div style="font-size:13px;">${score>=70?"Você está no caminho certo.":score>=40?"Cuidado com o saldo mensal.":"Risco! Saldo da conta negativo."}</div></div></div>`;
     };
 
-    window.analisarCompra=async function(){
-        const nome=document.getElementById("c-nome").value.trim()||"este item";const valor=window.parseMoney(document.getElementById("c-valor").value);const parcelas=+(document.getElementById("c-parcelas").value)||1;const resDiv=document.getElementById("compra-res");
-        if(!valor)return resDiv.innerHTML=`<p style="color:#ff453a;font-size:14px;margin-top:10px">Informe o valor do item.</p>`;
-        resDiv.innerHTML=`<div style="text-align:center;padding:20px;font-size:14px;color:#8e8e93;">🤖 Gemini analisando com base no seu histórico financeiro...</div>`;
-        const{tBRL,tReal,tAp,saldo}=window.calcTotals();
+    window.analisarCompraLocal=function(nome,valor,parcelas){
+        const ctx=window.coletarContextoFinanceiro();
+        const{tBRL,saldo,tAp}=ctx;
         const pm=valor/parcelas;
-        const prompt=`Você é um consultor financeiro pessoal brasileiro. Analise se a compra abaixo é recomendada e retorne um JSON com o seguinte schema:
-{
-  "veredito": "VAI_FUNDO" | "PENSE_BEM" | "NAO_RECOMENDADO",
-  "titulo_curto": "string (3-5 palavras)",
-  "frase_principal": "string (1-2 frases explicando o veredito)",
-  "impacto_parcela_mensal": number,
-  "comprometimento_pos_compra_pct": number,
-  "alertas_concretos": ["string"],
-  "alternativas": ["string"],
-  "estabilidade_renda": "ESTAVEL" | "VARIAVEL" | "DESCONHECIDA"
-}
+        const saldoPosCompra=saldo-pm;
+        const novoComp=tBRL>0?(ctx.tReal+tAp+pm)/tBRL*100:100;
+        const pctParcReceita=tBRL>0?pm/tBRL*100:100;
+        const ratioPar=saldo>0?pm/saldo:99;
+        let risco=0;
+        if(window.needVal==="nao")risco+=3;else if(window.needVal==="talvez")risco+=1;
+        if(saldo<=0)risco+=4;else if(saldoPosCompra<0)risco+=4;else if(ratioPar>0.8)risco+=3;else if(ratioPar>0.5)risco+=2;else if(ratioPar>0.3)risco+=1;
+        if(novoComp>90)risco+=3;else if(novoComp>80)risco+=2;else if(novoComp>70)risco+=1;
+        if(ctx.pctFixos>=55&&parcelas>1)risco+=2;
+        if(ctx.qtdParcelas>=3&&parcelas>3)risco+=2;
+        if(ctx.mesesNegativos>=2)risco+=1;
+        let veredito="VAI_FUNDO",titulo="Pode comprar",frase="Com a margem atual, a compra cabe sem apertar demais o mês — desde que não vire hábito.";
+        if(risco>6){veredito="NAO_RECOMENDADO";titulo="Evite agora";frase="Realista: este gasto piora um mês que já está no limite ou no vermelho. Adiar não é derrota, é proteção.";}
+        else if(risco>3){veredito="PENSE_BEM";titulo="Avalie bem";frase="Dá para comprar, mas o mês ficaria frágil. Só faça se for necessidade real e não houver alternativa mais barata.";}
+        const alertas=[];
+        if(saldo<=0)alertas.push(`Saldo do mês já negativo (${window.R(Math.abs(saldo))}).`);
+        else if(saldoPosCompra<0)alertas.push(`Após a parcela, o saldo cairia para ${window.R(saldoPosCompra)}.`);
+        if(novoComp>85)alertas.push(`Comprometeria ~${Math.round(novoComp)}% da receita (incluindo esta compra).`);
+        if(pctParcReceita>=15)alertas.push(`Só esta parcela seria ${Math.round(pctParcReceita)}% da sua receita do mês.`);
+        if(ctx.pctFixos>=50&&parcelas>1)alertas.push(`Você já tem ${ctx.pctFixos}% da renda em fixos — mais uma parcela aumenta o risco de bola de neve.`);
+        const alternativas=[];
+        if(parcelas===1&&valor>400)alternativas.push(`Parcelar em 2–3x (${window.R(valor/3)}/mês) pode aliviar o caixa — mas só se o total couber no orçamento.`);
+        if(window.needVal==="nao")alternativas.push("Marcou como “não precisa”: o cenário mais inteligente é adiar para um mês com margem maior.");
+        if(ctx.parcelasTerminando3m.length)alternativas.push(`Você libera ~${window.R(ctx.alivio3m)}/mês em breve com fim de parcelas — considere esperar.`);
+        if(parcelas>6)alternativas.push("Muitas parcelas = juros embutidos e renda comprometida por muito tempo; compare preço à vista com desconto.");
+        let opiniao_compra='';
+        if(veredito==='NAO_RECOMENDADO')opiniao_compra=`Minha leitura: comprar ${nome} agora (${window.R(valor)}) empurra você para um mês insustentável.`;
+        else if(veredito==='PENSE_BEM')opiniao_compra=`Minha leitura: até cabe, mas você ficaria com pouca folga (${saldoPosCompra>=0?window.R(saldoPosCompra):'negativo'} após a 1ª parcela). Vale a pena?`;
+        else opiniao_compra=`Minha leitura: com ${ctx.pctLivre}% de margem hoje, a compra é aceitável se for planejada — evite somar outras compras no mesmo mês.`;
+        return{veredito,titulo_curto:titulo,frase_principal:frase,opiniao_compra,impacto_parcela_mensal:pm,comprometimento_pos_compra_pct:Math.round(novoComp),alertas_concretos:alertas,alternativas};
+    };
 
-Dados:
-- Item: ${nome}
-- Valor total: R$ ${valor.toFixed(2)}
-- Parcelas: ${parcelas}x de R$ ${pm.toFixed(2)}
-- Necessidade: ${window.needVal}
-- Receita atual: R$ ${tBRL.toFixed(2)}
-- Gastos atuais: R$ ${tReal.toFixed(2)}
-- Saldo atual: R$ ${saldo.toFixed(2)}
-
-Responda APENAS o JSON.`;
-        try {
-            const res=await window.callGemini(prompt);window.renderRiskPurchase(res,nome,valor);
-        } catch(e) {
-            const parMensal=valor/parcelas;const ratioPar=saldo>0?parMensal/saldo:99;const novoComp=tBRL>0?(tReal+tAp+parMensal)/tBRL*100:100;let risco=0;
-            if(window.needVal==="nao")risco+=3;else if(window.needVal==="talvez")risco+=1;
-            if(saldo<=0)risco+=4;else if(ratioPar>0.8)risco+=3;else if(ratioPar>0.5)risco+=2;else if(ratioPar>0.3)risco+=1;
-            if(novoComp>90)risco+=3;else if(novoComp>80)risco+=2;else if(novoComp>70)risco+=1;
-            let bg,bc,tc,txt;
-            if(risco<=2){bg="#d1f7e0";bc="#1a6b3a";tc="#1a6b3a";txt="Seu saldo comporta esta compra com segurança.";}
-            else if(risco<=5){bg="#fff3cd";bc="#856404";tc="#856404";txt="Atenção. Esta compra vai comprometer boa parte do seu orçamento livre.";}
-            else{bg="#ffe5e5";bc="#c0392b";tc="#c0392b";txt="Não recomendado. Sem margem segura para nova despesa.";}
-            resDiv.innerHTML=`<div style="background:${bg};border:2px solid ${bc};border-radius:14px;padding:16px;margin-top:12px;"><div style="color:${tc};font-weight:700;margin-bottom:8px;">${nome} — ${window.R(valor)}</div><div style="font-size:14px;color:#3c3c43">${txt}</div><div style="font-size:11px;color:#8e8e93;margin-top:8px;">⚠️ IA offline — análise simplificada.</div></div>`;
-        }
+    window.analisarCompra=function(){
+        const nome=document.getElementById("c-nome").value.trim()||"este item";
+        const valor=window.parseMoney(document.getElementById("c-valor").value);
+        const parcelas=+(document.getElementById("c-parcelas").value)||1;
+        const resDiv=document.getElementById("compra-res");
+        if(!valor)return resDiv.innerHTML=`<p style="color:#ff453a;font-size:14px;margin-top:10px">Informe o valor do item.</p>`;
+        resDiv.innerHTML=`<div style="text-align:center;padding:16px;font-size:14px;color:#8e8e93;">🔒 Analisando localmente...</div>`;
+        setTimeout(()=>{window.renderRiskPurchase(window.analisarCompraLocal(nome,valor,parcelas),nome,valor);},80);
     };
 
     window.renderRiskPurchase=function(res,nome,valor){
         const resDiv=document.getElementById("compra-res");const verd=res.veredito||"PENSE_BEM";
         const corMap={"VAI_FUNDO":{bg:"#d1f7e0",border:"#1a6b3a",tc:"#1a6b3a",emoji:"✅"},"PENSE_BEM":{bg:"#fff3cd",border:"#856404",tc:"#856404",emoji:"⚠️"},"NAO_RECOMENDADO":{bg:"#ffe5e5",border:"#c0392b",tc:"#c0392b",emoji:"🚨"}};
         const cores=corMap[verd]||corMap.PENSE_BEM;const titulo=res.titulo_curto||verd.replace(/_/g,' ');const frase=res.frase_principal||"";const pm=res.impacto_parcela_mensal||(valor/(parseInt(document.getElementById("c-parcelas").value)||1));const compr=res.comprometimento_pos_compra_pct||0;const alertas=res.alertas_concretos||[];const alternativas=res.alternativas||[];
-        let html=`<div style="background:${cores.bg};border:2px solid ${cores.border};border-radius:14px;padding:16px;margin-top:12px;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><span style="font-size:28px;">${cores.emoji}</span><div style="flex:1;"><div style="font-size:11px;font-weight:800;color:${cores.tc};letter-spacing:0.5px;">VEREDITO DA IA</div><div style="font-size:16px;font-weight:800;color:${cores.tc};">${titulo}</div></div></div><div style="font-size:13px;color:#1c1c1e;line-height:1.4;margin-bottom:12px;">${frase}</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;"><div style="background:#fff;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:600;">📦 ${nome}: <b>${window.R(valor)}</b></div><div style="background:#fff;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:600;">💳 ${window.R(pm)}/mês</div>${compr?`<div style="background:#fff;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:600;">📊 ${compr.toFixed(0)}% comprometido</div>`:''}</div>`;
+        const opiniao=res.opiniao_compra||'';
+        let html=`<div style="background:${cores.bg};border:2px solid ${cores.border};border-radius:14px;padding:16px;margin-top:12px;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><span style="font-size:28px;">${cores.emoji}</span><div style="flex:1;"><div style="font-size:11px;font-weight:800;color:${cores.tc};letter-spacing:0.5px;">VEREDITO DA IA</div><div style="font-size:16px;font-weight:800;color:${cores.tc};">${titulo}</div></div></div><div style="font-size:13px;color:#1c1c1e;line-height:1.4;margin-bottom:12px;">${frase}</div>${opiniao?`<div style="font-size:13px;color:#3c3c43;line-height:1.45;margin-bottom:12px;padding:10px;background:#fff;border-radius:10px;">${opiniao}</div>`:''}<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;"><div style="background:#fff;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:600;">📦 ${nome}: <b>${window.R(valor)}</b></div><div style="background:#fff;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:600;">💳 ${window.R(pm)}/mês</div>${compr?`<div style="background:#fff;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:600;">📊 ${compr.toFixed(0)}% comprometido</div>`:''}</div>`;
         if(alertas.length>0){html+=`<div style="background:#fff;border-radius:10px;padding:10px;margin-bottom:8px;"><div style="font-size:11px;font-weight:800;color:${cores.tc};margin-bottom:6px;">⚠️ ALERTAS</div>`;alertas.forEach(a=>{html+=`<div style="font-size:12px;color:#3c3c43;line-height:1.4;margin-bottom:4px;">• ${a}</div>`;});html+=`</div>`;}
         if(alternativas.length>0){html+=`<div style="background:#fff;border-radius:10px;padding:10px;"><div style="font-size:11px;font-weight:800;color:#007aff;margin-bottom:6px;">💡 ALTERNATIVAS</div>`;alternativas.forEach(a=>{html+=`<div style="font-size:12px;color:#3c3c43;line-height:1.4;margin-bottom:4px;">→ ${a}</div>`;});html+=`</div>`;}
         html+=`</div>`;resDiv.innerHTML=html;
@@ -1489,13 +1930,17 @@ Responda APENAS o JSON.`;
     };
     window.jumpToMonth=k=>{const[m,y]=k.split('-');window.setMonthData(parseInt(m),parseInt(y));window.goTo('painel');};
     window.toggleDarkMode=()=>{document.body.classList.toggle("dark-theme");localStorage.setItem('cf_dark_mode',document.body.classList.contains('dark-theme'));if(window.currentHistView==='chart')window.renderHistChart();};
-    window.abrirConfig=()=>{document.getElementById('cfg-dolar').value=window.S.config.dolarMode||(window.S.config.isErgeon?'ergeon':'none');window.renderBancosList('cfg-bancos-list');document.getElementById("modal-config").style.display="flex";};
+    window.abrirConfig=()=>{
+        document.getElementById('cfg-dolar').value=window.S.config.dolarMode||(window.S.config.isErgeon?'ergeon':'none');
+        window.renderBancosList('cfg-bancos-list');document.getElementById("modal-config").style.display="flex";
+    };
     window.salvarConfigOptions=function(){
         const dm=document.getElementById("cfg-dolar").value;window.S.config.dolarMode=dm;window.S.config.isErgeon=(dm==='ergeon');window.S.config.freq='mensal';
         const cbs=document.querySelectorAll('#cfg-bancos-list input[type="checkbox"]:checked');let sel=[];const all=BANCOS_BASE.concat(window.S.config.customBanks||[]);cbs.forEach(cb=>{const b=all.find(x=>x.id===cb.value);if(b)sel.push(b);});if(sel.length>0)window.S.config.bancos=sel;
         window.fecharModal('modal-config');window.setMonthData(activeM,activeY);window.scheduleSync();
     };
     window.abrirModalParcelas=()=>document.getElementById("modal-parcelas").style.display="flex";
+    window.abrirModalAssinaturas=()=>document.getElementById("modal-assinaturas").style.display="flex";
     window.changeMes=dir=>{activeM+=dir;if(activeM<0){activeM=11;activeY--;}else if(activeM>11){activeM=0;activeY++;}window.setMonthData(activeM,activeY);};
     window.abrirHistorico=function(){
         const list=document.getElementById('hist-backup-list');list.innerHTML='';
