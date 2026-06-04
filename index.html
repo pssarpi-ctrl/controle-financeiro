@@ -18,17 +18,36 @@
         body.dark-theme { background: #000; color: #fff; }
         .dark-theme .app-container { background: #000; }
         .dark-theme .top-bar, .dark-theme .bottom-nav, .dark-theme .card, .dark-theme .modal-content, .dark-theme .m-card { background: #1c1c1e; border-color: #333; }
-        .dark-theme h1, .dark-theme .card-title, .dark-theme span, .dark-theme .m-label, .dark-theme .gasto-section-title { color: #f2f2f7; }
+        .dark-theme h1, .dark-theme h2, .dark-theme h3, .dark-theme h4, .dark-theme .card-title, .dark-theme .m-label, .dark-theme .gasto-section-title, .dark-theme .input-label, .dark-theme .bank-check, .dark-theme .fab-menu-item { color: #f2f2f7; }
+        .dark-theme .modal-content p, .dark-theme .modal-content li, .dark-theme .modal-content label { color: #e5e5ea; }
+        .dark-theme .page-title-bar, .dark-theme .gastos-total-sticky > span:first-child { color: #f2f2f7 !important; }
         .dark-theme input, .dark-theme select, .dark-theme .form-sel, .dark-theme .gasto-inp, .dark-theme input[type=date] { background: #2c2c2e; color: #fff; border-color: #3a3a3c; }
         .dark-theme .welcome { color: #8e8e93; }
         .dark-theme .gastos-total-sticky { background: rgba(28,28,30,0.95); border-bottom-color: #333; }
+        .dark-theme .gastos-search-wrap { background: #2c2c2e; border-color: #3a3a3c; }
+        .dark-theme .gastos-search-wrap input { color: #fff; }
+        .dark-theme .gasto-row { border-bottom-color: #3a3a3c; }
+        .dark-theme .receita-header input[type=text] { color: #fff !important; }
+        .dark-theme .ia-bloco { background: #2c2c2e; color: #f2f2f7; }
+        .dark-theme .ia-btn-voltar { background: #3a3a3c; color: #64b5f6; }
         .dark-theme .cal-cell.cal-bg-gray { background: #2c2c2e; }
         .dark-theme .btn-secondary, .dark-theme .btn-close-modal, .dark-theme .btn-small { background: #2c2c2e; color: #007aff; border-color: #3a3a3c; }
         .dark-theme .mes-selector { background: #000; }
         .dark-theme .mes-selector button { background: #2c2c2e; color:#fff; box-shadow:none;}
-        .dark-theme #total-tipos-det, .dark-theme #total-gastos-det { background: #1c1c1e !important; border-bottom-color: #333 !important; }
+        .dark-theme #total-tipos-det, .dark-theme #total-gastos-det { background: #1c1c1e !important; border-bottom-color: #333 !important; color: #f2f2f7; }
         .dark-theme #hist-toggle-bg { background: #2c2c2e !important; }
+        .dark-theme #hist-toggle-bg button { color: #8e8e93 !important; }
+        #hist-toggle-bg button { background: transparent; border: none; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; color: #8e8e93; font-family: inherit; }
+        #hist-toggle-bg button.hist-view-active { background: #fff; color: #1c1c1e; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .dark-theme #hist-toggle-bg button.hist-view-active { background: #3a3a3c !important; color: #f2f2f7 !important; box-shadow: none !important; }
+        .dark-theme #mdet-objetivo, .dark-theme #mdet-mes-atual { color: #f2f2f7 !important; }
+        .dark-theme #mdet-aporte { color: #fff !important; }
         .dark-theme .fab-menu-item { background: #2c2c2e !important; color: #fff !important; }
+        .dark-theme .bottom-nav { background: rgba(28,28,30,0.97); border-top-color: #333; }
+        .dark-theme .login-screen { background: #000; color: #fff; }
+        .dark-theme .m-val.green, .dark-theme .green { color: #30d158 !important; }
+        .dark-theme .m-val.red, .dark-theme .red { color: #ff453a !important; }
+        .dark-theme .m-val.blue, .dark-theme .blue { color: #64b5f6 !important; }
         .top-bar { background: #fff; padding: 50px 16px 14px; border-bottom: 0.5px solid rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 50; }
         .welcome { font-size: 12px; color: #8e8e93; margin-bottom: 2px; font-weight: 500; }
         .mes-selector { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; background: #f2f2f7; border-radius: 12px; padding: 4px; }
@@ -128,6 +147,33 @@
         .dark-theme .ia-app-tile { box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
         .dark-theme .ia-detalhe-header { border-bottom-color: #333; }
 
+        .painel-acoes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+        .painel-acao-btn {
+            border: none; border-radius: 16px; padding: 18px 12px; min-height: 88px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+            cursor: pointer; font-family: inherit; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.12s ease;
+        }
+        .painel-acao-btn:active { transform: scale(0.97); }
+        .painel-acao-btn .painel-acao-ico { font-size: 28px; line-height: 1; }
+        .painel-acao-btn .painel-acao-txt { font-size: 13px; font-weight: 800; }
+        .painel-acao-ganho { background: #d1f7e0; color: #1a6b3a; border: 1.5px solid #81c784; }
+        .painel-acao-gasto { background: #f3e5f5; color: #6b2d8b; border: 1.5px solid #ce93d8; }
+        .page-title-bar { font-size: 16px; font-weight: 700; color: #1c1c1e; text-transform: uppercase; }
+        .btn-voltar-topo {
+            position: fixed; left: 16px; bottom: calc(env(safe-area-inset-bottom, 0px) + 92px);
+            z-index: 180; border: none; border-radius: 22px; padding: 10px 14px;
+            background: #1c1c1e; color: #fff; font-size: 12px; font-weight: 700; font-family: inherit;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.25); cursor: pointer;
+            opacity: 0; pointer-events: none; transform: translateY(8px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        .btn-voltar-topo.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .dark-theme .btn-voltar-topo { background: #f2f2f7; color: #1c1c1e; }
+        @media (min-width: 431px) {
+            .btn-voltar-topo { left: calc(50% - 215px + 16px); }
+        }
+
         /* Cabeçalho v1.11.14 — emojis fixos, report abaixo */
         .top-header-left { flex: 1; min-width: 0; }
         .top-header-emojis {
@@ -179,7 +225,7 @@
         <button class="login-btn" style="background: #f2f2f7; color: #8e8e93;" onclick="window.iniciarVisitante()">👤 Acessar como Visitante</button>
         <div style="margin-top: 60px; font-size: 11px; color: #8e8e93; font-weight: 500; line-height: 1.5;">
             Desenvolvido por <span style="color: #007aff; font-weight: 700;">Pedro Sarpi</span><br>
-            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()">Versão 1.11.16</span>
+            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()">Versão 1.12</span>
         </div>
     </div>
 
@@ -218,24 +264,22 @@
                 <div id="painel-alerts"></div>
                 <div id="painel-parcelas"></div>
                 <div id="painel-assinaturas"></div>
-                <div class="card">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-                        <span style="font-size:12px; font-weight:700; color:#8e8e93; text-transform:uppercase;">Resumo anual</span>
-                        <div style="display:flex;gap:8px;align-items:center">
-                            <button class="btn-small" onclick="window.changeCalYear(-1)">&lsaquo;</button>
-                            <span id="cal-year" style="font-size:14px;font-weight:600;min-width:36px;text-align:center"></span>
-                            <button class="btn-small" onclick="window.changeCalYear(1)">&rsaquo;</button>
-                        </div>
-                    </div>
-                    <div class="cal-grid" id="cal-grid"></div>
-                    <div id="cal-detail"></div>
+                <div class="painel-acoes-grid">
+                    <button type="button" class="painel-acao-btn painel-acao-ganho" onclick="window.irParaNovoRegistro('ganho')">
+                        <span class="painel-acao-ico">💰</span>
+                        <span class="painel-acao-txt">Novo ganho</span>
+                    </button>
+                    <button type="button" class="painel-acao-btn painel-acao-gasto" onclick="window.irParaNovoRegistro('gasto')">
+                        <span class="painel-acao-ico">💳</span>
+                        <span class="painel-acao-txt">Novo gasto</span>
+                    </button>
                 </div>
                 <div style="text-align:center; margin-top: 10px; font-size: 10px; color: #c7c7cc;">Desenvolvido por Pedro Sarpi</div>
             </div>
 
             <div class="page" id="pg-receitas">
                 <div class="gastos-total-sticky" style="cursor:pointer;" onclick="window.toggleTotalTipos()">
-                    <span style="font-size:16px; font-weight:700; color:#1c1c1e; text-transform:uppercase;">Receitas <span style="font-size:10px; color:#8e8e93; text-transform:none;" id="btn-ver-detalhes">(Ver)</span></span>
+                    <span class="page-title-bar">Receitas <span style="font-size:10px; color:#8e8e93; text-transform:none;" id="btn-ver-detalhes">(Ver)</span></span>
                     <div style="text-align:right">
                         <div style="font-size:20px; font-weight:800; color:#30d158" id="total-brl">R$ 0,00</div>
                         <div style="font-size:12px; color:#007aff; font-weight:700; display:none;" id="total-usd">U$ 0,00</div>
@@ -249,7 +293,7 @@
             <!-- ABA GASTOS: títulos atualizados, sem botões de adicionar (FAB) -->
             <div class="page" id="pg-gastos">
                 <div class="gastos-total-sticky" style="cursor:pointer;" onclick="window.toggleTotalGastos()">
-                    <span style="font-size:16px; font-weight:700; color:#1c1c1e; text-transform:uppercase;">Gastos <span style="font-size:10px; color:#8e8e93; text-transform:none;" id="btn-ver-det-gastos">(Ver)</span></span>
+                    <span class="page-title-bar">Gastos <span style="font-size:10px; color:#8e8e93; text-transform:none;" id="btn-ver-det-gastos">(Ver)</span></span>
                     <div style="text-align:right">
                         <div style="font-size:20px; font-weight:800; color:#ff453a;" id="gastos-total-real">R$ 0,00</div>
                         <div style="font-size:11px; color:#8e8e93;" id="gastos-total-orc"></div>
@@ -290,7 +334,7 @@
             <div class="page" id="pg-metas">
                 <div class="gastos-total-sticky">
                     <div style="display:flex; align-items:center; gap:8px;">
-                        <span style="font-size:16px; font-weight:700; color:#1c1c1e; text-transform:uppercase;">Metas</span>
+                        <span class="page-title-bar">Metas</span>
                         <button class="btn-small" style="padding:4px 8px; font-size:11px;" onclick="window.abrirModalMeta()">+ Nova</button>
                     </div>
                     <div style="text-align:right">
@@ -306,8 +350,8 @@
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                         <span style="font-weight:700; font-size:16px;">Seu Histórico</span>
                         <div style="display:flex; background:#e5e5ea; border-radius:8px; padding:2px;" id="hist-toggle-bg">
-                            <button id="btn-view-table" onclick="window.toggleHistView('table')" style="background:#fff; border:none; padding:4px 10px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; box-shadow:0 1px 2px rgba(0,0,0,0.1); color:#1c1c1e;">Tabela</button>
-                            <button id="btn-view-chart" onclick="window.toggleHistView('chart')" style="background:transparent; border:none; padding:4px 10px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; color:#8e8e93;">Gráfico</button>
+                            <button id="btn-view-table" class="hist-view-active" onclick="window.toggleHistView('table')">Tabela</button>
+                            <button id="btn-view-chart" onclick="window.toggleHistView('chart')">Gráfico</button>
                         </div>
                     </div>
                     <p style="font-size:12px;color:#8e8e93;margin-bottom:16px;line-height:1.4">O histórico exibe automaticamente os meses onde houve movimentação.</p>
@@ -323,6 +367,18 @@
                     <div id="hist-view-chart" style="display:none; width: 100%; height: 260px; position: relative; margin-top: 10px;">
                         <canvas id="hist-canvas"></canvas>
                     </div>
+                </div>
+                <div class="card" style="margin-top:12px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                        <span style="font-size:12px; font-weight:700; color:#8e8e93; text-transform:uppercase;">Relatório anual</span>
+                        <div style="display:flex;gap:8px;align-items:center">
+                            <button class="btn-small" onclick="window.changeCalYear(-1)">&lsaquo;</button>
+                            <span id="cal-year" style="font-size:14px;font-weight:600;min-width:36px;text-align:center"></span>
+                            <button class="btn-small" onclick="window.changeCalYear(1)">&rsaquo;</button>
+                        </div>
+                    </div>
+                    <div class="cal-grid" id="cal-grid"></div>
+                    <div id="cal-detail"></div>
                 </div>
             </div>
 
@@ -369,6 +425,8 @@
     </div>
     <button class="fab-btn" id="fab-btn" onclick="window.toggleFab()">+</button>
 </div>
+
+<button type="button" id="btn-voltar-topo" class="btn-voltar-topo" onclick="window.voltarAoInicio()" aria-label="Voltar ao início">↑ Voltar ao início</button>
 
 <!-- MODAIS -->
 <div class="modal-overlay" id="modal-onboarding" style="background:#fff;">
@@ -627,7 +685,7 @@
       <div class="input-group"><label class="input-label">Objetivo Total</label><input type="text" id="mm-obj" inputmode="decimal" placeholder="0,00" oninput="this.value=window.formatMoneyInput(this.value)"></div>
     </div>
     <div class="input-group"><label class="input-label">Já tem valor guardado? (Acumulado Inicial)</label><input type="text" id="mm-acum-ini" inputmode="decimal" placeholder="0,00" oninput="this.value=window.formatMoneyInput(this.value)"></div>
-    <button class="btn-primary" onclick="window.salvarMeta()" style="margin-top:20px;">Salvar Meta</button>
+    <button class="btn-primary" id="mm-btn-salvar" onclick="window.salvarMeta()" style="margin-top:20px;">Salvar Meta</button>
   </div>
 </div>
 
@@ -693,11 +751,16 @@
 <div class="modal-overlay" id="modal-changelog">
   <div class="modal-content">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <h3 style="font-weight:800;">Novidades — v1.11.16</h3>
+      <h3 style="font-weight:800;">Novidades — v1.12</h3>
       <button class="btn-close-modal" onclick="window.fecharModal('modal-changelog')">&times;</button>
     </div>
-    <div style="font-size:11px; color:#fff; background:#007aff; display:inline-block; padding:3px 10px; border-radius:6px; font-weight:800; margin-bottom:8px;">v1.11.16 — agora</div>
+    <div style="font-size:11px; color:#fff; background:#007aff; display:inline-block; padding:3px 10px; border-radius:6px; font-weight:800; margin-bottom:8px;">v1.12 — agora</div>
     <ul style="font-size:14px; color:#3c3c43; line-height:1.5; padding-left:16px; margin-bottom:18px;">
+        <li style="margin-bottom:8px;"><b>💰 Painel:</b> Atalhos <i>Novo ganho</i> (Receitas) e <i>Novo gasto</i> (menu com os 3 tipos).</li>
+        <li style="margin-bottom:8px;"><b>📅 Histórico:</b> Relatório anual abaixo do seu histórico mensal.</li>
+        <li style="margin-bottom:8px;"><b>🎯 Metas:</b> Salvamento na nuvem corrigido; botão volta ao normal após salvar.</li>
+        <li style="margin-bottom:8px;"><b>🌙 Modo noturno:</b> Textos e títulos legíveis em todas as telas.</li>
+        <li style="margin-bottom:8px;"><b>⬆️ Voltar ao início:</b> Botão ao rolar páginas longas.</li>
         <li style="margin-bottom:8px;"><b>🩺 Diagnóstico sem repetição:</b> Resumo no topo; detalhes das parcelas só na lista (maior → menor).</li>
         <li style="margin-bottom:8px;"><b>🧠 IA local avançada:</b> Cenários, opinião direta e projeções — tudo no aparelho, sem enviar dados.</li>
         <li style="margin-bottom:8px;"><b>🔒 IA privada:</b> Análise feita no aparelho — seus dados não saem para terceiros.</li>
@@ -764,6 +827,19 @@
         }
     });
 
+    window.sanitizeForFirestore = function(obj) {
+        if (obj === null || obj === undefined) return null;
+        if (Array.isArray(obj)) return obj.map(v => window.sanitizeForFirestore(v));
+        if (typeof obj !== 'object') return obj;
+        const out = {};
+        Object.keys(obj).forEach(k => {
+            const v = obj[k];
+            if (v === undefined) return;
+            out[k] = window.sanitizeForFirestore(v);
+        });
+        return out;
+    };
+
     window.syncFirebase = () => {
         if (window.currentUserUID && !window.isCloudLoading) {
             document.getElementById("cloud-status").textContent = "Salvando...";
@@ -775,10 +851,12 @@
             }
             const btnUndo = document.getElementById("btn-undo");
             if(btnUndo) btnUndo.style.display = window.S.backups.length > 1 ? "block" : "none";
-            setDoc(doc(db, "usuarios", window.currentUserUID), window.S)
+            const payload = window.sanitizeForFirestore(window.S);
+            return setDoc(doc(db, "usuarios", window.currentUserUID), payload)
                 .then(() => { document.getElementById("cloud-status").textContent = "Salvo na Nuvem"; })
-                .catch(e => document.getElementById("cloud-status").textContent = "Erro ao salvar");
+                .catch(() => { document.getElementById("cloud-status").textContent = "Erro ao salvar"; });
         }
+        return Promise.resolve();
     };
 </script>
 
@@ -849,6 +927,12 @@
     window.fecharFab = function() {
         document.getElementById('fab-btn').classList.remove('open');
         document.getElementById('fab-menu').classList.remove('open');
+    };
+    window.abrirFabMenu = function() {
+        const btn = document.getElementById('fab-btn');
+        const menu = document.getElementById('fab-menu');
+        if (btn) btn.classList.add('open');
+        if (menu) menu.classList.add('open');
     };
 
     // ===== PARSERS / FORMATTERS =====
@@ -927,6 +1011,7 @@
         } else {
             window.setMonthData(activeM, activeY);
         }
+        window.initScrollTopoBtn();
     };
 
     // ===== BANCOS =====
@@ -1469,16 +1554,42 @@
         document.getElementById('modal-meta').style.display='flex';
     };
     window.salvarMeta=function(){
+        const btn=document.getElementById('mm-btn-salvar');
+        if(btn&&btn.disabled)return;
         const editId=document.getElementById('mm-edit-id').value;let nome=document.getElementById('mm-nome').value.trim();
         const pM=document.getElementById('mm-prazo-m').value;const pY=document.getElementById('mm-prazo-y').value;
         const ap=window.parseMoney(document.getElementById('mm-ap').value);const obj=window.parseMoney(document.getElementById('mm-obj').value);const acumIni=window.parseMoney(document.getElementById('mm-acum-ini').value);
         if(!nome||ap<=0)return alert('Preencha um nome e o aporte mensal.');
+        if(btn){btn.disabled=true;btn.textContent='Salvando...';}
         nome=window.autoEmoji(nome);
-        let prazoStr='Sem prazo';let parsedM=undefined;let parsedY=undefined;
-        if(pM!==''&&pY!==''){parsedM=parseInt(pM);parsedY=parseInt(pY);prazoStr=MESES_CURTO[parsedM]+'/'+parsedY;}
-        if(editId){const meta=window.S.metas.find(m=>m.id===editId);if(meta){meta.n=nome;meta.ap=ap;meta.obj=obj;meta.acumInicial=acumIni;if(parsedM!==undefined){meta.pM=parsedM;meta.pY=parsedY;meta.prazo=prazoStr;}}}
-        else{const id='m_'+Date.now();window.S.metas.push({id,n:nome,prazo:prazoStr,pM:parsedM,pY:parsedY,ap,obj,acumInicial:acumIni,endM:null,endY:null,hiddenMonths:[]});Object.keys(window.S.dataByMonth).forEach(k=>{window.S.dataByMonth[k].metasAcum[id]=0;});}
-        window.fecharModal('modal-meta');window.renderView();window.scheduleSync();
+        let prazoStr='Sem prazo';let parsedM=null;let parsedY=null;
+        if(pM!==''&&pY!==''){parsedM=parseInt(pM,10);parsedY=parseInt(pY,10);prazoStr=MESES_CURTO[parsedM]+'/'+parsedY;}
+        const aplicarPrazo=(meta)=>{meta.prazo=prazoStr;if(parsedM!==null&&parsedY!==null){meta.pM=parsedM;meta.pY=parsedY;}else{delete meta.pM;delete meta.pY;}};
+        const finalizar=()=>{if(btn){btn.disabled=false;btn.textContent='Salvar Meta';}};
+        try{
+            if(editId){
+                const meta=window.S.metas.find(m=>m.id===editId);
+                if(meta){meta.n=nome;meta.ap=ap;meta.obj=obj;meta.acumInicial=acumIni;aplicarPrazo(meta);}
+            }else{
+                const id='m_'+Date.now();
+                const nova={id,n:nome,prazo:prazoStr,ap,obj,acumInicial:acumIni,endM:null,endY:null,hiddenMonths:[]};
+                if(parsedM!==null&&parsedY!==null){nova.pM=parsedM;nova.pY=parsedY;}
+                window.S.metas.push(nova);
+                Object.keys(window.S.dataByMonth).forEach(k=>{
+                    if(!window.S.dataByMonth[k].metasAcum)window.S.dataByMonth[k].metasAcum={};
+                    window.S.dataByMonth[k].metasAcum[id]=0;
+                });
+                if(activeData){if(!activeData.metasAcum)activeData.metasAcum={};activeData.metasAcum[id]=0;}
+            }
+            window.fecharModal('modal-meta');
+            window.renderView();
+            clearTimeout(syncTimer);
+            const p=window.syncFirebase?window.syncFirebase():Promise.resolve();
+            Promise.resolve(p).finally(finalizar);
+        }catch(e){
+            finalizar();
+            alert('Não foi possível salvar a meta. Tente novamente.');
+        }
     };
 
     // ===== DELETE =====
@@ -1595,9 +1706,14 @@
 
     // ===== HISTÓRICO =====
     window.toggleHistView=function(view){
-        window.currentHistView=view;const bt=document.getElementById('btn-view-table');const bg=document.getElementById('btn-view-chart');
-        if(view==='table'){bt.style.cssText="background:#fff;border:none;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.1);color:#1c1c1e;";bg.style.cssText="background:transparent;border:none;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;color:#8e8e93;";document.getElementById('hist-view-table').style.display='block';document.getElementById('hist-view-chart').style.display='none';}
-        else{bg.style.cssText="background:#fff;border:none;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.1);color:#1c1c1e;";bt.style.cssText="background:transparent;border:none;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;color:#8e8e93;";document.getElementById('hist-view-table').style.display='none';document.getElementById('hist-view-chart').style.display='block';window.renderHistChart();}
+        window.currentHistView=view;
+        const bt=document.getElementById('btn-view-table');
+        const bg=document.getElementById('btn-view-chart');
+        if(bt)bt.classList.toggle('hist-view-active',view==='table');
+        if(bg)bg.classList.toggle('hist-view-active',view==='chart');
+        document.getElementById('hist-view-table').style.display=view==='table'?'block':'none';
+        document.getElementById('hist-view-chart').style.display=view==='chart'?'block':'none';
+        if(view==='chart')window.renderHistChart();
     };
     window.renderHistChart=function(){
         const canvas=document.getElementById('hist-canvas');if(!canvas)return;const ctx=canvas.getContext('2d');if(histChartInstance)histChartInstance.destroy();
@@ -1987,15 +2103,52 @@
         return nome;
     };
     window.setNeed=v=>{window.needVal=v;["sim","talvez","nao"].forEach(k=>document.getElementById("nb-"+k).classList.toggle("active",k===v));};
+    window.fecharGastosSecoes=function(){
+        ['wrap-fixos','wrap-vars','wrap-subs'].forEach(id=>{
+            const el=document.getElementById(id);
+            if(el)el.style.display='none';
+        });
+        ['chev-fixos','chev-vars','chev-subs'].forEach(id=>{
+            const cv=document.getElementById(id);
+            if(cv)cv.classList.remove('open');
+        });
+    };
+    window.irParaNovoRegistro=function(tipo){
+        if(tipo==='ganho'){
+            window.goTo('receitas');
+            setTimeout(()=>window.adicionarReceita(),80);
+            return;
+        }
+        window.goTo('gastos');
+        setTimeout(()=>{
+            window.fecharGastosSecoes();
+            window.abrirFabMenu();
+        },100);
+    };
+    window.initScrollTopoBtn=function(){
+        const content=document.querySelector('.content');
+        const btn=document.getElementById('btn-voltar-topo');
+        if(!content||!btn||window._scrollTopoInited)return;
+        window._scrollTopoInited=true;
+        const atualizar=()=>btn.classList.toggle('visible',content.scrollTop>360);
+        content.addEventListener('scroll',atualizar,{passive:true});
+        atualizar();
+    };
+    window.voltarAoInicio=function(){
+        const content=document.querySelector('.content');
+        if(content)content.scrollTo({top:0,behavior:'smooth'});
+    };
     window.goTo=function(pg){
         document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
         document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
         document.getElementById("pg-"+pg).classList.add("active");
         document.getElementById("nb-"+pg).classList.add("active");
-        // FAB visível apenas na aba de gastos
         const fab=document.getElementById('fab-container');if(fab)fab.classList.toggle('visible',pg==='gastos');
         window.fecharFab();
         if(pg==="saude")window.buildSaude();
+        if(pg==="historico"){window.buildHistorico();window.buildCal();}
+        if(pg==="gastos")window.fecharGastosSecoes();
+        const content=document.querySelector('.content');if(content)content.scrollTop=0;
     };
     window.jumpToMonth=k=>{const[m,y]=k.split('-');window.setMonthData(parseInt(m),parseInt(y));window.goTo('painel');};
     window.toggleDarkMode=()=>{document.body.classList.toggle("dark-theme");localStorage.setItem('cf_dark_mode',document.body.classList.contains('dark-theme'));if(window.currentHistView==='chart')window.renderHistChart();};
