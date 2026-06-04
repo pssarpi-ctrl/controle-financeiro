@@ -883,7 +883,15 @@
     window.normalizarNomeGasto=function(nome){return(nome||"").replace(/[^a-zA-Z0-9\s\u00C0-\u024F]/g," ").replace(/\s+/g," ").trim().toLowerCase();};
     window.nomesGastosSimilares=function(a,b){if(!a||!b)return false;if(a===b)return true;if(a.length>4&&b.length>4&&(a.includes(b)||b.includes(a)))return true;const pa=a.split(" ").filter(w=>w.length>2),pb=b.split(" ").filter(w=>w.length>2);return pa.filter(w=>pb.includes(w)).length>=2;};
     window.agruparItensGastos=function(itens){const grupos=[];itens.forEach(it=>{const ch=window.normalizarNomeGasto(it.nome);let g=grupos.find(x=>window.nomesGastosSimilares(x.chave,ch));if(!g){g={chave:ch,nomeExib:it.nome,valor:0,itens:[],tipos:{},cat:it.cat};grupos.push(g);}g.valor+=it.valor;g.itens.push(it);g.tipos[it.tipo]=true;if(it.valor>=Math.max(...g.itens.map(x=>x.valor)))g.nomeExib=it.nome;});return grupos.sort((a,b)=>b.valor-a.valor);};
-    window.fecharModal = id => { document.getElementById(id).style.display="none"; };
+    window.fecharModal = id => {
+        document.getElementById(id).style.display="none";
+        if(id==='modal-gasto')window.limparFormGasto();
+    };
+    window.limparFormGasto=function(){
+        const eid=document.getElementById('mg-edit-id');if(eid)eid.value='';
+        const eot=document.getElementById('mg-edit-orig-tipo');if(eot)eot.value='';
+        const ter=document.getElementById('mg-tipo-edit-row');if(ter)ter.style.display='none';
+    };
     window.abrirChangelog = () => document.getElementById('modal-changelog').style.display='flex';
     window.abrirExplicacaoFechamento = () => document.getElementById('modal-fechamento').style.display='flex';
     window.toggleAccordion = (id, chev) => { const el=document.getElementById(id); const cv=document.getElementById(chev); el.style.display=el.style.display==="none"?"block":"none"; cv.classList.toggle('open'); };
@@ -1263,12 +1271,48 @@
         if(tipo==='var'){
             Object.keys(window.S.dataByMonth).forEach(k=>{
                 const md=window.S.dataByMonth[k];
-                if(md.gastosV)md.gastosV=md.gastosV.filter(g=>g.id!==id);
+                if(md&&md.gastosV)md.gastosV=md.gastosV.filter(g=>g.id!==id);
             });
         }else{
             window.S.gastosFixos=(window.S.gastosFixos||[]).filter(g=>g.id!==id);
-            Object.keys(window.S.dataByMonth).forEach(k=>{if(window.S.dataByMonth[k].gastosF)delete window.S.dataByMonth[k].gastosF[id];});
+            Object.keys(window.S.dataByMonth).forEach(k=>{const md=window.S.dataByMonth[k];if(md&&md.gastosF)delete md.gastosF[id];});
         }
+    };
+    window.syncGastoFixoMeses=function(gf,val,pay){
+        Object.keys(window.S.dataByMonth).forEach(k=>{
+            const[km,ky]=k.split('-').map(Number);
+            const md=window.S.dataByMonth[k];
+            if(!md)return;
+            if(window.isItemActive(gf,km,ky)){
+                if(!md.gastosF)md.gastosF={};
+                md.gastosF[gf.id]={val,pay};
+            }else if(md.gastosF)delete md.gastosF[gf.id];
+        });
+    };
+    window.calcFimParcelas=function(startM,startY,numParc){
+        if(!numParc||numParc<1)return{endM:null,endY:null};
+        const totalMeses=startM+(numParc-1);
+        return{endY:startY+Math.floor(totalMeses/12),endM:totalMeses%12};
+    };
+    window.atualizarGastoVarInPlace=function(id,emojiName,val,pay,cat){
+        Object.keys(window.S.dataByMonth).forEach(k=>{
+            const gv=(window.S.dataByMonth[k].gastosV||[]).find(g=>g.id===id);
+            if(gv){gv.n=emojiName;gv.val=val;gv.pay=pay;gv.cat=cat;}
+        });
+    };
+    window.atualizarGastoFixoSubInPlace=function(id,tipo,emojiName,val,pay,cat,startM,startY){
+        const gf=(window.S.gastosFixos||[]).find(g=>g.id===id);
+        if(!gf)return false;
+        gf.n=emojiName;gf.val=val;gf.pay=pay;gf.cat=cat;
+        gf.startM=startM;gf.startY=startY;
+        if(tipo==='sub'){gf.endM=null;gf.endY=null;}
+        else{
+            const numParc=parseInt(document.getElementById('mg-numparc').value,10);
+            if(numParc>=1){const fim=window.calcFimParcelas(startM,startY,numParc);gf.endM=fim.endM;gf.endY=fim.endY;}
+            else if(gf.endY===null||gf.endY===undefined){gf.endM=null;gf.endY=null;}
+        }
+        window.syncGastoFixoMeses(gf,val,pay);
+        return true;
     };
 
     window.calcStartMesPgto=function(tipo,pay){
@@ -1281,9 +1325,12 @@
     };
 
     window.criarGastoFixoOuSub=function(tipo,emojiName,val,pay,cat,startM,startY,endM,endY,idOpt){
+        if(!window.S.gastosFixos)window.S.gastosFixos=[];
         const id=idOpt||('gf_'+Date.now());
+        if(tipo==='sub'){endM=null;endY=null;}
         const item={id,n:emojiName,val,pay,cat,startM,startY,endM,endY,hiddenMonths:[]};
-        window.S.gastosFixos.push(item);
+        const ix=window.S.gastosFixos.findIndex(g=>g.id===id);
+        if(ix>=0)window.S.gastosFixos[ix]=item;else window.S.gastosFixos.push(item);
         Object.keys(window.S.dataByMonth).forEach(k=>{
             const[km,ky]=k.split('-').map(Number);
             if(window.isItemActive(item,km,ky)){
@@ -1298,11 +1345,17 @@
         const id=idOpt||('gv_'+Date.now());
         const gv={id,n:emojiName,val,pay,cat};
         const key=`${startM}-${startY}`;
-        if(key===activeKey)activeData.gastosV.push(gv);
-        else{
+        const addOrReplace=(arr)=>{
+            const ix=arr.findIndex(g=>g.id===id);
+            if(ix>=0)arr[ix]=gv;else arr.push(gv);
+        };
+        if(key===activeKey){
+            if(!activeData.gastosV)activeData.gastosV=[];
+            addOrReplace(activeData.gastosV);
+        }else{
             if(!window.S.dataByMonth[key])window.S.dataByMonth[key]={semanas:[{n:"Receita do Mês",brl:0,usd:0,cam:5.90,camData:"",camDataRaw:"",tipos:{}}],gastosF:{},gastosV:[],metasAcum:{}};
             if(!window.S.dataByMonth[key].gastosV)window.S.dataByMonth[key].gastosV=[];
-            window.S.dataByMonth[key].gastosV.push(gv);
+            addOrReplace(window.S.dataByMonth[key].gastosV);
         }
         return id;
     };
@@ -1316,39 +1369,55 @@
         if(!nome||val<=0)return alert('Preencha um nome e um valor maior que zero.');
         const emojiName=window.autoEmoji(nome);
         window.S.catDict[emojiName.toLowerCase()]=cat;
-        const editId=document.getElementById('mg-edit-id').value;
+        const editId=(document.getElementById('mg-edit-id').value||'').trim();
         const origTipo=document.getElementById('mg-edit-orig-tipo').value;
-        const {startM,startY}=window.calcStartMesPgto(tipo,pay);
+        let {startM,startY}=window.calcStartMesPgto(tipo,pay);
 
-        if(editId){
-            let sm=startM,sy=startY;
-            if(origTipo!=='var'){
-                const oldGf=(window.S.gastosFixos||[]).find(g=>g.id===editId);
-                if(oldGf&&(tipo==='fixo'||tipo==='sub')){sm=oldGf.startM;sy=oldGf.startY;}
-            }else if(tipo==='var'){sm=activeM;sy=activeY;}
-            window.removerGastoCompleto(origTipo,editId);
-            startM=sm;startY=sy;
-            if(tipo==='fixo'){
-                let endM=null,endY=null;
-                const numParc=parseInt(document.getElementById('mg-numparc').value);
-                if(numParc>=1){let totalMeses=startM+(numParc-1);endY=startY+Math.floor(totalMeses/12);endM=totalMeses%12;}
-                window.criarGastoFixoOuSub('fixo',emojiName,val,pay,cat,startM,startY,endM,endY,editId);
+        try{
+            if(editId){
+                const mesmoTipo=origTipo===tipo;
+                if(mesmoTipo&&tipo==='var'){
+                    window.atualizarGastoVarInPlace(editId,emojiName,val,pay,cat);
+                }else if(mesmoTipo&&(tipo==='fixo'||tipo==='sub')){
+                    const oldGf=(window.S.gastosFixos||[]).find(g=>g.id===editId);
+                    if(oldGf){startM=oldGf.startM;startY=oldGf.startY;}
+                    if(!window.atualizarGastoFixoSubInPlace(editId,tipo,emojiName,val,pay,cat,startM,startY)){
+                        alert('Gasto não encontrado. Tente novamente.');
+                        return;
+                    }
+                }else{
+                    if(origTipo!=='var'){
+                        const oldGf=(window.S.gastosFixos||[]).find(g=>g.id===editId);
+                        if(oldGf&&(tipo==='fixo'||tipo==='sub')){startM=oldGf.startM;startY=oldGf.startY;}
+                    }else if(tipo==='var'){startM=activeM;startY=activeY;}
+                    window.removerGastoCompleto(origTipo,editId);
+                    if(tipo==='fixo'){
+                        const numParc=parseInt(document.getElementById('mg-numparc').value,10);
+                        const fim=window.calcFimParcelas(startM,startY,numParc);
+                        window.criarGastoFixoOuSub('fixo',emojiName,val,pay,cat,startM,startY,fim.endM,fim.endY,editId);
+                    }else if(tipo==='sub'){
+                        window.criarGastoFixoOuSub('sub',emojiName,val,pay,cat,startM,startY,null,null,editId);
+                    }else{
+                        window.criarGastoVar(emojiName,val,pay,cat,startM,startY,editId);
+                    }
+                }
+            }else if(tipo==='fixo'){
+                const numParc=parseInt(document.getElementById('mg-numparc').value,10);
+                const fim=window.calcFimParcelas(startM,startY,numParc);
+                window.criarGastoFixoOuSub('fixo',emojiName,val,pay,cat,startM,startY,fim.endM,fim.endY);
             }else if(tipo==='sub'){
-                window.criarGastoFixoOuSub('sub',emojiName,val,pay,cat,startM,startY,null,null,editId);
+                window.criarGastoFixoOuSub('sub',emojiName,val,pay,cat,startM,startY,null,null);
             }else{
-                window.criarGastoVar(emojiName,val,pay,cat,startM,startY,editId);
+                window.criarGastoVar(emojiName,val,pay,cat,startM,startY);
             }
-        }else if(tipo==='fixo'){
-            let endM=null,endY=null;
-            const numParc=parseInt(document.getElementById('mg-numparc').value);
-            if(numParc>=1){let totalMeses=startM+(numParc-1);endY=startY+Math.floor(totalMeses/12);endM=totalMeses%12;}
-            window.criarGastoFixoOuSub('fixo',emojiName,val,pay,cat,startM,startY,endM,endY);
-        }else if(tipo==='sub'){
-            window.criarGastoFixoOuSub('sub',emojiName,val,pay,cat,startM,startY,null,null);
-        }else{
-            window.criarGastoVar(emojiName,val,pay,cat,startM,startY);
+            window.fecharModal('modal-gasto');
+            window.renderView();
+            window.scheduleSync();
+        }catch(err){
+            console.error('salvarGasto',err);
+            alert('Não foi possível salvar o gasto. Tente de novo.');
+            window.renderView();
         }
-        window.fecharModal('modal-gasto');window.renderView();window.scheduleSync();
     };
 
     // ===== METAS =====
