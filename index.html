@@ -36,7 +36,7 @@
         .dark-theme .btn-secondary, .dark-theme .btn-close-modal, .dark-theme .btn-small { background: #2c2c2e; color: #007aff; border-color: #3a3a3c; }
         .dark-theme .mes-selector { background: #000; }
         .dark-theme .mes-selector button { background: #2c2c2e; color:#fff; box-shadow:none;}
-        .dark-theme #total-tipos-det, .dark-theme #total-gastos-det { background: #1c1c1e !important; border-bottom-color: #333 !important; color: #f2f2f7; }
+        .dark-theme #total-tipos-det, .dark-theme #total-gastos-det, .dark-theme #total-metas-det { background: #1c1c1e !important; border-bottom-color: #333 !important; color: #f2f2f7; }
         .dark-theme #hist-toggle-bg { background: #2c2c2e !important; }
         .dark-theme #hist-toggle-bg button { color: #8e8e93 !important; }
         #hist-toggle-bg button { background: transparent; border: none; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; color: #8e8e93; font-family: inherit; }
@@ -199,6 +199,10 @@
         .gasto-det-parcelas { background: #e3f0ff; color: #0055cc; }
         .gasto-det-compras { background: #f3e5f5; color: #6b2d8b; }
         .gasto-det-assin { background: #fff3cd; color: #856404; }
+        .meta-det-tag { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
+        .meta-det-aporte { background: #d1f7e0; color: #1a6b3a; }
+        .meta-det-saida { background: #ffe5e5; color: #c0392b; }
+        .meta-det-liquido { background: #e3f0ff; color: #0055cc; }
         @media (min-width: 431px) {
             .btn-voltar-topo { left: calc(50% - 215px + 16px); }
         }
@@ -254,7 +258,7 @@
         <button class="login-btn" style="background: #f2f2f7; color: #8e8e93;" onclick="window.iniciarVisitante()">👤 Acessar como Visitante</button>
         <div style="margin-top: 60px; font-size: 11px; color: #8e8e93; font-weight: 500; line-height: 1.5;">
             Desenvolvido por <span style="color: #007aff; font-weight: 700;">Pedro Sarpi</span><br>
-            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()" title="Ver novidades">Versão 1.15.2</span>
+            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()" title="Ver novidades">Versão 1.15.3</span>
         </div>
     </div>
 
@@ -361,16 +365,17 @@
             </div>
 
             <div class="page" id="pg-metas">
-                <div class="gastos-total-sticky">
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <span class="page-title-bar">Metas</span>
-                        <button class="btn-small" style="padding:4px 8px; font-size:11px;" onclick="window.abrirModalMeta()">+ Nova</button>
+                <div class="gastos-total-sticky" style="cursor:pointer;" onclick="window.toggleTotalMetas()">
+                    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                        <span class="page-title-bar">Metas <span style="font-size:10px; color:#8e8e93; text-transform:none;" id="btn-ver-det-metas">(Ver)</span></span>
+                        <button class="btn-small" style="padding:4px 8px; font-size:11px;" onclick="event.stopPropagation(); window.abrirModalMeta()">+ Nova</button>
                     </div>
-                    <div style="text-align:right">
+                    <div style="text-align:right;">
                         <div style="font-size:20px; font-weight:800; color:#007aff" id="metas-total-val">R$ 0,00</div>
-                        <div style="font-size:11px; color:#8e8e93;">Aportes do mês</div>
+                        <div style="font-size:11px; color:#8e8e93;" id="metas-total-sub">Aportes do mês</div>
                     </div>
                 </div>
+                <div id="total-metas-det" style="display:none; background:#fff; margin:-16px -16px 16px -16px; padding:12px 16px; border-bottom:0.5px solid rgba(0,0,0,0.1); border-radius:0 0 16px 16px;"></div>
                 <div id="metas-list" style="display:flex; flex-direction:column;"></div>
             </div>
 
@@ -850,11 +855,12 @@
 <div class="modal-overlay" id="modal-changelog">
   <div class="modal-content">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <h3 style="font-weight:800;">Novidades — v1.15.2</h3>
+      <h3 style="font-weight:800;">Novidades — v1.15.3</h3>
       <button class="btn-close-modal" onclick="window.fecharModal('modal-changelog')">&times;</button>
     </div>
-    <div style="font-size:11px; color:#fff; background:#007aff; display:inline-block; padding:3px 10px; border-radius:6px; font-weight:800; margin-bottom:8px;">v1.15.2 — agora</div>
+    <div style="font-size:11px; color:#fff; background:#007aff; display:inline-block; padding:3px 10px; border-radius:6px; font-weight:800; margin-bottom:8px;">v1.15.3 — agora</div>
     <ul style="font-size:14px; color:#3c3c43; line-height:1.5; padding-left:16px; margin-bottom:18px;">
+        <li style="margin-bottom:8px;"><b>🎯 Metas:</b> clique em <b>(Ver)</b> para ver totais de aportes, saídas e líquido do mês — mesmo layout de Receitas e Gastos.</li>
         <li style="margin-bottom:8px;"><b>🎯 Metas:</b> detalhe mais enxuto — aporte e saída lado a lado, datas em dd/mm e sem totais redundantes.</li>
         <li style="margin-bottom:8px;"><b>📋 Metas:</b> histórico do mês corrigido — edite entradas, saídas e trocas de emoji com data.</li>
         <li style="margin-bottom:8px;"><b>🎯 Metas:</b> emoji no &quot;Editar Meta&quot; (seção expansível); botão único &quot;Registrar&quot; para aporte e saída.</li>
@@ -1260,6 +1266,7 @@
     window.toggleWeek=i=>{const el=document.getElementById(`wd-${i}`);if(el)el.style.display=el.style.display==='none'?'grid':'none';};
     window.toggleTotalTipos=()=>{const dm=window.S.config.dolarMode||'none';if(dm!=='ergeon')return;const el=document.getElementById("total-tipos-det");const btn=document.getElementById("btn-ver-detalhes");if(el){el.style.display=el.style.display==='none'?'block':'none';if(btn)btn.textContent=el.style.display==='none'?'(Ver)':'(Esconder)';}};
     window.toggleTotalGastos=()=>{const el=document.getElementById("total-gastos-det");const btn=document.getElementById("btn-ver-det-gastos");if(el){el.style.display=el.style.display==='none'?'block':'none';if(btn)btn.textContent=el.style.display==='none'?'(Ver)':'(Esconder)';}};
+    window.toggleTotalMetas=()=>{const el=document.getElementById("total-metas-det");const btn=document.getElementById("btn-ver-det-metas");if(el){el.style.display=el.style.display==='none'?'block':'none';if(btn)btn.textContent=el.style.display==='none'?'(Ver)':'(Esconder)';}};
     window.tipoTotals=()=>{const t={salario:{u:0,b:0},reembolso:{u:0,b:0},review:{u:0,b:0},bonus:{u:0,b:0}};(activeData.semanas||[]).forEach(s=>{if(!s.isBRL&&s.tipos){window.TIPOS.forEach(tp=>{const v=s.tipos[tp.k]||0;if(v>0){t[tp.k].u+=v;t[tp.k].b+=(v*(s.cam||5.90));}});}});return t;};
 
     window.buildReceitas=function(){
@@ -2067,7 +2074,7 @@
 
     let recalcTimeout;
     window.recalc=function(){
-        const{tBRL,tUSD,tReal,tOrc,tAp,saldo,realFixos,realVar}=window.calcTotals();
+        const{tBRL,tUSD,tReal,tOrc,tAp,tSai,saldo,realFixos,realVar}=window.calcTotals();
         const dm=(window.S.config&&window.S.config.dolarMode)?window.S.config.dolarMode:'none';
         const isUSD=dm!=='none';const isErgeon=dm==='ergeon';
         const topSaldo=document.getElementById("top-saldo");
@@ -2078,18 +2085,25 @@
         document.getElementById("gastos-total-real").textContent=window.R(tReal);
         document.getElementById("gastos-total-orc").textContent=`Base fixa: ${window.R(tOrc)}`;
         const apEl=document.getElementById("metas-total-val");if(apEl)apEl.textContent=window.R(tAp);
+        const metasSub=document.getElementById("metas-total-sub");
+        if(metasSub)metasSub.textContent=tSai>0?`Aportes do mês • Saídas: ${window.R(tSai).replace('R$ ','')}`:'Aportes do mês';
         clearTimeout(recalcTimeout);
-        recalcTimeout=setTimeout(()=>window.recalcHeavy(tBRL,tUSD,tReal,tOrc,tAp,saldo,isUSD,isErgeon,realFixos,realVar),600);
+        recalcTimeout=setTimeout(()=>window.recalcHeavy(tBRL,tUSD,tReal,tOrc,tAp,tSai,saldo,isUSD,isErgeon,realFixos,realVar),600);
         window.scheduleSync();
     };
 
-    window.recalcHeavy=function(tBRL,tUSD,tReal,tOrc,tAp,saldo,isUSD,isErgeon,realFixos,realVar){
+    window.recalcHeavy=function(tBRL,tUSD,tReal,tOrc,tAp,tSai,saldo,isUSD,isErgeon,realFixos,realVar){
         const detEl=document.getElementById("total-tipos-det");
         if(isUSD&&tUSD>0&&detEl&&isErgeon){const tt=window.tipoTotals();const rows=window.TIPOS.filter(t=>tt[t.k].b>0).map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:0.5px solid rgba(255,255,255,0.1);"><span style="background:${t.bg};color:${t.tc};font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;">${t.l}</span><div style="text-align:right;"><div style="font-size:14px;font-weight:800;color:#30d158;">${window.R(tt[t.k].b)}</div><div style="font-size:10px;color:#8e8e93;font-weight:600;">U$ ${tt[t.k].u.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div></div></div>`).join("");detEl.innerHTML=rows||`<div style="font-size:12px;color:#8e8e93;text-align:center;">Sem detalhamento ativo</div>`;}else if(detEl)detEl.style.display="none";
         const detGastosEl=document.getElementById("total-gastos-det");
         if(detGastosEl){
             const br=window.calcGastosBreakdown();
             detGastosEl.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:0.5px solid rgba(0,0,0,0.08);"><span class="gasto-det-tag gasto-det-parcelas">Parcelas</span><div style="font-size:14px;font-weight:700;color:#ff453a;">${window.R(br.parcelas)}</div></div><div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:0.5px solid rgba(0,0,0,0.08);"><span class="gasto-det-tag gasto-det-compras">Compras do mês</span><div style="font-size:14px;font-weight:700;color:#ff453a;">${window.R(br.comprasMes)}</div></div><div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;"><span class="gasto-det-tag gasto-det-assin">Assinaturas</span><div style="font-size:14px;font-weight:700;color:#ff453a;">${window.R(br.assinaturas)}</div></div>`;
+        }
+        const detMetasEl=document.getElementById("total-metas-det");
+        if(detMetasEl){
+            const liquido=tAp-tSai;
+            detMetasEl.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:0.5px solid rgba(0,0,0,0.08);"><span class="meta-det-tag meta-det-aporte">Aportes do mês</span><div style="font-size:14px;font-weight:700;color:#30d158;">${window.R(tAp)}</div></div><div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:0.5px solid rgba(0,0,0,0.08);"><span class="meta-det-tag meta-det-saida">Saídas do mês</span><div style="font-size:14px;font-weight:700;color:#ff453a;">${window.R(tSai)}</div></div><div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;"><span class="meta-det-tag meta-det-liquido">Líquido (aporte − saída)</span><div style="font-size:14px;font-weight:700;color:${liquido>=0?'#007aff':'#ff453a'};">${window.R(liquido)}</div></div>`;
         }
         let totalAcumGeral=0;let activeMetasCount=0;
         (window.S.metas||[]).forEach(m=>{if(window.isItemActive(m,activeM,activeY)){activeMetasCount++;totalAcumGeral+=window.calcMetaAcumulado(m);}});
