@@ -42,7 +42,7 @@
         #hist-toggle-bg button { background: transparent; border: none; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; color: #8e8e93; font-family: inherit; }
         #hist-toggle-bg button.hist-view-active { background: #fff; color: #1c1c1e; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
         .dark-theme #hist-toggle-bg button.hist-view-active { background: #3a3a3c !important; color: #f2f2f7 !important; box-shadow: none !important; }
-        .dark-theme #mdet-objetivo, .dark-theme #mdet-mes-atual { color: #f2f2f7 !important; }
+        .dark-theme #mdet-objetivo { color: #f2f2f7 !important; }
         .dark-theme #mdet-aporte { color: #fff !important; }
         .dark-theme .fab-menu-item { background: #2c2c2e !important; color: #fff !important; }
         .dark-theme .bottom-nav { background: rgba(28,28,30,0.97); border-top-color: #333; }
@@ -96,7 +96,9 @@
         .meta-hist-row .mh-info { flex: 1; min-width: 0; }
         .meta-hist-row .mh-tipo { font-size: 11px; font-weight: 700; color: #8e8e93; text-transform: uppercase; }
         .meta-hist-row .mh-val { font-size: 14px; font-weight: 700; }
-        .meta-hist-row .mh-data { font-size: 11px; color: #8e8e93; margin-top: 2px; }
+        .meta-hist-row .mh-data { font-size: 11px; color: #8e8e93; margin-top: 2px; font-variant-numeric: tabular-nums; }
+        .meta-date-inp { height: 30px; font-size: 13px; width: 100%; text-align: center; border-radius: 8px; border: 0.5px solid #e5e5ea; padding: 0 6px; font-family: inherit; color: #1c1c1e; background: #fff; font-variant-numeric: tabular-nums; }
+        .dark-theme .meta-date-inp { background: #1c1c1e; border-color: #3a3a3c; color: #f2f2f7; }
         .meta-hist-ctrl { display: flex; gap: 4px; flex-shrink: 0; }
         .meta-hist-ctrl button { background: none; border: none; font-size: 16px; cursor: pointer; padding: 4px; line-height: 1; }
         .dark-theme .meta-hist-row { background: #2c2c2e; border-color: #3a3a3c; }
@@ -252,7 +254,7 @@
         <button class="login-btn" style="background: #f2f2f7; color: #8e8e93;" onclick="window.iniciarVisitante()">👤 Acessar como Visitante</button>
         <div style="margin-top: 60px; font-size: 11px; color: #8e8e93; font-weight: 500; line-height: 1.5;">
             Desenvolvido por <span style="color: #007aff; font-weight: 700;">Pedro Sarpi</span><br>
-            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()" title="Ver novidades">Versão 1.15.1</span>
+            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()" title="Ver novidades">Versão 1.15.2</span>
         </div>
     </div>
 
@@ -492,33 +494,23 @@
             <button class="btn-close-modal" onclick="window.fecharModal('modal-meta-detalhes')">&times;</button>
         </div>
         <input type="hidden" id="mdet-id" value="">
-        <div style="display:flex; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:4px;">
-           <span style="font-size:13px; color:#8e8e93;">Aportado neste mês: <strong id="mdet-mes-atual" style="color:#1c1c1e;">R$ 0,00</strong></span>
-           <span id="mdet-mes-saida-info" style="font-size:13px; color:#8e8e93; display:none;">Retirado: <strong id="mdet-mes-saida" style="color:#ff453a;">R$ 0,00</strong></span>
-        </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
             <div style="background:#f2f2f7; border-radius:10px; padding:10px;">
                 <div style="font-size:11px; color:#8e8e93; margin-bottom:4px; font-weight:600;">Somar Aporte</div>
-                <div style="display:flex; align-items:center; margin-bottom:8px;">
+                <div style="display:flex; align-items:center; margin-bottom:6px;">
                     <span style="font-size:14px; font-weight:700; color:#30d158; margin-right:4px;">+ R$</span>
                     <input type="text" id="mdet-aporte" inputmode="decimal" placeholder="0,00" oninput="this.value=window.formatMoneyInput(this.value)" style="background:transparent; border:none; height:28px; padding:0; font-size:16px; font-weight:700; width:100%; color:#1c1c1e; outline:none; font-family:inherit;">
                 </div>
-                <label style="font-size:10px; color:#8e8e93; font-weight:600;">Data</label>
-                <input type="date" id="mdet-aporte-data" style="height:34px; font-size:13px; margin-top:4px; width:100%;">
+                <input type="text" id="mdet-aporte-data" class="meta-date-inp" inputmode="numeric" placeholder="dd/mm" maxlength="5" oninput="this.value=window.formatDataCurtaInput(this.value)">
             </div>
-            <div style="background:#e3f0ff; border-radius:10px; padding:10px;">
-                <div style="font-size:11px; color:#0055cc; margin-bottom:4px; font-weight:600;">Acumulado Total</div>
-                <div id="mdet-acumulado" style="font-size:15px; font-weight:700; color:#007aff;">R$ 0,00</div>
+            <div style="background:#fff3cd; border-radius:10px; padding:10px;">
+                <div style="font-size:11px; color:#856404; margin-bottom:4px; font-weight:600;">Saída</div>
+                <div style="display:flex; align-items:center; margin-bottom:6px;">
+                    <span style="font-size:14px; font-weight:700; color:#ff453a; margin-right:4px;">– R$</span>
+                    <input type="text" id="mdet-saida" inputmode="decimal" placeholder="0,00" oninput="this.value=window.formatMoneyInput(this.value)" style="background:transparent; border:none; height:28px; padding:0; font-size:16px; font-weight:700; width:100%; color:#1c1c1e; outline:none; font-family:inherit;">
+                </div>
+                <input type="text" id="mdet-saida-data" class="meta-date-inp" inputmode="numeric" placeholder="dd/mm" maxlength="5" oninput="this.value=window.formatDataCurtaInput(this.value)">
             </div>
-        </div>
-        <div style="background:#fff3cd; border-radius:10px; padding:10px; margin-bottom:12px;">
-            <div style="font-size:11px; color:#856404; margin-bottom:4px; font-weight:600;">Registrar saída (volta para sua conta)</div>
-            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                <span style="font-size:14px; font-weight:700; color:#ff453a;">– R$</span>
-                <input type="text" id="mdet-saida" inputmode="decimal" placeholder="0,00" oninput="this.value=window.formatMoneyInput(this.value)" style="background:transparent; border:none; height:28px; padding:0; font-size:16px; font-weight:700; flex:1; color:#1c1c1e; outline:none; font-family:inherit;">
-            </div>
-            <label style="font-size:10px; color:#856404; font-weight:600;">Data</label>
-            <input type="date" id="mdet-saida-data" style="height:34px; font-size:13px; margin-top:4px; width:100%;">
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
             <span id="mdet-objetivo" style="font-size:13px; font-weight:600; color:#3c3c43;">Objetivo: R$ 0,00</span>
@@ -554,7 +546,7 @@
             <label class="input-label">Novo emoji</label>
             <div id="mhe-emoji-grid" class="meta-emoji-grid"></div>
         </div>
-        <div class="input-group"><label class="input-label">Data</label><input type="date" id="mhe-data"></div>
+        <div class="input-group"><label class="input-label">Data (dd/mm)</label><input type="text" id="mhe-data" class="meta-date-inp" inputmode="numeric" placeholder="dd/mm" maxlength="5" oninput="this.value=window.formatDataCurtaInput(this.value)"></div>
         <button class="btn-primary" onclick="window.salvarMetaHistEdit()" style="margin-top:16px; margin-bottom:10px;">Salvar alteração</button>
         <button class="btn-primary" style="background:#ffe5e5; color:#c0392b;" onclick="window.excluirMetaHistEdit()">Excluir lançamento</button>
     </div>
@@ -858,11 +850,12 @@
 <div class="modal-overlay" id="modal-changelog">
   <div class="modal-content">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <h3 style="font-weight:800;">Novidades — v1.15.1</h3>
+      <h3 style="font-weight:800;">Novidades — v1.15.2</h3>
       <button class="btn-close-modal" onclick="window.fecharModal('modal-changelog')">&times;</button>
     </div>
-    <div style="font-size:11px; color:#fff; background:#007aff; display:inline-block; padding:3px 10px; border-radius:6px; font-weight:800; margin-bottom:8px;">v1.15.1 — agora</div>
+    <div style="font-size:11px; color:#fff; background:#007aff; display:inline-block; padding:3px 10px; border-radius:6px; font-weight:800; margin-bottom:8px;">v1.15.2 — agora</div>
     <ul style="font-size:14px; color:#3c3c43; line-height:1.5; padding-left:16px; margin-bottom:18px;">
+        <li style="margin-bottom:8px;"><b>🎯 Metas:</b> detalhe mais enxuto — aporte e saída lado a lado, datas em dd/mm e sem totais redundantes.</li>
         <li style="margin-bottom:8px;"><b>📋 Metas:</b> histórico do mês corrigido — edite entradas, saídas e trocas de emoji com data.</li>
         <li style="margin-bottom:8px;"><b>🎯 Metas:</b> emoji no &quot;Editar Meta&quot; (seção expansível); botão único &quot;Registrar&quot; para aporte e saída.</li>
         <li style="margin-bottom:8px;"><b>🤖 IA Analista:</b> detecta seu perfil financeiro, analisa padrões dos últimos meses e sugere ações personalizadas.</li>
@@ -1715,7 +1708,11 @@
     };
     window.META_EMOJIS=['🎯','✈️','🏠','🚗','💰','🎓','💊','🛡️','🎁','🏋️','📦','🌴','💎','🎮','📱','🐶','🏷️','✨','🔥','💡'];
     window.hojeISO=function(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
-    window.formatDataBR=function(iso){if(!iso)return '—';const p=iso.split('-');return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:iso;};
+    window.formatDataCurta=function(iso){if(!iso)return '—';const p=iso.split('-');return p.length===3?`${p[2]}/${p[1]}`:iso;};
+    window.isoFromDataCurta=function(str,refY){const s=(str||'').trim();if(!s)return window.hojeISO();const m=s.match(/^(\d{1,2})\/(\d{1,2})$/);if(!m)return window.hojeISO();const d=parseInt(m[1],10),mo=parseInt(m[2],10);let y=refY!=null?refY:activeY;if(y==null)y=new Date().getFullYear();if(d<1||d>31||mo<1||mo>12)return window.hojeISO();return `${y}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;};
+    window.hojeDataCurta=function(){return window.formatDataCurta(window.hojeISO());};
+    window.formatDataCurtaInput=function(v){const d=(v||'').replace(/\D/g,'').slice(0,4);if(d.length<=2)return d;return d.slice(0,2)+'/'+d.slice(2);};
+    window.formatDataBR=function(iso){return window.formatDataCurta(iso);};
     window.extrairEmojiTexto=function(text){const m=(text||'').match(/^(\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic})*)\s*/u);return m?m[1]:'🏷️';};
     window.nomeSemEmojiTexto=function(text){return (text||'').replace(/^(\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic})*)\s*/u,'').trim()||(text||'');};
     window.aplicarEmojiNome=function(emoji,nomeSem){return emoji+' '+nomeSem.trim();};
@@ -1824,7 +1821,7 @@
             else{tipoLbl='Emoji';valHtml=(e.emojiDe||'?')+' → '+(e.emojiPara||'?');cor='#5856d6';}
             const row=document.createElement('div');
             row.className='meta-hist-row';
-            row.innerHTML=`<div class="mh-info"><div class="mh-tipo">${tipoLbl}</div><div class="mh-val" style="color:${cor};">${valHtml}</div><div class="mh-data">${window.formatDataBR(e.data)}</div></div>`;
+            row.innerHTML=`<div class="mh-info"><div class="mh-tipo">${tipoLbl}</div><div class="mh-val" style="color:${cor};">${valHtml}</div><div class="mh-data">${window.formatDataCurta(e.data)}</div></div>`;
             const ctrl=document.createElement('div');
             ctrl.className='meta-hist-ctrl';
             const btn=document.createElement('button');
@@ -1848,7 +1845,7 @@
         document.getElementById('mhe-meta-id').value=metaId;
         document.getElementById('mhe-entry-id').value=entryId;
         document.getElementById('mhe-tipo').value=e.tipo;
-        document.getElementById('mhe-data').value=e.data||window.hojeISO();
+        document.getElementById('mhe-data').value=window.formatDataCurta(e.data||window.hojeISO());
         const fv=document.getElementById('mhe-fields-val');
         const fe=document.getElementById('mhe-fields-emoji');
         if(e.tipo==='emoji'){
@@ -1868,7 +1865,7 @@
         const metaId=document.getElementById('mhe-meta-id').value;
         const entryId=document.getElementById('mhe-entry-id').value;
         const tipo=document.getElementById('mhe-tipo').value;
-        const data=document.getElementById('mhe-data').value||window.hojeISO();
+        const data=window.isoFromDataCurta(document.getElementById('mhe-data').value);
         const e=window.findMetaHistEntry(metaId,entryId);if(!e)return;
         if(tipo==='emoji'){
             const novo=window._mheEmojiPick||e.emojiPara;
@@ -1931,7 +1928,7 @@
         document.getElementById('mdet-titulo').textContent=m.n+((m.obj>0&&pct>=100)?' 🎉':'');
         document.getElementById('mdet-aporte').value='';
         const sEl=document.getElementById('mdet-saida');if(sEl)sEl.value='';
-        const hoje=window.hojeISO();
+        const hoje=window.hojeDataCurta();
         const apData=document.getElementById('mdet-aporte-data');if(apData)apData.value=hoje;
         const saData=document.getElementById('mdet-saida-data');if(saData)saData.value=hoje;
         window.atualizarVisualizacaoMetaDetalhes(id);
@@ -1941,16 +1938,10 @@
         const m=window.S.metas.find(x=>x.id===id);if(!m)return;
         window.migrarMetaHistLegado(id,activeData);
         window.syncMetaTotaisFromHist(id);
-        const ap=(activeData.metasAcum||{})[id]||0;
-        const sa=(activeData.metasSaidas||{})[id]||0;
-        const el=document.getElementById('mdet-mes-atual');if(el)el.textContent=window.R(ap);
-        const saInfo=document.getElementById('mdet-mes-saida-info');const saEl=document.getElementById('mdet-mes-saida');
-        if(saInfo&&saEl){if(sa>0){saEl.textContent=window.R(sa);saInfo.style.display='block';}else saInfo.style.display='none';}
         const ac=window.calcMetaAcumulado(m);
         const pct=m.obj>0?Math.min(100,(ac/m.obj)*100):0;
         const cor=window.metaBarColor(pct);
         document.getElementById('mdet-titulo').textContent=m.n+((m.obj>0&&pct>=100)?' 🎉':'');
-        document.getElementById('mdet-acumulado').textContent=window.R(ac);
         document.getElementById('mdet-objetivo').textContent=m.obj>0?`Objetivo: ${window.R(m.obj)}`:'Sem objetivo definido';
         const pctEl=document.getElementById('mdet-pct');
         if(pctEl){pctEl.textContent=m.obj>0?`${pct.toFixed(1)}%${pct>=100?' 🎉':''}`:'';pctEl.style.color=cor;}
@@ -1964,11 +1955,11 @@
         const id=document.getElementById('mdet-id').value;
         const valAp=window.parseMoney(document.getElementById('mdet-aporte').value);
         const valSa=window.parseMoney(document.getElementById('mdet-saida').value);
-        const dataAp=(document.getElementById('mdet-aporte-data')||{}).value||window.hojeISO();
-        const dataSa=(document.getElementById('mdet-saida-data')||{}).value||window.hojeISO();
+        const dataAp=window.isoFromDataCurta((document.getElementById('mdet-aporte-data')||{}).value);
+        const dataSa=window.isoFromDataCurta((document.getElementById('mdet-saida-data')||{}).value);
         if(valAp<=0&&valSa<=0)return alert('Informe um valor de aporte ou de saída.');
-        if(valAp>0){window.addMetaHistEntry(id,{tipo:'aporte',val:valAp,data:dataAp});document.getElementById('mdet-aporte').value='';if(document.getElementById('mdet-aporte-data'))document.getElementById('mdet-aporte-data').value=window.hojeISO();}
-        if(valSa>0){window.addMetaHistEntry(id,{tipo:'saida',val:valSa,data:dataSa});document.getElementById('mdet-saida').value='';if(document.getElementById('mdet-saida-data'))document.getElementById('mdet-saida-data').value=window.hojeISO();}
+        if(valAp>0){window.addMetaHistEntry(id,{tipo:'aporte',val:valAp,data:dataAp});document.getElementById('mdet-aporte').value='';if(document.getElementById('mdet-aporte-data'))document.getElementById('mdet-aporte-data').value=window.hojeDataCurta();}
+        if(valSa>0){window.addMetaHistEntry(id,{tipo:'saida',val:valSa,data:dataSa});document.getElementById('mdet-saida').value='';if(document.getElementById('mdet-saida-data'))document.getElementById('mdet-saida-data').value=window.hojeDataCurta();}
         window.recalc();window.atualizarVisualizacaoMetaDetalhes(id);window.buildMetas();window.scheduleSync();
         const btn=document.getElementById('btn-registrar-meta');
         if(btn){const orig=btn.textContent;btn.style.background='#30d158';btn.textContent='Registrado! 🎉';setTimeout(()=>{btn.style.background='';btn.textContent=orig;},1500);}
