@@ -100,6 +100,7 @@
         .meta-hist-ctrl { display: flex; gap: 4px; flex-shrink: 0; }
         .meta-hist-ctrl button { background: none; border: none; font-size: 16px; cursor: pointer; padding: 4px; line-height: 1; }
         .dark-theme .meta-hist-row { background: #2c2c2e; border-color: #3a3a3c; }
+        #modal-meta-hist-edit { z-index: 1101; }
         .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: rgba(248,248,248,0.97); border-top: 0.5px solid rgba(0,0,0,0.12); display: flex; flex-direction: row !important; z-index: 100; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); }
         .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 0; border: none; background: transparent; cursor: pointer; }
         .nav-icon { font-size: 20px; margin-bottom: 2px; }
@@ -251,7 +252,7 @@
         <button class="login-btn" style="background: #f2f2f7; color: #8e8e93;" onclick="window.iniciarVisitante()">👤 Acessar como Visitante</button>
         <div style="margin-top: 60px; font-size: 11px; color: #8e8e93; font-weight: 500; line-height: 1.5;">
             Desenvolvido por <span style="color: #007aff; font-weight: 700;">Pedro Sarpi</span><br>
-            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()" title="Ver novidades">Versão 1.15</span>
+            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()" title="Ver novidades">Versão 1.15.1</span>
         </div>
     </div>
 
@@ -495,10 +496,6 @@
            <span style="font-size:13px; color:#8e8e93;">Aportado neste mês: <strong id="mdet-mes-atual" style="color:#1c1c1e;">R$ 0,00</strong></span>
            <span id="mdet-mes-saida-info" style="font-size:13px; color:#8e8e93; display:none;">Retirado: <strong id="mdet-mes-saida" style="color:#ff453a;">R$ 0,00</strong></span>
         </div>
-        <div class="input-group" style="margin-bottom:12px;">
-            <label class="input-label">Emoji da meta</label>
-            <div id="mdet-emoji-grid" class="meta-emoji-grid"></div>
-        </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
             <div style="background:#f2f2f7; border-radius:10px; padding:10px;">
                 <div style="font-size:11px; color:#8e8e93; margin-bottom:4px; font-weight:600;">Somar Aporte</div>
@@ -507,7 +504,7 @@
                     <input type="text" id="mdet-aporte" inputmode="decimal" placeholder="0,00" oninput="this.value=window.formatMoneyInput(this.value)" style="background:transparent; border:none; height:28px; padding:0; font-size:16px; font-weight:700; width:100%; color:#1c1c1e; outline:none; font-family:inherit;">
                 </div>
                 <label style="font-size:10px; color:#8e8e93; font-weight:600;">Data</label>
-                <input type="date" id="mdet-aporte-data" style="height:34px; font-size:13px; margin-top:4px;">
+                <input type="date" id="mdet-aporte-data" style="height:34px; font-size:13px; margin-top:4px; width:100%;">
             </div>
             <div style="background:#e3f0ff; border-radius:10px; padding:10px;">
                 <div style="font-size:11px; color:#0055cc; margin-bottom:4px; font-weight:600;">Acumulado Total</div>
@@ -520,13 +517,8 @@
                 <span style="font-size:14px; font-weight:700; color:#ff453a;">– R$</span>
                 <input type="text" id="mdet-saida" inputmode="decimal" placeholder="0,00" oninput="this.value=window.formatMoneyInput(this.value)" style="background:transparent; border:none; height:28px; padding:0; font-size:16px; font-weight:700; flex:1; color:#1c1c1e; outline:none; font-family:inherit;">
             </div>
-            <div style="display:flex; align-items:flex-end; gap:8px;">
-                <div style="flex:1;">
-                    <label style="font-size:10px; color:#856404; font-weight:600;">Data</label>
-                    <input type="date" id="mdet-saida-data" style="height:34px; font-size:13px; margin-top:4px;">
-                </div>
-                <button class="btn-small" id="btn-registrar-saida" style="height:34px; background:#ffe5e5; color:#c0392b; border:none;" onclick="window.registrarSaidaMeta()">Registrar</button>
-            </div>
+            <label style="font-size:10px; color:#856404; font-weight:600;">Data</label>
+            <input type="date" id="mdet-saida-data" style="height:34px; font-size:13px; margin-top:4px; width:100%;">
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
             <span id="mdet-objetivo" style="font-size:13px; font-weight:600; color:#3c3c43;">Objetivo: R$ 0,00</span>
@@ -536,7 +528,7 @@
             <div id="mdet-prog-fill" class="prog-fill" style="width:0%"></div>
         </div>
         <div id="mdet-local" style="font-size:12px; color:#8e8e93; font-weight:600; margin-bottom:12px; display:none;"></div>
-        <button class="btn-primary" id="btn-salvar-aporte" style="margin-bottom:16px; height:46px; font-size:14px;" onclick="window.somarAporte()">Salvar Aporte</button>
+        <button class="btn-primary" id="btn-registrar-meta" style="margin-bottom:16px; height:46px; font-size:14px;" onclick="window.registrarMetaLancamentos()">Registrar</button>
         <div style="font-size:12px; font-weight:800; color:#8e8e93; margin-bottom:8px; text-transform:uppercase;">Histórico deste mês</div>
         <div id="mdet-hist-list" class="meta-hist-list"></div>
         <div style="display:flex; gap:8px; margin-top:8px;">
@@ -772,6 +764,15 @@
     </div>
     <div class="input-group"><label class="input-label">Já tem valor guardado? (Acumulado Inicial)</label><input type="text" id="mm-acum-ini" inputmode="decimal" placeholder="0,00" oninput="this.value=window.formatMoneyInput(this.value)"></div>
     <div class="input-group"><label class="input-label">Onde está guardada?</label><select class="form-sel" id="mm-local"></select></div>
+    <div style="margin-top:4px; margin-bottom:4px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; padding:10px 0;" onclick="window.toggleAccordion('wrap-mm-emoji', 'chev-mm-emoji')">
+            <span class="input-label" style="margin:0;">Emoji da meta <span id="mm-emoji-atual" style="font-size:18px; margin-left:6px;">🎯</span></span>
+            <span id="chev-mm-emoji" class="chev">▼</span>
+        </div>
+        <div id="wrap-mm-emoji" style="display:none; padding-bottom:8px;">
+            <div id="mm-emoji-grid" class="meta-emoji-grid"></div>
+        </div>
+    </div>
     <button class="btn-primary" id="mm-btn-salvar" onclick="window.salvarMeta()" style="margin-top:20px;">Salvar Meta</button>
   </div>
 </div>
@@ -857,16 +858,16 @@
 <div class="modal-overlay" id="modal-changelog">
   <div class="modal-content">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <h3 style="font-weight:800;">Novidades — v1.15</h3>
+      <h3 style="font-weight:800;">Novidades — v1.15.1</h3>
       <button class="btn-close-modal" onclick="window.fecharModal('modal-changelog')">&times;</button>
     </div>
-    <div style="font-size:11px; color:#fff; background:#007aff; display:inline-block; padding:3px 10px; border-radius:6px; font-weight:800; margin-bottom:8px;">v1.15 — agora</div>
+    <div style="font-size:11px; color:#fff; background:#007aff; display:inline-block; padding:3px 10px; border-radius:6px; font-weight:800; margin-bottom:8px;">v1.15.1 — agora</div>
     <ul style="font-size:14px; color:#3c3c43; line-height:1.5; padding-left:16px; margin-bottom:18px;">
+        <li style="margin-bottom:8px;"><b>📋 Metas:</b> histórico do mês corrigido — edite entradas, saídas e trocas de emoji com data.</li>
+        <li style="margin-bottom:8px;"><b>🎯 Metas:</b> emoji no &quot;Editar Meta&quot; (seção expansível); botão único &quot;Registrar&quot; para aporte e saída.</li>
         <li style="margin-bottom:8px;"><b>🤖 IA Analista:</b> detecta seu perfil financeiro, analisa padrões dos últimos meses e sugere ações personalizadas.</li>
         <li style="margin-bottom:8px;"><b>✏️ Gastos:</b> edite pelo lápis e escolha alterar valor só neste mês ou nos próximos.</li>
-        <li style="margin-bottom:8px;"><b>📋 Metas:</b> histórico do mês com data em cada entrada e saída; edite ou exclua lançamentos e troque o emoji da meta.</li>
         <li style="margin-bottom:8px;"><b>🎯 Metas:</b> saídas voltam para sua conta, local de guarda e barra colorida com 🎉 ao concluir.</li>
-        <li style="margin-bottom:8px;"><b>📝 Formulário:</b> cadastro usa só &quot;Este mês&quot; ou &quot;Próximo mês&quot;.</li>
     </ul>
     <button class="btn-primary" onclick="window.fecharModal('modal-changelog')">Incrível!</button>
   </div>
@@ -1720,17 +1721,30 @@
     window.aplicarEmojiNome=function(emoji,nomeSem){return emoji+' '+nomeSem.trim();};
     window.renderMetaEmojiGrid=function(containerId,atual,cbName){
         const el=document.getElementById(containerId);if(!el)return;
-        el.innerHTML=window.META_EMOJIS.map(e=>`<button type="button" class="meta-emoji-btn${e===atual?' active':''}" onclick="window.${cbName}('${e}')">${e}</button>`).join('');
+        el.innerHTML='';
+        window.META_EMOJIS.forEach(em=>{
+            const btn=document.createElement('button');
+            btn.type='button';
+            btn.className='meta-emoji-btn'+(em===atual?' active':'');
+            btn.textContent=em;
+            btn.onclick=()=>{if(typeof window[cbName]==='function')window[cbName](em);};
+            el.appendChild(btn);
+        });
     };
-    window.pickMetaDetalheEmoji=function(em){
-        const id=document.getElementById('mdet-id').value;if(!id||!em)return;
-        window.alterarEmojiMeta(id,em);
-        window.atualizarVisualizacaoMetaDetalhes(id);
-        window.buildMetas();window.scheduleSync();
+    window.pickMetaEditEmoji=function(em){
+        window._mmEmojiPick=em;
+        const prev=document.getElementById('mm-emoji-atual');if(prev)prev.textContent=em;
+        document.querySelectorAll('#mm-emoji-grid .meta-emoji-btn').forEach(b=>b.classList.toggle('active',b.textContent===em));
     };
     window.pickMetaHistEditEmoji=function(em){
         window._mheEmojiPick=em;
         document.querySelectorAll('#mhe-emoji-grid .meta-emoji-btn').forEach(b=>b.classList.toggle('active',b.textContent===em));
+    };
+    window.ensureMetaHist=function(metaId,md){
+        if(!md)md=activeData;
+        if(!md.metasHist)md.metasHist={};
+        if(!md.metasHist[metaId])md.metasHist[metaId]=[];
+        return md.metasHist[metaId];
     };
     window.syncMetaTotaisFromHist=function(metaId,md){
         if(!md)md=activeData;
@@ -1761,16 +1775,18 @@
     };
     window.addMetaHistEntry=function(metaId,entry,md){
         if(!md)md=activeData;
-        if(!md.metasHist)md.metasHist={};
-        if(!md.metasHist[metaId])md.metasHist[metaId]=[];
-        const e={id:entry.id||('mh_'+Date.now()+'_'+Math.random().toString(36).slice(2,6)),tipo:entry.tipo,val:entry.val,data:entry.data||window.hojeISO()};
-        if(entry.tipo==='emoji'){e.emojiDe=entry.emojiDe;e.emojiPara=entry.emojiPara;delete e.val;}
-        md.metasHist[metaId].push(e);
+        const list=window.ensureMetaHist(metaId,md);
+        const e={id:entry.id||('mh_'+Date.now()+'_'+Math.random().toString(36).slice(2,6)),tipo:entry.tipo,data:entry.data||window.hojeISO()};
+        if(entry.tipo==='emoji'){e.emojiDe=entry.emojiDe;e.emojiPara=entry.emojiPara;}
+        else{e.val=Number(entry.val||0);}
+        list.push(e);
         window.syncMetaTotaisFromHist(metaId,md);
         return e.id;
     };
     window.findMetaHistEntry=function(metaId,entryId,md){
-        const list=window.getMetaHistList(metaId,md);
+        if(!md)md=activeData;
+        window.migrarMetaHistLegado(metaId,md);
+        const list=(md.metasHist&&md.metasHist[metaId])||[];
         return list.find(e=>e.id===entryId)||null;
     };
     window.updateMetaHistEntry=function(metaId,entryId,updates,md){
@@ -1779,6 +1795,7 @@
         if(!list)return false;
         const ix=list.findIndex(e=>e.id===entryId);
         if(ix<0)return false;
+        if(updates.val!==undefined)updates.val=Number(updates.val);
         Object.assign(list[ix],updates);
         window.syncMetaTotaisFromHist(metaId,md);
         return true;
@@ -1796,15 +1813,27 @@
     };
     window.renderMetaHistList=function(metaId){
         const box=document.getElementById('mdet-hist-list');if(!box)return;
+        window.migrarMetaHistLegado(metaId,activeData);
         const list=window.getMetaHistList(metaId).sort((a,b)=>(b.data||'').localeCompare(a.data||'')||String(b.id).localeCompare(String(a.id)));
+        box.innerHTML='';
         if(!list.length){box.innerHTML='<p style="font-size:13px;color:#8e8e93;text-align:center;padding:12px 0;">Nenhum lançamento neste mês.</p>';return;}
-        box.innerHTML=list.map(e=>{
+        list.forEach(e=>{
             let valHtml='',cor='#1c1c1e',tipoLbl='';
             if(e.tipo==='aporte'){tipoLbl='Entrada';valHtml=window.R(e.val);cor='#30d158';}
             else if(e.tipo==='saida'){tipoLbl='Saída';valHtml='– '+window.R(e.val);cor='#ff453a';}
             else{tipoLbl='Emoji';valHtml=(e.emojiDe||'?')+' → '+(e.emojiPara||'?');cor='#5856d6';}
-            return `<div class="meta-hist-row"><div class="mh-info"><div class="mh-tipo">${tipoLbl}</div><div class="mh-val" style="color:${cor};">${valHtml}</div><div class="mh-data">${window.formatDataBR(e.data)}</div></div><div class="meta-hist-ctrl"><button type="button" title="Editar" onclick="window.abrirMetaHistEdit('${metaId}','${e.id}')">✏️</button></div></div>`;
-        }).join('');
+            const row=document.createElement('div');
+            row.className='meta-hist-row';
+            row.innerHTML=`<div class="mh-info"><div class="mh-tipo">${tipoLbl}</div><div class="mh-val" style="color:${cor};">${valHtml}</div><div class="mh-data">${window.formatDataBR(e.data)}</div></div>`;
+            const ctrl=document.createElement('div');
+            ctrl.className='meta-hist-ctrl';
+            const btn=document.createElement('button');
+            btn.type='button';btn.title='Editar';btn.textContent='✏️';
+            btn.onclick=(ev)=>{ev.stopPropagation();window.abrirMetaHistEdit(metaId,e.id);};
+            ctrl.appendChild(btn);
+            row.appendChild(ctrl);
+            box.appendChild(row);
+        });
     };
     window.alterarEmojiMeta=function(metaId,novoEmoji,dataOpt){
         const m=window.S.metas.find(x=>x.id===metaId);if(!m||!novoEmoji)return;
@@ -1843,15 +1872,13 @@
         const e=window.findMetaHistEntry(metaId,entryId);if(!e)return;
         if(tipo==='emoji'){
             const novo=window._mheEmojiPick||e.emojiPara;
-            if(novo&&novo!==window.extrairEmojiTexto((window.S.metas.find(x=>x.id===metaId)||{}).n)){
-                const m=window.S.metas.find(x=>x.id===metaId);
-                if(m){const nomeSem=window.nomeSemEmojiTexto(m.n);m.n=window.aplicarEmojiNome(novo,nomeSem);}
-            }
+            const m=window.S.metas.find(x=>x.id===metaId);
+            if(m&&novo){const nomeSem=window.nomeSemEmojiTexto(m.n);m.n=window.aplicarEmojiNome(novo,nomeSem);}
             window.updateMetaHistEntry(metaId,entryId,{emojiPara:novo,data});
         }else{
             const val=window.parseMoney(document.getElementById('mhe-val').value);
             if(val<=0)return alert('Informe um valor maior que zero.');
-            window.updateMetaHistEntry(metaId,entryId,{val,data});
+            window.updateMetaHistEntry(metaId,entryId,{val:Number(val),data});
         }
         window.fecharModal('modal-meta-hist-edit');
         window.atualizarVisualizacaoMetaDetalhes(metaId);
@@ -1931,21 +1958,23 @@
         if(pf){if(m.obj>0){pf.style.width=`${pct}%`;pf.style.background=cor;document.getElementById('mdet-prog-wrapper').style.display='block';}else document.getElementById('mdet-prog-wrapper').style.display='none';}
         const locEl=document.getElementById('mdet-local');
         if(locEl){const ll=window.getMetaLocalLabel(m);if(ll){locEl.textContent=`🏦 Guardado em: ${ll}`;locEl.style.display='block';}else locEl.style.display='none';}
-        window.renderMetaEmojiGrid('mdet-emoji-grid',window.extrairEmojiTexto(m.n),'pickMetaDetalheEmoji');
         window.renderMetaHistList(id);
     };
-    window.somarAporte=function(){
-        const id=document.getElementById('mdet-id').value;const val=window.parseMoney(document.getElementById('mdet-aporte').value);
-        const data=(document.getElementById('mdet-aporte-data')||{}).value||window.hojeISO();
-        if(val>0){window.addMetaHistEntry(id,{tipo:'aporte',val,data});document.getElementById('mdet-aporte').value='';if(document.getElementById('mdet-aporte-data'))document.getElementById('mdet-aporte-data').value=window.hojeISO();window.recalc();window.atualizarVisualizacaoMetaDetalhes(id);window.buildMetas();window.scheduleSync();
-            const btn=document.getElementById('btn-salvar-aporte');const orig=btn.textContent;btn.style.background='#30d158';btn.textContent='Aporte Salvo! 🎉';setTimeout(()=>{btn.style.background='';btn.textContent=orig;},1500);}
+    window.registrarMetaLancamentos=function(){
+        const id=document.getElementById('mdet-id').value;
+        const valAp=window.parseMoney(document.getElementById('mdet-aporte').value);
+        const valSa=window.parseMoney(document.getElementById('mdet-saida').value);
+        const dataAp=(document.getElementById('mdet-aporte-data')||{}).value||window.hojeISO();
+        const dataSa=(document.getElementById('mdet-saida-data')||{}).value||window.hojeISO();
+        if(valAp<=0&&valSa<=0)return alert('Informe um valor de aporte ou de saída.');
+        if(valAp>0){window.addMetaHistEntry(id,{tipo:'aporte',val:valAp,data:dataAp});document.getElementById('mdet-aporte').value='';if(document.getElementById('mdet-aporte-data'))document.getElementById('mdet-aporte-data').value=window.hojeISO();}
+        if(valSa>0){window.addMetaHistEntry(id,{tipo:'saida',val:valSa,data:dataSa});document.getElementById('mdet-saida').value='';if(document.getElementById('mdet-saida-data'))document.getElementById('mdet-saida-data').value=window.hojeISO();}
+        window.recalc();window.atualizarVisualizacaoMetaDetalhes(id);window.buildMetas();window.scheduleSync();
+        const btn=document.getElementById('btn-registrar-meta');
+        if(btn){const orig=btn.textContent;btn.style.background='#30d158';btn.textContent='Registrado! 🎉';setTimeout(()=>{btn.style.background='';btn.textContent=orig;},1500);}
     };
-    window.registrarSaidaMeta=function(){
-        const id=document.getElementById('mdet-id').value;const val=window.parseMoney(document.getElementById('mdet-saida').value);
-        const data=(document.getElementById('mdet-saida-data')||{}).value||window.hojeISO();
-        if(val>0){window.addMetaHistEntry(id,{tipo:'saida',val,data});document.getElementById('mdet-saida').value='';if(document.getElementById('mdet-saida-data'))document.getElementById('mdet-saida-data').value=window.hojeISO();window.recalc();window.atualizarVisualizacaoMetaDetalhes(id);window.buildMetas();window.scheduleSync();
-            const btn=document.getElementById('btn-registrar-saida');if(btn){const orig=btn.textContent;btn.style.background='#30d158';btn.style.color='#fff';btn.textContent='Saída registrada!';setTimeout(()=>{btn.style.background='#ffe5e5';btn.style.color='#c0392b';btn.textContent=orig;},1500);}}
-    };
+    window.somarAporte=window.registrarMetaLancamentos;
+    window.registrarSaidaMeta=window.registrarMetaLancamentos;
     window.editarMetaAtual=()=>{const id=document.getElementById('mdet-id').value;window.fecharModal('modal-meta-detalhes');window.abrirModalMeta(id);};
     window.apagarMetaAtual=()=>{const id=document.getElementById('mdet-id').value;window.fecharModal('modal-meta-detalhes');window.abrirModalDelete('meta',id);};
     window.preencherSelectLocalMeta=function(sel){
@@ -1957,20 +1986,29 @@
         if((sel||'')&&elx.value!==sel){const o=document.createElement('option');o.value=sel;o.textContent=window.getMetaLocalLabel({local:sel});elx.appendChild(o);elx.value=sel;}
     };
     window.abrirModalMeta=function(id=null){
-        if(id){const meta=window.S.metas.find(m=>m.id===id);if(meta){document.getElementById('mm-edit-id').value=id;document.getElementById('mm-titulo').textContent='Editar Meta';document.getElementById('mm-nome').value=meta.n;document.getElementById('mm-ap').value=window.toInput(meta.ap);document.getElementById('mm-obj').value=window.toInput(meta.obj);document.getElementById('mm-acum-ini').value=window.toInput(meta.acumInicial);window.preencherSelectLocalMeta(meta.local||'');if(meta.pM!==undefined&&meta.pY!==undefined){document.getElementById('mm-prazo-m').value=meta.pM;document.getElementById('mm-prazo-y').value=meta.pY;document.getElementById('mm-prazo-old').style.display='none';}else{document.getElementById('mm-prazo-m').value='';document.getElementById('mm-prazo-y').value='';if(meta.prazo&&meta.prazo!=='Sem prazo'){document.getElementById('mm-prazo-old').textContent='Prazo atual: '+meta.prazo+' (Selecione acima para alterar)';document.getElementById('mm-prazo-old').style.display='block';}else document.getElementById('mm-prazo-old').style.display='none';}}}
-        else{document.getElementById('mm-edit-id').value='';document.getElementById('mm-titulo').textContent='Nova Meta';document.getElementById('mm-nome').value='';document.getElementById('mm-prazo-m').value='';document.getElementById('mm-prazo-y').value='';document.getElementById('mm-ap').value='';document.getElementById('mm-obj').value='';document.getElementById('mm-acum-ini').value='';window.preencherSelectLocalMeta('');document.getElementById('mm-prazo-old').style.display='none';}
+        const wrapEmoji=document.getElementById('wrap-mm-emoji');
+        const chevEmoji=document.getElementById('chev-mm-emoji');
+        if(wrapEmoji)wrapEmoji.style.display='none';
+        if(chevEmoji)chevEmoji.classList.remove('open');
+        if(id){const meta=window.S.metas.find(m=>m.id===id);if(meta){document.getElementById('mm-edit-id').value=id;document.getElementById('mm-titulo').textContent='Editar Meta';document.getElementById('mm-nome').value=window.nomeSemEmojiTexto(meta.n);document.getElementById('mm-ap').value=window.toInput(meta.ap);document.getElementById('mm-obj').value=window.toInput(meta.obj);document.getElementById('mm-acum-ini').value=window.toInput(meta.acumInicial);window.preencherSelectLocalMeta(meta.local||'');window._mmEmojiPick=window.extrairEmojiTexto(meta.n);if(meta.pM!==undefined&&meta.pY!==undefined){document.getElementById('mm-prazo-m').value=meta.pM;document.getElementById('mm-prazo-y').value=meta.pY;document.getElementById('mm-prazo-old').style.display='none';}else{document.getElementById('mm-prazo-m').value='';document.getElementById('mm-prazo-y').value='';if(meta.prazo&&meta.prazo!=='Sem prazo'){document.getElementById('mm-prazo-old').textContent='Prazo atual: '+meta.prazo+' (Selecione acima para alterar)';document.getElementById('mm-prazo-old').style.display='block';}else document.getElementById('mm-prazo-old').style.display='none';}}}
+        else{document.getElementById('mm-edit-id').value='';document.getElementById('mm-titulo').textContent='Nova Meta';document.getElementById('mm-nome').value='';document.getElementById('mm-prazo-m').value='';document.getElementById('mm-prazo-y').value='';document.getElementById('mm-ap').value='';document.getElementById('mm-obj').value='';document.getElementById('mm-acum-ini').value='';window.preencherSelectLocalMeta('');document.getElementById('mm-prazo-old').style.display='none';window._mmEmojiPick='🎯';}
+        const emojiAtual=document.getElementById('mm-emoji-atual');if(emojiAtual)emojiAtual.textContent=window._mmEmojiPick||'🎯';
+        window.renderMetaEmojiGrid('mm-emoji-grid',window._mmEmojiPick||'🎯','pickMetaEditEmoji');
         document.getElementById('modal-meta').style.display='flex';
     };
     window.salvarMeta=function(){
         const btn=document.getElementById('mm-btn-salvar');
         if(btn&&btn.disabled)return;
-        const editId=document.getElementById('mm-edit-id').value;let nome=document.getElementById('mm-nome').value.trim();
+        const editId=document.getElementById('mm-edit-id').value;
+        const nomeRaw=document.getElementById('mm-nome').value.trim();
+        const nomeSem=window.nomeSemEmojiTexto(nomeRaw)||nomeRaw;
         const pM=document.getElementById('mm-prazo-m').value;const pY=document.getElementById('mm-prazo-y').value;
         const ap=window.parseMoney(document.getElementById('mm-ap').value);const obj=window.parseMoney(document.getElementById('mm-obj').value);const acumIni=window.parseMoney(document.getElementById('mm-acum-ini').value);
         const localSel=document.getElementById('mm-local')?document.getElementById('mm-local').value:'';
-        if(!nome||ap<=0)return alert('Preencha um nome e o aporte mensal.');
+        if(!nomeSem||ap<=0)return alert('Preencha um nome e o aporte mensal.');
         if(btn){btn.disabled=true;btn.textContent='Salvando...';}
-        nome=window.autoEmoji(nome);
+        let emojiPick=window._mmEmojiPick||window.extrairEmojiTexto(window.autoEmoji(nomeSem));
+        let nome=window.aplicarEmojiNome(emojiPick,nomeSem);
         let prazoStr='Sem prazo';let parsedM=null;let parsedY=null;
         if(pM!==''&&pY!==''){parsedM=parseInt(pM,10);parsedY=parseInt(pY,10);prazoStr=MESES_CURTO[parsedM]+'/'+parsedY;}
         const aplicarPrazo=(meta)=>{meta.prazo=prazoStr;if(parsedM!==null&&parsedY!==null){meta.pM=parsedM;meta.pY=parsedY;}else{delete meta.pM;delete meta.pY;}};
@@ -1978,7 +2016,11 @@
         try{
             if(editId){
                 const meta=window.S.metas.find(m=>m.id===editId);
-                if(meta){meta.n=nome;meta.ap=ap;meta.obj=obj;meta.acumInicial=acumIni;meta.local=localSel;aplicarPrazo(meta);}
+                if(meta){
+                    const antigoEmoji=window.extrairEmojiTexto(meta.n);
+                    meta.n=nome;meta.ap=ap;meta.obj=obj;meta.acumInicial=acumIni;meta.local=localSel;aplicarPrazo(meta);
+                    if(antigoEmoji!==emojiPick)window.addMetaHistEntry(editId,{tipo:'emoji',emojiDe:antigoEmoji,emojiPara:emojiPick,data:window.hojeISO()});
+                }
             }else{
                 const id='m_'+Date.now();
                 const nova={id,n:nome,prazo:prazoStr,ap,obj,acumInicial:acumIni,local:localSel,endM:null,endY:null,hiddenMonths:[]};
