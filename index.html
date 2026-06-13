@@ -88,6 +88,18 @@
         .prog-fill { height: 100%; border-radius: 3px; background: #30d158; transition: width 0.4s ease-in-out; }
         .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 8px; margin-left: 6px; vertical-align: middle; }
         .badge-info { background: #e3f0ff; color: #0055cc !important; }
+        .meta-emoji-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+        .meta-emoji-btn { width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid #e5e5ea; background: #fff; font-size: 18px; cursor: pointer; padding: 0; line-height: 1; }
+        .meta-emoji-btn.active { border-color: #007aff; background: #e8f4fd; }
+        .meta-hist-list { display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; margin-bottom: 12px; }
+        .meta-hist-row { display: flex; align-items: center; gap: 8px; padding: 10px; background: #f9f9f9; border-radius: 10px; border: 0.5px solid #e5e5ea; }
+        .meta-hist-row .mh-info { flex: 1; min-width: 0; }
+        .meta-hist-row .mh-tipo { font-size: 11px; font-weight: 700; color: #8e8e93; text-transform: uppercase; }
+        .meta-hist-row .mh-val { font-size: 14px; font-weight: 700; }
+        .meta-hist-row .mh-data { font-size: 11px; color: #8e8e93; margin-top: 2px; }
+        .meta-hist-ctrl { display: flex; gap: 4px; flex-shrink: 0; }
+        .meta-hist-ctrl button { background: none; border: none; font-size: 16px; cursor: pointer; padding: 4px; line-height: 1; }
+        .dark-theme .meta-hist-row { background: #2c2c2e; border-color: #3a3a3c; }
         .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: rgba(248,248,248,0.97); border-top: 0.5px solid rgba(0,0,0,0.12); display: flex; flex-direction: row !important; z-index: 100; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); }
         .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 0; border: none; background: transparent; cursor: pointer; }
         .nav-icon { font-size: 20px; margin-bottom: 2px; }
@@ -473,7 +485,7 @@
 </div>
 
 <div class="modal-overlay" id="modal-meta-detalhes">
-    <div class="modal-content">
+    <div class="modal-content" style="max-height:92vh; overflow-y:auto;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
             <h3 style="font-weight:800; font-size:18px;" id="mdet-titulo">Detalhes da Meta</h3>
             <button class="btn-close-modal" onclick="window.fecharModal('modal-meta-detalhes')">&times;</button>
@@ -483,24 +495,36 @@
            <span style="font-size:13px; color:#8e8e93;">Aportado neste mês: <strong id="mdet-mes-atual" style="color:#1c1c1e;">R$ 0,00</strong></span>
            <span id="mdet-mes-saida-info" style="font-size:13px; color:#8e8e93; display:none;">Retirado: <strong id="mdet-mes-saida" style="color:#ff453a;">R$ 0,00</strong></span>
         </div>
+        <div class="input-group" style="margin-bottom:12px;">
+            <label class="input-label">Emoji da meta</label>
+            <div id="mdet-emoji-grid" class="meta-emoji-grid"></div>
+        </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
             <div style="background:#f2f2f7; border-radius:10px; padding:10px;">
                 <div style="font-size:11px; color:#8e8e93; margin-bottom:4px; font-weight:600;">Somar Aporte</div>
-                <div style="display:flex; align-items:center;">
+                <div style="display:flex; align-items:center; margin-bottom:8px;">
                     <span style="font-size:14px; font-weight:700; color:#30d158; margin-right:4px;">+ R$</span>
                     <input type="text" id="mdet-aporte" inputmode="decimal" placeholder="0,00" oninput="this.value=window.formatMoneyInput(this.value)" style="background:transparent; border:none; height:28px; padding:0; font-size:16px; font-weight:700; width:100%; color:#1c1c1e; outline:none; font-family:inherit;">
                 </div>
+                <label style="font-size:10px; color:#8e8e93; font-weight:600;">Data</label>
+                <input type="date" id="mdet-aporte-data" style="height:34px; font-size:13px; margin-top:4px;">
             </div>
             <div style="background:#e3f0ff; border-radius:10px; padding:10px;">
                 <div style="font-size:11px; color:#0055cc; margin-bottom:4px; font-weight:600;">Acumulado Total</div>
                 <div id="mdet-acumulado" style="font-size:15px; font-weight:700; color:#007aff;">R$ 0,00</div>
             </div>
         </div>
-        <div style="background:#fff3cd; border-radius:10px; padding:10px; margin-bottom:16px;">
+        <div style="background:#fff3cd; border-radius:10px; padding:10px; margin-bottom:12px;">
             <div style="font-size:11px; color:#856404; margin-bottom:4px; font-weight:600;">Registrar saída (volta para sua conta)</div>
-            <div style="display:flex; align-items:center; gap:8px;">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
                 <span style="font-size:14px; font-weight:700; color:#ff453a;">– R$</span>
                 <input type="text" id="mdet-saida" inputmode="decimal" placeholder="0,00" oninput="this.value=window.formatMoneyInput(this.value)" style="background:transparent; border:none; height:28px; padding:0; font-size:16px; font-weight:700; flex:1; color:#1c1c1e; outline:none; font-family:inherit;">
+            </div>
+            <div style="display:flex; align-items:flex-end; gap:8px;">
+                <div style="flex:1;">
+                    <label style="font-size:10px; color:#856404; font-weight:600;">Data</label>
+                    <input type="date" id="mdet-saida-data" style="height:34px; font-size:13px; margin-top:4px;">
+                </div>
                 <button class="btn-small" id="btn-registrar-saida" style="height:34px; background:#ffe5e5; color:#c0392b; border:none;" onclick="window.registrarSaidaMeta()">Registrar</button>
             </div>
         </div>
@@ -511,12 +535,36 @@
         <div class="prog-bar" style="margin-top:0; margin-bottom:12px; height:8px;" id="mdet-prog-wrapper">
             <div id="mdet-prog-fill" class="prog-fill" style="width:0%"></div>
         </div>
-        <div id="mdet-local" style="font-size:12px; color:#8e8e93; font-weight:600; margin-bottom:16px; display:none;"></div>
-        <button class="btn-primary" id="btn-salvar-aporte" style="margin-bottom:20px; height:46px; font-size:14px;" onclick="window.somarAporte()">Salvar Aporte</button>
-        <div style="display:flex; gap:8px;">
+        <div id="mdet-local" style="font-size:12px; color:#8e8e93; font-weight:600; margin-bottom:12px; display:none;"></div>
+        <button class="btn-primary" id="btn-salvar-aporte" style="margin-bottom:16px; height:46px; font-size:14px;" onclick="window.somarAporte()">Salvar Aporte</button>
+        <div style="font-size:12px; font-weight:800; color:#8e8e93; margin-bottom:8px; text-transform:uppercase;">Histórico deste mês</div>
+        <div id="mdet-hist-list" class="meta-hist-list"></div>
+        <div style="display:flex; gap:8px; margin-top:8px;">
             <button class="btn-small" style="flex:1; height:42px; background:#f2f2f7; border:none; color:#1c1c1e;" onclick="window.editarMetaAtual()">Editar Meta ✏️</button>
             <button class="btn-small" style="flex:1; height:42px; color:#ff453a; border:none; background:#ffe5e5;" onclick="window.apagarMetaAtual()">Apagar 🗑️</button>
         </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modal-meta-hist-edit">
+    <div class="modal-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 style="font-weight:800; font-size:16px;" id="mhe-titulo">Editar lançamento</h3>
+            <button class="btn-close-modal" onclick="window.fecharModal('modal-meta-hist-edit')">&times;</button>
+        </div>
+        <input type="hidden" id="mhe-meta-id" value="">
+        <input type="hidden" id="mhe-entry-id" value="">
+        <input type="hidden" id="mhe-tipo" value="">
+        <div id="mhe-fields-val" style="display:none;">
+            <div class="input-group"><label class="input-label" id="mhe-val-label">Valor (R$)</label><input type="text" id="mhe-val" inputmode="decimal" placeholder="0,00" oninput="this.value=window.formatMoneyInput(this.value)"></div>
+        </div>
+        <div id="mhe-fields-emoji" style="display:none;">
+            <label class="input-label">Novo emoji</label>
+            <div id="mhe-emoji-grid" class="meta-emoji-grid"></div>
+        </div>
+        <div class="input-group"><label class="input-label">Data</label><input type="date" id="mhe-data"></div>
+        <button class="btn-primary" onclick="window.salvarMetaHistEdit()" style="margin-top:16px; margin-bottom:10px;">Salvar alteração</button>
+        <button class="btn-primary" style="background:#ffe5e5; color:#c0392b;" onclick="window.excluirMetaHistEdit()">Excluir lançamento</button>
     </div>
 </div>
 
@@ -816,6 +864,7 @@
     <ul style="font-size:14px; color:#3c3c43; line-height:1.5; padding-left:16px; margin-bottom:18px;">
         <li style="margin-bottom:8px;"><b>🤖 IA Analista:</b> detecta seu perfil financeiro, analisa padrões dos últimos meses e sugere ações personalizadas.</li>
         <li style="margin-bottom:8px;"><b>✏️ Gastos:</b> edite pelo lápis e escolha alterar valor só neste mês ou nos próximos.</li>
+        <li style="margin-bottom:8px;"><b>📋 Metas:</b> histórico do mês com data em cada entrada e saída; edite ou exclua lançamentos e troque o emoji da meta.</li>
         <li style="margin-bottom:8px;"><b>🎯 Metas:</b> saídas voltam para sua conta, local de guarda e barra colorida com 🎉 ao concluir.</li>
         <li style="margin-bottom:8px;"><b>📝 Formulário:</b> cadastro usa só &quot;Este mês&quot; ou &quot;Próximo mês&quot;.</li>
     </ul>
@@ -1186,12 +1235,14 @@
             window.S.dataByMonth[activeKey].gastosV=window.S.dataByMonth[activeKey].gastosV||[];
             window.S.dataByMonth[activeKey].metasAcum=window.S.dataByMonth[activeKey].metasAcum||{};
             window.S.dataByMonth[activeKey].metasSaidas=window.S.dataByMonth[activeKey].metasSaidas||{};
+            window.S.dataByMonth[activeKey].metasHist=window.S.dataByMonth[activeKey].metasHist||{};
         }
         activeData=window.S.dataByMonth[activeKey];
         if(!activeData.gastosF) activeData.gastosF={};
         if(!activeData.gastosV) activeData.gastosV=[];
         if(!activeData.metasAcum) activeData.metasAcum={};
         if(!activeData.metasSaidas) activeData.metasSaidas={};
+        if(!activeData.metasHist) activeData.metasHist={};
         Object.keys(activeData.gastosF||{}).forEach(id=>{
             const gf=(window.S.gastosFixos||[]).find(g=>g.id===id);
             if(gf&&!window.isItemActive(gf,m,y))delete activeData.gastosF[id];
@@ -1577,7 +1628,7 @@
             if(!activeData.gastosV)activeData.gastosV=[];
             addOrReplace(activeData.gastosV);
         }else{
-            if(!window.S.dataByMonth[key])window.S.dataByMonth[key]={semanas:[{n:"Receita do Mês",brl:0,usd:0,cam:5.90,camData:"",camDataRaw:"",tipos:{}}],gastosF:{},gastosV:[],metasAcum:{}};
+            if(!window.S.dataByMonth[key])window.S.dataByMonth[key]={semanas:[{n:"Receita do Mês",brl:0,usd:0,cam:5.90,camData:"",camDataRaw:"",tipos:{}}],gastosF:{},gastosV:[],metasAcum:{},metasSaidas:{},metasHist:{}};
             if(!window.S.dataByMonth[key].gastosV)window.S.dataByMonth[key].gastosV=[];
             addOrReplace(window.S.dataByMonth[key].gastosV);
         }
@@ -1661,6 +1712,165 @@
         const b=all.find(x=>x.id===m.local);
         return b?b.l:m.local;
     };
+    window.META_EMOJIS=['🎯','✈️','🏠','🚗','💰','🎓','💊','🛡️','🎁','🏋️','📦','🌴','💎','🎮','📱','🐶','🏷️','✨','🔥','💡'];
+    window.hojeISO=function(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
+    window.formatDataBR=function(iso){if(!iso)return '—';const p=iso.split('-');return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:iso;};
+    window.extrairEmojiTexto=function(text){const m=(text||'').match(/^(\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic})*)\s*/u);return m?m[1]:'🏷️';};
+    window.nomeSemEmojiTexto=function(text){return (text||'').replace(/^(\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic})*)\s*/u,'').trim()||(text||'');};
+    window.aplicarEmojiNome=function(emoji,nomeSem){return emoji+' '+nomeSem.trim();};
+    window.renderMetaEmojiGrid=function(containerId,atual,cbName){
+        const el=document.getElementById(containerId);if(!el)return;
+        el.innerHTML=window.META_EMOJIS.map(e=>`<button type="button" class="meta-emoji-btn${e===atual?' active':''}" onclick="window.${cbName}('${e}')">${e}</button>`).join('');
+    };
+    window.pickMetaDetalheEmoji=function(em){
+        const id=document.getElementById('mdet-id').value;if(!id||!em)return;
+        window.alterarEmojiMeta(id,em);
+        window.atualizarVisualizacaoMetaDetalhes(id);
+        window.buildMetas();window.scheduleSync();
+    };
+    window.pickMetaHistEditEmoji=function(em){
+        window._mheEmojiPick=em;
+        document.querySelectorAll('#mhe-emoji-grid .meta-emoji-btn').forEach(b=>b.classList.toggle('active',b.textContent===em));
+    };
+    window.syncMetaTotaisFromHist=function(metaId,md){
+        if(!md)md=activeData;
+        if(!md.metasHist)md.metasHist={};
+        const list=md.metasHist[metaId]||[];
+        let ap=0,sa=0;
+        list.forEach(e=>{if(e.tipo==='aporte')ap+=Number(e.val||0);else if(e.tipo==='saida')sa+=Number(e.val||0);});
+        if(!md.metasAcum)md.metasAcum={};
+        if(!md.metasSaidas)md.metasSaidas={};
+        if(ap>0)md.metasAcum[metaId]=ap;else delete md.metasAcum[metaId];
+        if(sa>0)md.metasSaidas[metaId]=sa;else delete md.metasSaidas[metaId];
+    };
+    window.migrarMetaHistLegado=function(metaId,md){
+        if(!md.metasHist)md.metasHist={};
+        if(md.metasHist[metaId]&&md.metasHist[metaId].length)return;
+        const hist=[];
+        const ap=(md.metasAcum||{})[metaId]||0;
+        const sa=(md.metasSaidas||{})[metaId]||0;
+        const dataDefault=window.hojeISO();
+        if(ap>0)hist.push({id:'mh_l_'+metaId+'_a',tipo:'aporte',val:ap,data:dataDefault});
+        if(sa>0)hist.push({id:'mh_l_'+metaId+'_s',tipo:'saida',val:sa,data:dataDefault});
+        if(hist.length)md.metasHist[metaId]=hist;
+    };
+    window.getMetaHistList=function(metaId,md){
+        if(!md)md=activeData;
+        window.migrarMetaHistLegado(metaId,md);
+        return (md.metasHist&&md.metasHist[metaId])?md.metasHist[metaId].slice():[];
+    };
+    window.addMetaHistEntry=function(metaId,entry,md){
+        if(!md)md=activeData;
+        if(!md.metasHist)md.metasHist={};
+        if(!md.metasHist[metaId])md.metasHist[metaId]=[];
+        const e={id:entry.id||('mh_'+Date.now()+'_'+Math.random().toString(36).slice(2,6)),tipo:entry.tipo,val:entry.val,data:entry.data||window.hojeISO()};
+        if(entry.tipo==='emoji'){e.emojiDe=entry.emojiDe;e.emojiPara=entry.emojiPara;delete e.val;}
+        md.metasHist[metaId].push(e);
+        window.syncMetaTotaisFromHist(metaId,md);
+        return e.id;
+    };
+    window.findMetaHistEntry=function(metaId,entryId,md){
+        const list=window.getMetaHistList(metaId,md);
+        return list.find(e=>e.id===entryId)||null;
+    };
+    window.updateMetaHistEntry=function(metaId,entryId,updates,md){
+        if(!md)md=activeData;
+        const list=md.metasHist&&md.metasHist[metaId];
+        if(!list)return false;
+        const ix=list.findIndex(e=>e.id===entryId);
+        if(ix<0)return false;
+        Object.assign(list[ix],updates);
+        window.syncMetaTotaisFromHist(metaId,md);
+        return true;
+    };
+    window.deleteMetaHistEntry=function(metaId,entryId,md){
+        if(!md)md=activeData;
+        const list=md.metasHist&&md.metasHist[metaId];
+        if(!list)return false;
+        const ix=list.findIndex(e=>e.id===entryId);
+        if(ix<0)return false;
+        list.splice(ix,1);
+        if(!list.length)delete md.metasHist[metaId];
+        window.syncMetaTotaisFromHist(metaId,md);
+        return true;
+    };
+    window.renderMetaHistList=function(metaId){
+        const box=document.getElementById('mdet-hist-list');if(!box)return;
+        const list=window.getMetaHistList(metaId).sort((a,b)=>(b.data||'').localeCompare(a.data||'')||String(b.id).localeCompare(String(a.id)));
+        if(!list.length){box.innerHTML='<p style="font-size:13px;color:#8e8e93;text-align:center;padding:12px 0;">Nenhum lançamento neste mês.</p>';return;}
+        box.innerHTML=list.map(e=>{
+            let valHtml='',cor='#1c1c1e',tipoLbl='';
+            if(e.tipo==='aporte'){tipoLbl='Entrada';valHtml=window.R(e.val);cor='#30d158';}
+            else if(e.tipo==='saida'){tipoLbl='Saída';valHtml='– '+window.R(e.val);cor='#ff453a';}
+            else{tipoLbl='Emoji';valHtml=(e.emojiDe||'?')+' → '+(e.emojiPara||'?');cor='#5856d6';}
+            return `<div class="meta-hist-row"><div class="mh-info"><div class="mh-tipo">${tipoLbl}</div><div class="mh-val" style="color:${cor};">${valHtml}</div><div class="mh-data">${window.formatDataBR(e.data)}</div></div><div class="meta-hist-ctrl"><button type="button" title="Editar" onclick="window.abrirMetaHistEdit('${metaId}','${e.id}')">✏️</button></div></div>`;
+        }).join('');
+    };
+    window.alterarEmojiMeta=function(metaId,novoEmoji,dataOpt){
+        const m=window.S.metas.find(x=>x.id===metaId);if(!m||!novoEmoji)return;
+        const antigo=window.extrairEmojiTexto(m.n);
+        if(antigo===novoEmoji)return;
+        const nomeSem=window.nomeSemEmojiTexto(m.n);
+        m.n=window.aplicarEmojiNome(novoEmoji,nomeSem);
+        window.addMetaHistEntry(metaId,{tipo:'emoji',emojiDe:antigo,emojiPara:novoEmoji,data:dataOpt||window.hojeISO()});
+    };
+    window.abrirMetaHistEdit=function(metaId,entryId){
+        const e=window.findMetaHistEntry(metaId,entryId);if(!e)return;
+        document.getElementById('mhe-meta-id').value=metaId;
+        document.getElementById('mhe-entry-id').value=entryId;
+        document.getElementById('mhe-tipo').value=e.tipo;
+        document.getElementById('mhe-data').value=e.data||window.hojeISO();
+        const fv=document.getElementById('mhe-fields-val');
+        const fe=document.getElementById('mhe-fields-emoji');
+        if(e.tipo==='emoji'){
+            document.getElementById('mhe-titulo').textContent='Editar emoji';
+            fv.style.display='none';fe.style.display='block';
+            window.renderMetaEmojiGrid('mhe-emoji-grid',e.emojiPara,'pickMetaHistEditEmoji');
+            window._mheEmojiPick=e.emojiPara;
+        }else{
+            document.getElementById('mhe-titulo').textContent=e.tipo==='aporte'?'Editar entrada':'Editar saída';
+            document.getElementById('mhe-val-label').textContent=e.tipo==='aporte'?'Valor do aporte (R$)':'Valor da saída (R$)';
+            document.getElementById('mhe-val').value=window.toInput(e.val||0);
+            fv.style.display='block';fe.style.display='none';
+        }
+        document.getElementById('modal-meta-hist-edit').style.display='flex';
+    };
+    window.salvarMetaHistEdit=function(){
+        const metaId=document.getElementById('mhe-meta-id').value;
+        const entryId=document.getElementById('mhe-entry-id').value;
+        const tipo=document.getElementById('mhe-tipo').value;
+        const data=document.getElementById('mhe-data').value||window.hojeISO();
+        const e=window.findMetaHistEntry(metaId,entryId);if(!e)return;
+        if(tipo==='emoji'){
+            const novo=window._mheEmojiPick||e.emojiPara;
+            if(novo&&novo!==window.extrairEmojiTexto((window.S.metas.find(x=>x.id===metaId)||{}).n)){
+                const m=window.S.metas.find(x=>x.id===metaId);
+                if(m){const nomeSem=window.nomeSemEmojiTexto(m.n);m.n=window.aplicarEmojiNome(novo,nomeSem);}
+            }
+            window.updateMetaHistEntry(metaId,entryId,{emojiPara:novo,data});
+        }else{
+            const val=window.parseMoney(document.getElementById('mhe-val').value);
+            if(val<=0)return alert('Informe um valor maior que zero.');
+            window.updateMetaHistEntry(metaId,entryId,{val,data});
+        }
+        window.fecharModal('modal-meta-hist-edit');
+        window.atualizarVisualizacaoMetaDetalhes(metaId);
+        window.buildMetas();window.recalc();window.scheduleSync();
+    };
+    window.excluirMetaHistEdit=function(){
+        const metaId=document.getElementById('mhe-meta-id').value;
+        const entryId=document.getElementById('mhe-entry-id').value;
+        const e=window.findMetaHistEntry(metaId,entryId);if(!e)return;
+        if(!confirm('Excluir este lançamento do histórico?'))return;
+        if(e.tipo==='emoji'){
+            const m=window.S.metas.find(x=>x.id===metaId);
+            if(m&&e.emojiDe){const nomeSem=window.nomeSemEmojiTexto(m.n);m.n=window.aplicarEmojiNome(e.emojiDe,nomeSem);}
+        }
+        window.deleteMetaHistEntry(metaId,entryId);
+        window.fecharModal('modal-meta-hist-edit');
+        window.atualizarVisualizacaoMetaDetalhes(metaId);
+        window.buildMetas();window.recalc();window.scheduleSync();
+    };
     window.calcMetaAcumulado=function(m){
         let ac=m.acumInicial||0;
         Object.keys(window.S.dataByMonth).forEach(k=>{const[km,ky]=k.split('-').map(Number);if(ky<activeY||(ky===activeY&&km<=activeM)){ac+=((window.S.dataByMonth[k].metasAcum||{})[m.id]||0);ac-=((window.S.dataByMonth[k].metasSaidas||{})[m.id]||0);}});
@@ -1694,11 +1904,16 @@
         document.getElementById('mdet-titulo').textContent=m.n+((m.obj>0&&pct>=100)?' 🎉':'');
         document.getElementById('mdet-aporte').value='';
         const sEl=document.getElementById('mdet-saida');if(sEl)sEl.value='';
+        const hoje=window.hojeISO();
+        const apData=document.getElementById('mdet-aporte-data');if(apData)apData.value=hoje;
+        const saData=document.getElementById('mdet-saida-data');if(saData)saData.value=hoje;
         window.atualizarVisualizacaoMetaDetalhes(id);
         document.getElementById('modal-meta-detalhes').style.display='flex';
     };
     window.atualizarVisualizacaoMetaDetalhes=function(id){
         const m=window.S.metas.find(x=>x.id===id);if(!m)return;
+        window.migrarMetaHistLegado(id,activeData);
+        window.syncMetaTotaisFromHist(id);
         const ap=(activeData.metasAcum||{})[id]||0;
         const sa=(activeData.metasSaidas||{})[id]||0;
         const el=document.getElementById('mdet-mes-atual');if(el)el.textContent=window.R(ap);
@@ -1707,6 +1922,7 @@
         const ac=window.calcMetaAcumulado(m);
         const pct=m.obj>0?Math.min(100,(ac/m.obj)*100):0;
         const cor=window.metaBarColor(pct);
+        document.getElementById('mdet-titulo').textContent=m.n+((m.obj>0&&pct>=100)?' 🎉':'');
         document.getElementById('mdet-acumulado').textContent=window.R(ac);
         document.getElementById('mdet-objetivo').textContent=m.obj>0?`Objetivo: ${window.R(m.obj)}`:'Sem objetivo definido';
         const pctEl=document.getElementById('mdet-pct');
@@ -1715,15 +1931,19 @@
         if(pf){if(m.obj>0){pf.style.width=`${pct}%`;pf.style.background=cor;document.getElementById('mdet-prog-wrapper').style.display='block';}else document.getElementById('mdet-prog-wrapper').style.display='none';}
         const locEl=document.getElementById('mdet-local');
         if(locEl){const ll=window.getMetaLocalLabel(m);if(ll){locEl.textContent=`🏦 Guardado em: ${ll}`;locEl.style.display='block';}else locEl.style.display='none';}
+        window.renderMetaEmojiGrid('mdet-emoji-grid',window.extrairEmojiTexto(m.n),'pickMetaDetalheEmoji');
+        window.renderMetaHistList(id);
     };
     window.somarAporte=function(){
         const id=document.getElementById('mdet-id').value;const val=window.parseMoney(document.getElementById('mdet-aporte').value);
-        if(val>0){if(!activeData.metasAcum)activeData.metasAcum={};activeData.metasAcum[id]=(activeData.metasAcum[id]||0)+val;document.getElementById('mdet-aporte').value='';window.recalc();window.atualizarVisualizacaoMetaDetalhes(id);window.buildMetas();window.scheduleSync();
+        const data=(document.getElementById('mdet-aporte-data')||{}).value||window.hojeISO();
+        if(val>0){window.addMetaHistEntry(id,{tipo:'aporte',val,data});document.getElementById('mdet-aporte').value='';if(document.getElementById('mdet-aporte-data'))document.getElementById('mdet-aporte-data').value=window.hojeISO();window.recalc();window.atualizarVisualizacaoMetaDetalhes(id);window.buildMetas();window.scheduleSync();
             const btn=document.getElementById('btn-salvar-aporte');const orig=btn.textContent;btn.style.background='#30d158';btn.textContent='Aporte Salvo! 🎉';setTimeout(()=>{btn.style.background='';btn.textContent=orig;},1500);}
     };
     window.registrarSaidaMeta=function(){
         const id=document.getElementById('mdet-id').value;const val=window.parseMoney(document.getElementById('mdet-saida').value);
-        if(val>0){if(!activeData.metasSaidas)activeData.metasSaidas={};activeData.metasSaidas[id]=(activeData.metasSaidas[id]||0)+val;document.getElementById('mdet-saida').value='';window.recalc();window.atualizarVisualizacaoMetaDetalhes(id);window.buildMetas();window.scheduleSync();
+        const data=(document.getElementById('mdet-saida-data')||{}).value||window.hojeISO();
+        if(val>0){window.addMetaHistEntry(id,{tipo:'saida',val,data});document.getElementById('mdet-saida').value='';if(document.getElementById('mdet-saida-data'))document.getElementById('mdet-saida-data').value=window.hojeISO();window.recalc();window.atualizarVisualizacaoMetaDetalhes(id);window.buildMetas();window.scheduleSync();
             const btn=document.getElementById('btn-registrar-saida');if(btn){const orig=btn.textContent;btn.style.background='#30d158';btn.style.color='#fff';btn.textContent='Saída registrada!';setTimeout(()=>{btn.style.background='#ffe5e5';btn.style.color='#c0392b';btn.textContent=orig;},1500);}}
     };
     window.editarMetaAtual=()=>{const id=document.getElementById('mdet-id').value;window.fecharModal('modal-meta-detalhes');window.abrirModalMeta(id);};
@@ -1766,9 +1986,10 @@
                 window.S.metas.push(nova);
                 Object.keys(window.S.dataByMonth).forEach(k=>{
                     if(!window.S.dataByMonth[k].metasAcum)window.S.dataByMonth[k].metasAcum={};
+                    if(!window.S.dataByMonth[k].metasHist)window.S.dataByMonth[k].metasHist={};
                     window.S.dataByMonth[k].metasAcum[id]=0;
                 });
-                if(activeData){if(!activeData.metasAcum)activeData.metasAcum={};activeData.metasAcum[id]=0;}
+                if(activeData){if(!activeData.metasAcum)activeData.metasAcum={};if(!activeData.metasHist)activeData.metasHist={};activeData.metasAcum[id]=0;}
             }
             window.fecharModal('modal-meta');
             window.renderView();
@@ -1790,8 +2011,8 @@
     window.confirmarDelete=function(mode){
         const list=delTargetType==='gastoFixo'?window.S.gastosFixos:window.S.metas;
         const item=list.find(x=>x.id===delTargetId);if(!item)return;
-        if(mode==='only_this'){if(!item.hiddenMonths)item.hiddenMonths=[];item.hiddenMonths.push(activeKey);if(delTargetType==='gastoFixo')delete activeData.gastosF[delTargetId];if(delTargetType==='meta')delete activeData.metasAcum[delTargetId];}
-        else if(mode==='this_and_future'){if(!confirm("⚠️ Tem certeza que deseja apagar este item e todos os meses seguintes?"))return;item.endY=activeM===0?activeY-1:activeY;item.endM=activeM===0?11:activeM-1;Object.keys(window.S.dataByMonth).forEach(k=>{const[km,ky]=k.split('-').map(Number);if(ky>activeY||(ky===activeY&&km>=activeM)){if(delTargetType==='gastoFixo')delete window.S.dataByMonth[k].gastosF[delTargetId];if(delTargetType==='meta')delete window.S.dataByMonth[k].metasAcum[delTargetId];}});}
+        if(mode==='only_this'){if(!item.hiddenMonths)item.hiddenMonths=[];item.hiddenMonths.push(activeKey);if(delTargetType==='gastoFixo')delete activeData.gastosF[delTargetId];if(delTargetType==='meta'){delete activeData.metasAcum[delTargetId];delete activeData.metasSaidas[delTargetId];if(activeData.metasHist)delete activeData.metasHist[delTargetId];}}
+        else if(mode==='this_and_future'){if(!confirm("⚠️ Tem certeza que deseja apagar este item e todos os meses seguintes?"))return;item.endY=activeM===0?activeY-1:activeY;item.endM=activeM===0?11:activeM-1;Object.keys(window.S.dataByMonth).forEach(k=>{const[km,ky]=k.split('-').map(Number);if(ky>activeY||(ky===activeY&&km>=activeM)){if(delTargetType==='gastoFixo')delete window.S.dataByMonth[k].gastosF[delTargetId];if(delTargetType==='meta'){delete window.S.dataByMonth[k].metasAcum[delTargetId];delete window.S.dataByMonth[k].metasSaidas[delTargetId];if(window.S.dataByMonth[k].metasHist)delete window.S.dataByMonth[k].metasHist[delTargetId];}}});}
         window.fecharModal('modal-delete');window.renderView();window.scheduleSync();
     };
 
