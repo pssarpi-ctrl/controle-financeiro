@@ -148,6 +148,10 @@
         .fab-menu-item .fab-icon { font-size: 20px; }
         .btn-edit-gasto { background: none; border: none; font-size: 16px; cursor: pointer; padding: 4px 6px; line-height: 1; opacity: 0.85; }
         .btn-edit-gasto:active { opacity: 1; }
+        .btn-check-gasto { background: none; border: none; font-size: 22px; cursor: pointer; padding: 2px 4px; line-height: 1; opacity: 0.75; flex-shrink: 0; }
+        .btn-check-gasto.checked { opacity: 1; }
+        .btn-check-gasto:active { transform: scale(0.92); }
+        .gasto-row-pendente .gasto-nome-titulo, .gasto-row-pendente .gasto-valor { opacity: 0.5; }
         .gastos-search-wrap { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; padding: 8px 12px; background: #fff; border-radius: 12px; border: 1.5px solid #e5e5ea; }
         .gastos-search-wrap input { flex: 1; border: none; background: transparent; height: 36px; font-size: 15px; outline: none; font-family: inherit; }
         .gasto-tipo-tag { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
@@ -265,7 +269,7 @@
         <button class="login-btn" style="background: #f2f2f7; color: #8e8e93;" onclick="window.iniciarVisitante()">👤 Acessar como Visitante</button>
         <div style="margin-top: 60px; font-size: 11px; color: #8e8e93; font-weight: 500; line-height: 1.5;">
             Desenvolvido por <span style="color: #007aff; font-weight: 700;">Pedro Sarpi</span><br>
-            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()" title="Ver novidades">Versão 1.16.1</span>
+            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()" title="Ver novidades">Versão 1.17</span>
         </div>
     </div>
 
@@ -863,13 +867,14 @@
 <div class="modal-overlay" id="modal-changelog">
   <div class="modal-content">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <h3 style="font-weight:800;">Novidades — v1.16.1</h3>
+      <h3 style="font-weight:800;">Novidades — v1.17</h3>
       <button class="btn-close-modal" onclick="window.fecharModal('modal-changelog')">&times;</button>
     </div>
-    <div style="font-size:11px; color:#fff; background:#007aff; display:inline-block; padding:3px 10px; border-radius:6px; font-weight:800; margin-bottom:8px;">v1.16.1 — agora</div>
+    <div style="font-size:11px; color:#fff; background:#007aff; display:inline-block; padding:3px 10px; border-radius:6px; font-weight:800; margin-bottom:8px;">v1.17 — agora</div>
     <ul style="font-size:14px; color:#3c3c43; line-height:1.5; padding-left:16px; margin-bottom:18px;">
-        <li style="margin-bottom:8px;"><b>📊 Painel:</b> saldo em destaque no topo (linha inteira), com recebido e gastos (sem metas) à direita no mesmo quadro.</li>
-        <li style="margin-bottom:8px;"><b>🎯 Metas:</b> aportes e retirada de metas continuam nos quadros abaixo.</li>
+        <li style="margin-bottom:8px;"><b>☐ Checklist de gastos:</b> parcelas e assinaturas têm botão de checklist na aba Gastos. Marcado = entra no saldo; desmarcado = só fica registrado, fora dos cálculos.</li>
+        <li style="margin-bottom:8px;"><b>💳 Compras únicas:</b> continuam entrando no saldo na hora — sem checklist.</li>
+        <li style="margin-bottom:8px;"><b>🏠 Painel:</b> avisos de parcelas e assinaturas seguem iguais (mostram tudo cadastrado, independente do checklist).</li>
     </ul>
     <button class="btn-primary" onclick="window.fecharModal('modal-changelog')">Incrível!</button>
   </div>
@@ -1109,11 +1114,33 @@
         if(monthsFromStart<0)return false;
         return monthsFromStart%window.getSubIntervalMonths(gf.subFreq||'mensal')===0;
     };
+    window.gastoFContaNoCalculo=function(gf,ga){
+        if(!ga)return false;
+        if(typeof ga==='number')return true;
+        if(ga.pago===undefined)return true;
+        return ga.pago===true;
+    };
+    window.mergeGastoFObj=function(prev,val,pay){
+        const pago=(prev&&typeof prev==='object'&&prev.pago!==undefined)?prev.pago:false;
+        return{val,pay,pago};
+    };
+    window.toggleGastoFPago=function(id){
+        if(!activeData.gastosF)activeData.gastosF={};
+        const gf=(window.S.gastosFixos||[]).find(g=>g.id===id);
+        if(!gf)return;
+        let ga=activeData.gastosF[id];
+        if(typeof ga==='number')ga={val:ga,pay:gf.pay||'none',pago:true};
+        if(!ga||typeof ga!=='object')ga={val:gf.val,pay:gf.pay||'none',pago:false};
+        ga.pago=!ga.pago;
+        activeData.gastosF[id]=ga;
+        window.renderView();
+    };
     window.calcGastosBreakdown=function(dataObj=activeData,m=activeM,y=activeY){
         let parcelas=0,assinaturas=0,comprasMes=0;
         (window.S.gastosFixos||[]).forEach(gf=>{
             if(!window.isItemActive(gf,m,y))return;
             const cur=(dataObj.gastosF||{})[gf.id];
+            if(!window.gastoFContaNoCalculo(gf,cur))return;
             const val=(cur&&typeof cur==='object')?(cur.val||0):(Number(cur)||gf.val||0);
             if(val<=0)return;
             if(window.isSubscription(gf))assinaturas+=val;else parcelas+=val;
@@ -1124,13 +1151,14 @@
     window.offsetMonth=function(m,y,delta){let nm=m+delta,ny=y;while(nm<0){nm+=12;ny--;}while(nm>11){nm-=12;ny++;}return{m:nm,y:ny};};
     window.getPayLabel=function(pay){if(pay==='pix')return'Pix';if(!pay||pay==='none')return'—';const all=BANCOS_BASE.concat(window.S.config.customBanks||[]);const b=all.find(x=>x.id===pay);return b?b.l:pay;};
     window.renderGastoLinhaHtml=function(opts){
-        const{nome,val,pay,badgeHtml,editTipo,id,onDelete,cor='#1c1c1e'}=opts;
+        const{nome,val,pay,badgeHtml,editTipo,id,onDelete,cor='#1c1c1e',showCheck,pago}=opts;
         const payLbl=window.getPayLabel(pay||'none');
         const badge=badgeHtml?`<div class="gasto-nome-badge">${badgeHtml}</div>`:'';
         const del=onDelete==='var'
             ?`<button class="btn-del" onclick="window.removerGastoVar('${id}')">&times;</button>`
             :`<button class="btn-del" onclick="window.abrirModalDelete('gastoFixo','${id}')">&times;</button>`;
-        return`<div class="gasto-nome" style="flex:1;min-width:0;"><span class="gasto-nome-titulo" style="color:${cor};">${nome}</span><span class="gasto-nome-pagto">${payLbl}</span>${badge}</div><div class="gasto-ctrl"><div style="font-size:16px;font-weight:700;min-width:72px;text-align:right;color:${cor};">${window.R(val)}</div><button type="button" class="btn-edit-gasto" title="Editar gasto" onclick="window.abrirModalGastoEdit('${editTipo}','${id}')">✏️</button>${del}</div>`;
+        const checkBtn=showCheck?`<button type="button" class="btn-check-gasto${pago?' checked':''}" title="${pago?'Pago — entra no saldo':'Marcar como pago para entrar no saldo'}" onclick="window.toggleGastoFPago('${id}')">${pago?'☑':'☐'}</button>`:'';
+        return`<div class="gasto-nome" style="flex:1;min-width:0;"><span class="gasto-nome-titulo" style="color:${cor};">${nome}</span><span class="gasto-nome-pagto">${payLbl}</span>${badge}</div><div class="gasto-ctrl">${checkBtn}<div class="gasto-valor" style="font-size:16px;font-weight:700;min-width:72px;text-align:right;color:${cor};">${window.R(val)}</div><button type="button" class="btn-edit-gasto" title="Editar gasto" onclick="window.abrirModalGastoEdit('${editTipo}','${id}')">✏️</button>${del}</div>`;
     };
     window.normalizarNomeGasto=function(nome){return(nome||"").replace(/[^a-zA-Z0-9\s\u00C0-\u024F]/g," ").replace(/\s+/g," ").trim().toLowerCase();};
     window.nomesGastosSimilares=function(a,b){if(!a||!b)return false;if(a===b)return true;if(a.length>4&&b.length>4&&(a.includes(b)||b.includes(a)))return true;const pa=a.split(" ").filter(w=>w.length>2),pb=b.split(" ").filter(w=>w.length>2);return pa.filter(w=>pb.includes(w)).length>=2;};
@@ -1294,7 +1322,7 @@
             const gf=(window.S.gastosFixos||[]).find(g=>g.id===id);
             if(gf&&!window.isItemActive(gf,m,y))delete activeData.gastosF[id];
         });
-        (window.S.gastosFixos||[]).forEach(gf=>{if(window.isItemActive(gf,m,y)&&activeData.gastosF[gf.id]===undefined)activeData.gastosF[gf.id]={val:gf.val,pay:gf.pay};});
+        (window.S.gastosFixos||[]).forEach(gf=>{if(window.isItemActive(gf,m,y)&&activeData.gastosF[gf.id]===undefined)activeData.gastosF[gf.id]={val:gf.val,pay:gf.pay,pago:false};});
         (window.S.metas||[]).forEach(meta=>{if(window.isItemActive(meta,m,y)&&activeData.metasAcum[meta.id]===undefined)activeData.metasAcum[meta.id]=0;});
         (activeData.semanas||[]).forEach(s=>{if(s.cam!=null&&s.cam!==''&&!s.camStr)s.camStr=window.toCambioInput(s.cam);});
         document.getElementById("top-mes-ref").textContent=`${MESES_CURTO[m]} ${y}`;
@@ -1360,7 +1388,7 @@
     window.updateGastoFixoNome=(id,name)=>{const gf=window.S.gastosFixos.find(g=>g.id===id);if(gf){gf.n=name;window.scheduleSync();}};
     window.updateGastoFixoVal=(id,valStr)=>{
         const val=window.parseMoney(valStr);
-        if(!activeData.gastosF[id]||typeof activeData.gastosF[id]==='number')activeData.gastosF[id]={val,pay:'none'};else activeData.gastosF[id].val=val;
+        if(!activeData.gastosF[id]||typeof activeData.gastosF[id]==='number')activeData.gastosF[id]=window.mergeGastoFObj(activeData.gastosF[id],val,'none');else activeData.gastosF[id].val=val;
         window.recalc();
         const gf=(window.S.gastosFixos||[]).find(g=>g.id===id);
         if(gf){const diff=val-gf.val;const dc=diff>0?"#ff453a":diff<0?"#30d158":"#8e8e93";const de=document.getElementById(`gf-diff-${id}`);if(de){de.style.color=val>0?dc:"#c7c7cc";de.textContent=val>0?(diff>=0?"+":"")+window.R(Math.abs(diff)).replace("R$ ",""):"—";}}
@@ -1406,7 +1434,10 @@
                 const el=document.createElement('div');el.className='gasto-row';
                 const editTipo=h.tipo==='sub'?'sub':h.tipo==='var'?'var':'fixo';
                 const badgeSearch=h.tipo==='sub'?`<span class="badge badge-info" style="font-size:10px;background:#f3e5f5;color:#6b2d8b;">🔁 ${window.getSubFreqLabel(h.gf&&h.gf.subFreq)}</span>`:(h.tipo==='fixo'&&h.gf&&h.gf.endY?`<span class="badge badge-info" style="font-size:10px">até ${MESES_CURTO[h.gf.endM]}/${String(h.gf.endY).slice(2)}</span>`:`<span class="gasto-tipo-tag ${tagCls}">${tipoLbl}</span>`);
-                el.innerHTML=window.renderGastoLinhaHtml({nome:h.nome,val:h.val,pay:h.pay,badgeHtml:badgeSearch,editTipo,id:h.id,onDelete:h.tipo==='var'?'var':'fixo',cor:h.tipo==='var'?'#007aff':'#1c1c1e'});
+                const showCheck=h.tipo!=='var';
+                const pago=showCheck&&h.gf?window.gastoFContaNoCalculo(h.gf,activeData.gastosF[h.id]):false;
+                if(showCheck&&!pago)el.classList.add('gasto-row-pendente');
+                el.innerHTML=window.renderGastoLinhaHtml({nome:h.nome,val:h.val,pay:h.pay,badgeHtml:badgeSearch,editTipo,id:h.id,onDelete:h.tipo==='var'?'var':'fixo',cor:h.tipo==='var'?'#007aff':'#1c1c1e',showCheck,pago});
                 searchPanel.appendChild(el);
             });
             return;
@@ -1418,17 +1449,19 @@
         const parcelasFixas=allActive.filter(gf=>!window.isSubscription(gf));
         const assinaturas=allActive.filter(gf=>window.isSubscription(gf));
         const renderFixoRow=(gf,container,listTipo)=>{
-            let ga=activeData.gastosF[gf.id]||{val:gf.val,pay:gf.pay};
-            if(typeof ga==='number')ga={val:ga,pay:'none'};
+            let ga=activeData.gastosF[gf.id]||{val:gf.val,pay:gf.pay,pago:false};
+            if(typeof ga==='number')ga={val:ga,pay:'none',pago:true};
             if(!window.gastoMatchesSearch(q,gf.n,ga.val))return;
             const editTipo=listTipo==='sub'?'sub':'fixo';
+            const pago=window.gastoFContaNoCalculo(gf,ga);
             const el=document.createElement("div");el.className="gasto-row";
+            if(!pago)el.classList.add('gasto-row-pendente');
             const dtBadge=listTipo==='sub'
                 ?`<span class="badge badge-info" style="font-size:10px;background:#f3e5f5;color:#6b2d8b;">🔁 ${window.getSubFreqLabel(gf.subFreq||'mensal')}</span>`
                 :(gf.endY!=null&&gf.endY!==undefined
                     ?`<span class="badge badge-info" style="font-size:10px">Última parcela em ${MESES_CURTO[gf.endM]}/${String(gf.endY).slice(2)}</span>`
                     :`<span class="badge badge-info" style="font-size:10px">Compra parcelada</span>`);
-            el.innerHTML=window.renderGastoLinhaHtml({nome:gf.n,val:ga.val,pay:ga.pay,badgeHtml:dtBadge,editTipo,id:gf.id,onDelete:'fixo'});
+            el.innerHTML=window.renderGastoLinhaHtml({nome:gf.n,val:ga.val,pay:ga.pay,badgeHtml:dtBadge,editTipo,id:gf.id,onDelete:'fixo',showCheck:true,pago});
             container.appendChild(el);
         };
         let fc=0;parcelasFixas.forEach(gf=>{const b=fList.children.length;renderFixoRow(gf,fList,'fixo');if(fList.children.length>b)fc++;});
@@ -1564,7 +1597,7 @@
             if(!md)return;
             if(window.isItemActive(gf,km,ky)){
                 if(!md.gastosF)md.gastosF={};
-                md.gastosF[gf.id]={val,pay};
+                md.gastosF[gf.id]=window.mergeGastoFObj(md.gastosF[gf.id],val,pay);
             }else if(md.gastosF)delete md.gastosF[gf.id];
         });
     };
@@ -1617,12 +1650,12 @@
             Object.keys(window.S.dataByMonth).forEach(k=>{
                 const[km,ky]=k.split('-').map(Number);const md=window.S.dataByMonth[k];if(!md)return;
                 if(ky>activeY||(ky===activeY&&km>=activeM)){
-                    if(window.isItemActive(gf,km,ky)){if(!md.gastosF)md.gastosF={};md.gastosF[id]={val,pay};}
+                    if(window.isItemActive(gf,km,ky)){if(!md.gastosF)md.gastosF={};md.gastosF[id]=window.mergeGastoFObj(md.gastosF[id],val,pay);}
                 }
             });
-            activeData.gastosF[id]={val,pay};
+            activeData.gastosF[id]=window.mergeGastoFObj(activeData.gastosF[id],val,pay);
         }else{
-            activeData.gastosF[id]={val,pay};
+            activeData.gastosF[id]=window.mergeGastoFObj(activeData.gastosF[id],val,pay);
         }
     };
     window.confirmarEscopoParcela=function(scope){
@@ -1659,7 +1692,7 @@
             const[km,ky]=k.split('-').map(Number);
             if(window.isItemActive(item,km,ky)){
                 if(!window.S.dataByMonth[k].gastosF)window.S.dataByMonth[k].gastosF={};
-                window.S.dataByMonth[k].gastosF[id]={val,pay};
+                window.S.dataByMonth[k].gastosF[id]=window.mergeGastoFObj(window.S.dataByMonth[k].gastosF[id],val,pay);
             }else if(window.S.dataByMonth[k].gastosF)delete window.S.dataByMonth[k].gastosF[id];
         });
         return id;
@@ -2127,7 +2160,12 @@
         const isUSD=dm!=='none';let tBRL=0,tUSD=0;
         (dataObj.semanas||[]).forEach(s=>{if(isUSD&&!s.isBRL){tUSD+=Number(s.usd||0);tBRL+=window.brlFromSemana(s.usd,s);}else{tBRL+=Number(s.brl||0);}});
         const tOrc=(window.S.gastosFixos||[]).filter(gf=>window.isItemActive(gf,m,y)).reduce((a,g)=>a+g.val,0);
-        const realFixos=Object.values(dataObj.gastosF||{}).reduce((a,obj)=>a+(typeof obj==='object'?(obj.val||0):(Number(obj)||0)),0);
+        const realFixos=(window.S.gastosFixos||[]).filter(gf=>window.isItemActive(gf,m,y)).reduce((a,gf)=>{
+            const obj=(dataObj.gastosF||{})[gf.id];
+            if(!window.gastoFContaNoCalculo(gf,obj))return a;
+            const v=(obj&&typeof obj==='object')?(obj.val||0):(Number(obj)||0);
+            return a+v;
+        },0);
         const realVar=(dataObj.gastosV||[]).reduce((a,v)=>a+v.val,0);
         const tReal=realFixos+realVar;
         const{tAp,tSai}=window.calcMetaMonthFlow(dataObj,m,y);
@@ -2405,6 +2443,7 @@
         (window.S.gastosFixos||[]).forEach(gf=>{
             if(!window.isItemActive(gf,activeM,activeY))return;
             const cur=activeData.gastosF[gf.id];
+            if(!window.gastoFContaNoCalculo(gf,cur))return;
             const val=(cur&&typeof cur==='object')?cur.val:(cur||gf.val);
             if(val<=0)return;
             const parcelado=!window.isSubscription(gf);
@@ -2580,6 +2619,7 @@
             (window.S.gastosFixos||[]).filter(gf=>window.isItemActive(gf,m,y)).forEach(gf=>{
                 const cur=window.S.dataByMonth[`${m}-${y}`];
                 const gv=cur&&cur.gastosF&&cur.gastosF[gf.id];
+                if(!window.gastoFContaNoCalculo(gf,gv))return;
                 fixo+=(gv&&typeof gv==='object')?gv.val:(gv||gf.val);
             });
             const mediaReal=ctx.mediaGastos||0;
