@@ -269,7 +269,7 @@
         <button class="login-btn" style="background: #f2f2f7; color: #8e8e93;" onclick="window.iniciarVisitante()">👤 Acessar como Visitante</button>
         <div style="margin-top: 60px; font-size: 11px; color: #8e8e93; font-weight: 500; line-height: 1.5;">
             Desenvolvido por <span style="color: #007aff; font-weight: 700;">Pedro Sarpi</span><br>
-            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()" title="Ver novidades">Versão 1.17</span>
+            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()" title="Ver novidades">Versão 1.17.2</span>
         </div>
     </div>
 
@@ -353,6 +353,14 @@
                 <div id="gastos-search-results" class="card" style="display:none; padding:4px 16px; margin-bottom:12px;"></div>
 
                 <div id="gastos-sections-wrap">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; cursor:pointer; padding:8px 0;" onclick="window.toggleAccordion('wrap-pendentes', 'chev-pendentes')">
+                    <span style="font-weight:700; font-size:16px;">Pendente de pagamento <span class="chev open" id="chev-pendentes">▼</span></span>
+                </div>
+                <div id="wrap-pendentes" style="display:block">
+                    <p style="font-size:11px;color:#8e8e93;margin:0 0 8px;line-height:1.35;">Pix de parcelas e assinaturas — marque ☐ ao pagar para entrar no saldo.</p>
+                    <div class="card" id="gastos-pendentes-list" style="padding:4px 16px; margin-bottom:12px;"></div>
+                </div>
+
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; cursor:pointer; padding:8px 0;" onclick="window.toggleAccordion('wrap-fixos', 'chev-fixos')">
                     <span style="font-weight:700; font-size:16px;">Compras Parceladas <span class="chev" id="chev-fixos">▼</span></span>
                 </div>
@@ -867,14 +875,14 @@
 <div class="modal-overlay" id="modal-changelog">
   <div class="modal-content">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <h3 style="font-weight:800;">Novidades — v1.17</h3>
+      <h3 style="font-weight:800;">Novidades — v1.17.2</h3>
       <button class="btn-close-modal" onclick="window.fecharModal('modal-changelog')">&times;</button>
     </div>
-    <div style="font-size:11px; color:#fff; background:#007aff; display:inline-block; padding:3px 10px; border-radius:6px; font-weight:800; margin-bottom:8px;">v1.17 — agora</div>
+    <div style="font-size:11px; color:#fff; background:#007aff; display:inline-block; padding:3px 10px; border-radius:6px; font-weight:800; margin-bottom:8px;">v1.17.2 — agora</div>
     <ul style="font-size:14px; color:#3c3c43; line-height:1.5; padding-left:16px; margin-bottom:18px;">
-        <li style="margin-bottom:8px;"><b>☐ Checklist de gastos:</b> parcelas e assinaturas têm botão de checklist na aba Gastos. Marcado = entra no saldo; desmarcado = só fica registrado, fora dos cálculos.</li>
-        <li style="margin-bottom:8px;"><b>💳 Compras únicas:</b> continuam entrando no saldo na hora — sem checklist.</li>
-        <li style="margin-bottom:8px;"><b>🏠 Painel:</b> avisos de parcelas e assinaturas seguem iguais (mostram tudo cadastrado, independente do checklist).</li>
+        <li style="margin-bottom:8px;"><b>☐ Checklist só no Pix:</b> parcelas e assinaturas com pagamento Pix têm checklist; cartão e débito entram no saldo na hora.</li>
+        <li style="margin-bottom:8px;"><b>📋 Pendente de pagamento:</b> nova seção na aba Gastos com Pix ainda não marcados — ao marcar aqui ou na linha original, os dois ficam sincronizados.</li>
+        <li style="margin-bottom:8px;"><b>🗓️ Novos meses e cadastros:</b> checklist começa desmarcado até você confirmar o pagamento.</li>
     </ul>
     <button class="btn-primary" onclick="window.fecharModal('modal-changelog')">Incrível!</button>
   </div>
@@ -1114,7 +1122,15 @@
         if(monthsFromStart<0)return false;
         return monthsFromStart%window.getSubIntervalMonths(gf.subFreq||'mensal')===0;
     };
+    window.gastoFPayDoMes=function(gf,ga){
+        if(ga&&typeof ga==='object'&&ga.pay&&ga.pay!=='none')return ga.pay;
+        return(gf&&gf.pay)?gf.pay:'none';
+    };
+    window.gastoFTemChecklist=function(gf,ga){
+        return window.gastoFPayDoMes(gf,ga)==='pix';
+    };
     window.gastoFContaNoCalculo=function(gf,ga){
+        if(!window.gastoFTemChecklist(gf,ga))return true;
         if(!ga)return false;
         if(typeof ga==='number')return true;
         if(ga.pago===undefined)return true;
@@ -1122,7 +1138,7 @@
     };
     window.mergeGastoFObj=function(prev,val,pay){
         const pago=(prev&&typeof prev==='object'&&prev.pago!==undefined)?prev.pago:false;
-        return{val,pay,pago};
+        return{val,pay,pago:pay==='pix'?pago:undefined};
     };
     window.toggleGastoFPago=function(id){
         if(!activeData.gastosF)activeData.gastosF={};
@@ -1131,6 +1147,7 @@
         let ga=activeData.gastosF[id];
         if(typeof ga==='number')ga={val:ga,pay:gf.pay||'none',pago:true};
         if(!ga||typeof ga!=='object')ga={val:gf.val,pay:gf.pay||'none',pago:false};
+        if(!window.gastoFTemChecklist(gf,ga))return;
         ga.pago=!ga.pago;
         activeData.gastosF[id]=ga;
         window.renderView();
@@ -1322,7 +1339,7 @@
             const gf=(window.S.gastosFixos||[]).find(g=>g.id===id);
             if(gf&&!window.isItemActive(gf,m,y))delete activeData.gastosF[id];
         });
-        (window.S.gastosFixos||[]).forEach(gf=>{if(window.isItemActive(gf,m,y)&&activeData.gastosF[gf.id]===undefined)activeData.gastosF[gf.id]={val:gf.val,pay:gf.pay,pago:false};});
+        (window.S.gastosFixos||[]).forEach(gf=>{if(window.isItemActive(gf,m,y)&&activeData.gastosF[gf.id]===undefined)activeData.gastosF[gf.id]={val:gf.val,pay:gf.pay,pago:(gf.pay==='pix'?false:undefined)};});
         (window.S.metas||[]).forEach(meta=>{if(window.isItemActive(meta,m,y)&&activeData.metasAcum[meta.id]===undefined)activeData.metasAcum[meta.id]=0;});
         (activeData.semanas||[]).forEach(s=>{if(s.cam!=null&&s.cam!==''&&!s.camStr)s.camStr=window.toCambioInput(s.cam);});
         document.getElementById("top-mes-ref").textContent=`${MESES_CURTO[m]} ${y}`;
@@ -1381,8 +1398,18 @@
         html+=`</select>`;return html;
     };
     window.updatePay=(id,newPay,tipo)=>{
-        if(tipo==='fixo'){const gf=window.S.gastosFixos.find(g=>g.id===id);if(gf)gf.pay=newPay;Object.values(window.S.dataByMonth).forEach(month=>{if(month.gastosF[id])month.gastosF[id].pay=newPay;});}
-        else{const gv=activeData.gastosV.find(g=>g.id===id);if(gv)gv.pay=newPay;}
+        if(tipo==='fixo'){
+            const gf=window.S.gastosFixos.find(g=>g.id===id);if(gf)gf.pay=newPay;
+            Object.values(window.S.dataByMonth).forEach(month=>{
+                if(!month.gastosF||!month.gastosF[id])return;
+                const cur=month.gastosF[id];
+                if(typeof cur==='object'){
+                    cur.pay=newPay;
+                    if(newPay==='pix'&&cur.pago===undefined)cur.pago=false;
+                    if(newPay!=='pix')delete cur.pago;
+                }
+            });
+        }else{const gv=activeData.gastosV.find(g=>g.id===id);if(gv)gv.pay=newPay;}
         window.renderView();window.scheduleSync();
     };
     window.updateGastoFixoNome=(id,name)=>{const gf=window.S.gastosFixos.find(g=>g.id===id);if(gf){gf.n=name;window.scheduleSync();}};
@@ -1412,9 +1439,35 @@
         const q=window.gastosSearchQuery||'';
         const sectionsWrap=document.getElementById('gastos-sections-wrap');
         const searchPanel=document.getElementById('gastos-search-results');
+        const pList=document.getElementById("gastos-pendentes-list");
         const fList=document.getElementById("gastos-fixos-list");
         const vList=document.getElementById("gastos-var-list");
         const sList=document.getElementById("gastos-sub-list");
+        const getGa=function(gf){
+            let ga=activeData.gastosF[gf.id]||{val:gf.val,pay:gf.pay,pago:(gf.pay==='pix'?false:undefined)};
+            if(typeof ga==='number')ga={val:ga,pay:gf.pay||'none',pago:(gf.pay==='pix'?false:undefined)};
+            return ga;
+        };
+        const badgeFixo=function(gf,listTipo){
+            return listTipo==='sub'
+                ?`<span class="badge badge-info" style="font-size:10px;background:#f3e5f5;color:#6b2d8b;">🔁 ${window.getSubFreqLabel(gf.subFreq||'mensal')}</span>`
+                :(gf.endY!=null&&gf.endY!==undefined
+                    ?`<span class="badge badge-info" style="font-size:10px">Última parcela em ${MESES_CURTO[gf.endM]}/${String(gf.endY).slice(2)}</span>`
+                    :`<span class="badge badge-info" style="font-size:10px">Compra parcelada</span>`);
+        };
+        const appendFixoRow=function(gf,container,listTipo,badgeExtra){
+            const ga=getGa(gf);
+            if(!window.gastoMatchesSearch(q,gf.n,ga.val))return false;
+            const editTipo=listTipo==='sub'?'sub':'fixo';
+            const temCheck=window.gastoFTemChecklist(gf,ga);
+            const pago=window.gastoFContaNoCalculo(gf,ga);
+            const el=document.createElement("div");el.className="gasto-row";
+            if(temCheck&&!pago)el.classList.add('gasto-row-pendente');
+            const dtBadge=badgeExtra||badgeFixo(gf,listTipo);
+            el.innerHTML=window.renderGastoLinhaHtml({nome:gf.n,val:ga.val,pay:ga.pay,badgeHtml:dtBadge,editTipo,id:gf.id,onDelete:'fixo',showCheck:temCheck,pago});
+            container.appendChild(el);
+            return true;
+        };
         if(q&&searchPanel){
             sectionsWrap.style.display='none';
             searchPanel.style.display='block';
@@ -1422,9 +1475,8 @@
             const hits=[];
             (window.S.gastosFixos||[]).filter(gf=>window.isItemActive(gf,activeM,activeY)).forEach(gf=>{
                 const tipo=window.isSubscription(gf)?'sub':'fixo';
-                let ga=activeData.gastosF[gf.id]||{val:gf.val,pay:gf.pay};
-                if(typeof ga==='number')ga={val:ga,pay:'none'};
-                if(window.gastoMatchesSearch(q,gf.n,ga.val))hits.push({tipo,id:gf.id,nome:gf.n,val:ga.val,pay:ga.pay,gf});
+                const ga=getGa(gf);
+                if(window.gastoMatchesSearch(q,gf.n,ga.val))hits.push({tipo,id:gf.id,nome:gf.n,val:ga.val,pay:ga.pay,gf,ga});
             });
             (activeData.gastosV||[]).forEach(gv=>{if(window.gastoMatchesSearch(q,gv.n,gv.val))hits.push({tipo:'var',id:gv.id,nome:gv.n,val:gv.val,pay:gv.pay});});
             if(hits.length===0){searchPanel.innerHTML=`<p style="font-size:13px;color:#8e8e93;padding:12px 0;text-align:center">Nenhum gasto encontrado para "${q}".</p>`;return;}
@@ -1434,40 +1486,37 @@
                 const el=document.createElement('div');el.className='gasto-row';
                 const editTipo=h.tipo==='sub'?'sub':h.tipo==='var'?'var':'fixo';
                 const badgeSearch=h.tipo==='sub'?`<span class="badge badge-info" style="font-size:10px;background:#f3e5f5;color:#6b2d8b;">🔁 ${window.getSubFreqLabel(h.gf&&h.gf.subFreq)}</span>`:(h.tipo==='fixo'&&h.gf&&h.gf.endY?`<span class="badge badge-info" style="font-size:10px">até ${MESES_CURTO[h.gf.endM]}/${String(h.gf.endY).slice(2)}</span>`:`<span class="gasto-tipo-tag ${tagCls}">${tipoLbl}</span>`);
-                const showCheck=h.tipo!=='var';
-                const pago=showCheck&&h.gf?window.gastoFContaNoCalculo(h.gf,activeData.gastosF[h.id]):false;
-                if(showCheck&&!pago)el.classList.add('gasto-row-pendente');
-                el.innerHTML=window.renderGastoLinhaHtml({nome:h.nome,val:h.val,pay:h.pay,badgeHtml:badgeSearch,editTipo,id:h.id,onDelete:h.tipo==='var'?'var':'fixo',cor:h.tipo==='var'?'#007aff':'#1c1c1e',showCheck,pago});
+                const temCheck=h.tipo!=='var'&&h.gf&&window.gastoFTemChecklist(h.gf,h.ga||activeData.gastosF[h.id]);
+                const pago=temCheck?window.gastoFContaNoCalculo(h.gf,h.ga||activeData.gastosF[h.id]):true;
+                if(temCheck&&!pago)el.classList.add('gasto-row-pendente');
+                el.innerHTML=window.renderGastoLinhaHtml({nome:h.nome,val:h.val,pay:h.pay,badgeHtml:badgeSearch,editTipo,id:h.id,onDelete:h.tipo==='var'?'var':'fixo',cor:h.tipo==='var'?'#007aff':'#1c1c1e',showCheck:temCheck,pago});
                 searchPanel.appendChild(el);
             });
             return;
         }
         if(sectionsWrap)sectionsWrap.style.display='block';
         if(searchPanel){searchPanel.style.display='none';searchPanel.innerHTML='';}
+        if(pList)pList.innerHTML="";
         fList.innerHTML="";vList.innerHTML="";if(sList)sList.innerHTML="";
         const allActive=(window.S.gastosFixos||[]).filter(gf=>window.isItemActive(gf,activeM,activeY));
         const parcelasFixas=allActive.filter(gf=>!window.isSubscription(gf));
         const assinaturas=allActive.filter(gf=>window.isSubscription(gf));
-        const renderFixoRow=(gf,container,listTipo)=>{
-            let ga=activeData.gastosF[gf.id]||{val:gf.val,pay:gf.pay,pago:false};
-            if(typeof ga==='number')ga={val:ga,pay:'none',pago:true};
-            if(!window.gastoMatchesSearch(q,gf.n,ga.val))return;
-            const editTipo=listTipo==='sub'?'sub':'fixo';
-            const pago=window.gastoFContaNoCalculo(gf,ga);
-            const el=document.createElement("div");el.className="gasto-row";
-            if(!pago)el.classList.add('gasto-row-pendente');
-            const dtBadge=listTipo==='sub'
-                ?`<span class="badge badge-info" style="font-size:10px;background:#f3e5f5;color:#6b2d8b;">🔁 ${window.getSubFreqLabel(gf.subFreq||'mensal')}</span>`
-                :(gf.endY!=null&&gf.endY!==undefined
-                    ?`<span class="badge badge-info" style="font-size:10px">Última parcela em ${MESES_CURTO[gf.endM]}/${String(gf.endY).slice(2)}</span>`
-                    :`<span class="badge badge-info" style="font-size:10px">Compra parcelada</span>`);
-            el.innerHTML=window.renderGastoLinhaHtml({nome:gf.n,val:ga.val,pay:ga.pay,badgeHtml:dtBadge,editTipo,id:gf.id,onDelete:'fixo',showCheck:true,pago});
-            container.appendChild(el);
-        };
-        let fc=0;parcelasFixas.forEach(gf=>{const b=fList.children.length;renderFixoRow(gf,fList,'fixo');if(fList.children.length>b)fc++;});
+        if(pList){
+            let pc=0;
+            allActive.forEach(gf=>{
+                const ga=getGa(gf);
+                if(!window.gastoFTemChecklist(gf,ga))return;
+                if(window.gastoFContaNoCalculo(gf,ga))return;
+                const listTipo=window.isSubscription(gf)?'sub':'fixo';
+                const tipoTag=`<span class="gasto-tipo-tag ${listTipo==='sub'?'tag-assinatura':'tag-parcelado'}" style="margin-left:6px;">${listTipo==='sub'?'Assinatura':'Parcelado'}</span>`;
+                if(appendFixoRow(gf,pList,listTipo,badgeFixo(gf,listTipo)+tipoTag))pc++;
+            });
+            if(pc===0)pList.innerHTML=`<p style="font-size:13px;color:#8e8e93;padding:12px 0;text-align:center">${q?'Nenhum Pix pendente encontrado.':'Nenhum Pix pendente neste mês.'}</p>`;
+        }
+        let fc=0;parcelasFixas.forEach(gf=>{const b=fList.children.length;appendFixoRow(gf,fList,'fixo');if(fList.children.length>b)fc++;});
         if(fc===0)fList.innerHTML=`<p style="font-size:13px;color:#8e8e93;padding:12px 0;text-align:center">${q?'Nenhuma parcela encontrada.':'Nenhuma compra parcelada ativa neste mês.'}</p>`;
         if(sList){
-            let sc=0;assinaturas.forEach(gf=>{const b=sList.children.length;renderFixoRow(gf,sList,'sub');if(sList.children.length>b)sc++;});
+            let sc=0;assinaturas.forEach(gf=>{const b=sList.children.length;appendFixoRow(gf,sList,'sub');if(sList.children.length>b)sc++;});
             if(sc===0)sList.innerHTML=`<p style="font-size:13px;color:#8e8e93;padding:12px 0;text-align:center">${q?'Nenhuma assinatura encontrada.':'Nenhuma assinatura cadastrada.'}</p>`;
         }
         let vc=0;
