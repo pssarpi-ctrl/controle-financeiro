@@ -62,6 +62,13 @@
         .m-label { font-size: 11px; color: #8e8e93; font-weight: 600; margin-bottom: 4px; text-transform: uppercase; }
         .m-val { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
         .m-sub { font-size: 11px; color: #8e8e93; margin-top: 4px; }
+        .painel-saldo-hero { background: #fff; border-radius: 16px; padding: 14px 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%; }
+        .painel-saldo-main { flex: 1; min-width: 0; }
+        .painel-saldo-side { display: flex; gap: 18px; flex-shrink: 0; align-items: flex-start; }
+        .painel-saldo-side-item { text-align: right; cursor: pointer; }
+        .painel-saldo-side-item .m-val { font-size: 15px; }
+        .painel-saldo-hero .saldo-val { font-size: 24px; }
+        .dark-theme .painel-saldo-hero { background: #1c1c1e; }
         .green { color: #30d158; } .red { color: #ff453a; } .blue { color: #007aff; }
         .gastos-total-sticky { position: sticky; top: -14px; z-index: 40; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); margin: -14px -16px 16px -16px; padding: 14px 16px; border-bottom: 0.5px solid rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
         .receita-row { display: flex !important; flex-direction: column !important; gap: 8px; }
@@ -258,7 +265,7 @@
         <button class="login-btn" style="background: #f2f2f7; color: #8e8e93;" onclick="window.iniciarVisitante()">👤 Acessar como Visitante</button>
         <div style="margin-top: 60px; font-size: 11px; color: #8e8e93; font-weight: 500; line-height: 1.5;">
             Desenvolvido por <span style="color: #007aff; font-weight: 700;">Pedro Sarpi</span><br>
-            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()" title="Ver novidades">Versão 1.15.3</span>
+            <span style="color: #007aff; text-decoration: underline; cursor: pointer; font-weight: 700;" onclick="window.abrirChangelog()" title="Ver novidades">Versão 1.16.1</span>
         </div>
     </div>
 
@@ -293,6 +300,7 @@
 
         <div class="content">
             <div class="page active" id="pg-painel">
+                <div id="painel-saldo-hero"></div>
                 <div class="m-grid" id="painel-metrics"></div>
                 <div id="painel-alerts"></div>
                 <div id="painel-parcelas"></div>
@@ -609,7 +617,7 @@
         </div>
         <input type="hidden" id="mc-index" value="">
         <div class="input-group"><label class="input-label">Data do Câmbio</label><input type="date" id="mc-data" style="font-family:inherit;"></div>
-        <div class="input-group"><label class="input-label">Valor Registrado (R$)</label><input type="text" id="mc-valor" inputmode="decimal" placeholder="0,00" oninput="this.value=window.formatCambioInput(this.value)"></div>
+        <div class="input-group"><label class="input-label">Valor Registrado (R$)</label><input type="text" id="mc-valor" inputmode="decimal" placeholder="0,0000" oninput="this.value=window.formatCambioInput(this.value)"></div>
         <p style="font-size:12px; color:#8e8e93; line-height:1.4;">Ao salvar a data, você consegue rastrear em qual dia específico o câmbio deste rendimento foi realizado.</p>
         <button class="btn-primary" onclick="window.salvarCambio()" style="margin-top:20px;">Salvar Câmbio</button>
     </div>
@@ -855,18 +863,13 @@
 <div class="modal-overlay" id="modal-changelog">
   <div class="modal-content">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <h3 style="font-weight:800;">Novidades — v1.15.3</h3>
+      <h3 style="font-weight:800;">Novidades — v1.16.1</h3>
       <button class="btn-close-modal" onclick="window.fecharModal('modal-changelog')">&times;</button>
     </div>
-    <div style="font-size:11px; color:#fff; background:#007aff; display:inline-block; padding:3px 10px; border-radius:6px; font-weight:800; margin-bottom:8px;">v1.15.3 — agora</div>
+    <div style="font-size:11px; color:#fff; background:#007aff; display:inline-block; padding:3px 10px; border-radius:6px; font-weight:800; margin-bottom:8px;">v1.16.1 — agora</div>
     <ul style="font-size:14px; color:#3c3c43; line-height:1.5; padding-left:16px; margin-bottom:18px;">
-        <li style="margin-bottom:8px;"><b>🎯 Metas:</b> clique em <b>(Ver)</b> para ver totais de aportes, saídas e líquido do mês — mesmo layout de Receitas e Gastos.</li>
-        <li style="margin-bottom:8px;"><b>🎯 Metas:</b> detalhe mais enxuto — aporte e saída lado a lado, datas em dd/mm e sem totais redundantes.</li>
-        <li style="margin-bottom:8px;"><b>📋 Metas:</b> histórico do mês corrigido — edite entradas, saídas e trocas de emoji com data.</li>
-        <li style="margin-bottom:8px;"><b>🎯 Metas:</b> emoji no &quot;Editar Meta&quot; (seção expansível); botão único &quot;Registrar&quot; para aporte e saída.</li>
-        <li style="margin-bottom:8px;"><b>🤖 IA Analista:</b> detecta seu perfil financeiro, analisa padrões dos últimos meses e sugere ações personalizadas.</li>
-        <li style="margin-bottom:8px;"><b>✏️ Gastos:</b> edite pelo lápis e escolha alterar valor só neste mês ou nos próximos.</li>
-        <li style="margin-bottom:8px;"><b>🎯 Metas:</b> saídas voltam para sua conta, local de guarda e barra colorida com 🎉 ao concluir.</li>
+        <li style="margin-bottom:8px;"><b>📊 Painel:</b> saldo em destaque no topo (linha inteira), com recebido e gastos (sem metas) à direita no mesmo quadro.</li>
+        <li style="margin-bottom:8px;"><b>🎯 Metas:</b> aportes e retirada de metas continuam nos quadros abaixo.</li>
     </ul>
     <button class="btn-primary" onclick="window.fecharModal('modal-changelog')">Incrível!</button>
   </div>
@@ -1034,10 +1037,54 @@
 
     // ===== PARSERS / FORMATTERS =====
     window.parseMoney = v => { if(typeof v==='number') return v; if(!v) return 0; return parseFloat(v.toString().replace(/\./g,'').replace(',','.'))||0; };
+    window.parseCambio = v => {
+        if(typeof v==='number') return v;
+        if(!v) return 0;
+        let s=v.toString().trim().replace(/\s/g,'');
+        if(s.includes(',') && s.includes('.')){
+            if(s.lastIndexOf(',')>s.lastIndexOf('.')) return parseFloat(s.replace(/\./g,'').replace(',','.'))||0;
+            return parseFloat(s.replace(/,/g,''))||0;
+        }
+        if(s.includes(',')) return parseFloat(s.replace(',','.'))||0;
+        return parseFloat(s)||0;
+    };
     window.formatMoneyInput = v => { let c=v.replace(/[^\d.,]/g,''); if(c.includes('.')&&c.includes(','))c=c.replace(/\./g,''); c=c.replace(/\./g,','); let p=c.split(','); if(p.length>2)c=p[0]+','+p.slice(1).join(''); if(p.length===2&&p[1].length>2)c=p[0]+','+p[1].substring(0,2); return c; };
-    window.formatCambioInput = v => { let c=v.replace(/[^\d.,]/g,''); if(c.includes('.')&&c.includes(','))c=c.replace(/\./g,''); c=c.replace(/\./g,','); let p=c.split(','); if(p.length>2)c=p[0]+','+p.slice(1).join(''); return c; };
+    window.formatCambioInput = v => {
+        let c=v.replace(/[^\d.,]/g,'');
+        if(c.includes('.')&&c.includes(',')){ if(c.lastIndexOf(',')>c.lastIndexOf('.')) c=c.replace(/\./g,''); else c=c.replace(/,/g,''); }
+        else c=c.replace(/\./g,',');
+        let p=c.split(',');
+        if(p.length>2)c=p[0]+','+p.slice(1).join('');
+        if(p.length===2&&p[1].length>6)c=p[0]+','+p[1].substring(0,6);
+        return c;
+    };
     window.toInput = v => { if(v===0||!v) return ''; let s=v.toString(); if(s.includes('.')){let p=s.split('.'); if(p[1].length===1)p[1]+='0'; return p[0]+','+p[1].substring(0,2);} return s; };
-    window.toCambioInput = v => { if(v===0||!v) return ''; return v.toString().replace('.',','); };
+    window.toCambioInput = v => {
+        if(v===0||!v) return '';
+        const n=Number(v);
+        if(!isFinite(n)) return '';
+        let s=n.toFixed(6).replace(/\.?0+$/,'');
+        return s.replace('.',',');
+    };
+    window.getCamRate = s => (s&&s.cam!=null&&s.cam!=='')?Number(s.cam):5.90;
+    window.convertUsdToBrl = (usd, rate, rateStr) => {
+        const u=Number(usd)||0;
+        if(!u) return 0;
+        let r;
+        if(rateStr!=null&&String(rateStr).trim()!=='') r=window.parseCambio(rateStr);
+        else{ r=Number(rate)||0; r=Math.round(r*1000000)/1000000; }
+        if(!r) return 0;
+        const us=u.toFixed(2);
+        const rs=r.toFixed(6).replace(/\.?0+$/,'');
+        const uDec=(us.split('.')[1]||'').length;
+        const rDec=(rs.split('.')[1]||'').length;
+        const ui=parseInt(us.replace('.',''),10);
+        const ri=parseInt(rs.replace('.',''),10);
+        if(!ui||!ri) return 0;
+        const brlCents=Math.round((ui*ri)/Math.pow(10,uDec+rDec-2));
+        return brlCents/100;
+    };
+    window.brlFromSemana = (usd, s) => window.convertUsdToBrl(usd, s&&s.cam, s&&s.camStr);
     window.R = v => "R$ "+Number(v||0).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
 
     // ===== UTILITY =====
@@ -1249,6 +1296,7 @@
         });
         (window.S.gastosFixos||[]).forEach(gf=>{if(window.isItemActive(gf,m,y)&&activeData.gastosF[gf.id]===undefined)activeData.gastosF[gf.id]={val:gf.val,pay:gf.pay};});
         (window.S.metas||[]).forEach(meta=>{if(window.isItemActive(meta,m,y)&&activeData.metasAcum[meta.id]===undefined)activeData.metasAcum[meta.id]=0;});
+        (activeData.semanas||[]).forEach(s=>{if(s.cam!=null&&s.cam!==''&&!s.camStr)s.camStr=window.toCambioInput(s.cam);});
         document.getElementById("top-mes-ref").textContent=`${MESES_CURTO[m]} ${y}`;
         window.atualizarSelectsPagamento();
         window.renderView();
@@ -1258,16 +1306,16 @@
 
     // ===== RECEITAS =====
     window.toggleCurrency=i=>{activeData.semanas[i].isBRL=!activeData.semanas[i].isBRL;window.renderView();};
-    window.updateReceitaUSD=(i,val)=>{activeData.semanas[i].usd=Number(val);activeData.semanas[i].tipos={salario:0,reembolso:0,review:0,bonus:0};window.recalc();const el=document.getElementById(`rec-line-total-${i}`);if(el)el.textContent=window.R((activeData.semanas[i].usd||0)*(activeData.semanas[i].cam||5.90));};
+    window.updateReceitaUSD=(i,val)=>{activeData.semanas[i].usd=Number(val);activeData.semanas[i].tipos={salario:0,reembolso:0,review:0,bonus:0};window.recalc();const el=document.getElementById(`rec-line-total-${i}`);if(el)el.textContent=window.R(window.brlFromSemana(activeData.semanas[i].usd,activeData.semanas[i]));};
     window.updateReceitaBRL=(i,val)=>{activeData.semanas[i].brl=Number(val);window.recalc();const el=document.getElementById(`rec-line-total-${i}`);if(el)el.textContent=window.R(activeData.semanas[i].brl);};
-    window.updateReceitaTipo=(i,k,val)=>{if(!activeData.semanas[i].tipos)activeData.semanas[i].tipos={salario:0,reembolso:0,review:0,bonus:0};activeData.semanas[i].tipos[k]=Number(val);const sum=Object.values(activeData.semanas[i].tipos).reduce((a,b)=>a+b,0);activeData.semanas[i].usd=sum;const ui=document.getElementById(`wu-${i}`);if(ui)ui.value=sum>0?window.toInput(sum):'';const el=document.getElementById(`rec-line-total-${i}`);if(el)el.textContent=window.R(sum*(activeData.semanas[i].cam||5.90));window.recalc();};
-    window.abrirModalCambio=i=>{const s=activeData.semanas[i];document.getElementById("mc-index").value=i;document.getElementById("mc-data").value=s.camDataRaw||"";document.getElementById("mc-valor").value=window.toCambioInput(s.cam||5.90);document.getElementById("modal-cambio").style.display="flex";};
-    window.salvarCambio=()=>{const i=document.getElementById("mc-index").value;const dataStr=document.getElementById("mc-data").value;const valStr=document.getElementById("mc-valor").value;if(!valStr)return alert("Preencha o valor do câmbio.");let dataF="";if(dataStr){let p=dataStr.split('-');dataF=`${p[2]}/${p[1]}/${p[0]}`;}activeData.semanas[i].cam=window.parseMoney(valStr);activeData.semanas[i].camDataRaw=dataStr;activeData.semanas[i].camData=dataF;window.fecharModal('modal-cambio');window.renderView();};
+    window.updateReceitaTipo=(i,k,val)=>{if(!activeData.semanas[i].tipos)activeData.semanas[i].tipos={salario:0,reembolso:0,review:0,bonus:0};activeData.semanas[i].tipos[k]=Number(val);const sum=Object.values(activeData.semanas[i].tipos).reduce((a,b)=>a+b,0);activeData.semanas[i].usd=sum;const ui=document.getElementById(`wu-${i}`);if(ui)ui.value=sum>0?window.toInput(sum):'';const el=document.getElementById(`rec-line-total-${i}`);if(el)el.textContent=window.R(window.brlFromSemana(sum,activeData.semanas[i]));window.recalc();};
+    window.abrirModalCambio=i=>{const s=activeData.semanas[i];document.getElementById("mc-index").value=i;document.getElementById("mc-data").value=s.camDataRaw||"";document.getElementById("mc-valor").value=s.camStr||window.toCambioInput(s.cam||5.90);document.getElementById("modal-cambio").style.display="flex";};
+    window.salvarCambio=()=>{const i=document.getElementById("mc-index").value;const dataStr=document.getElementById("mc-data").value;const valStr=document.getElementById("mc-valor").value.trim();if(!valStr)return alert("Preencha o valor do câmbio.");let dataF="";if(dataStr){let p=dataStr.split('-');dataF=`${p[2]}/${p[1]}/${p[0]}`;}activeData.semanas[i].camStr=valStr;activeData.semanas[i].cam=window.parseCambio(valStr);activeData.semanas[i].camDataRaw=dataStr;activeData.semanas[i].camData=dataF;window.fecharModal('modal-cambio');window.renderView();};
     window.toggleWeek=i=>{const el=document.getElementById(`wd-${i}`);if(el)el.style.display=el.style.display==='none'?'grid':'none';};
     window.toggleTotalTipos=()=>{const dm=window.S.config.dolarMode||'none';if(dm!=='ergeon')return;const el=document.getElementById("total-tipos-det");const btn=document.getElementById("btn-ver-detalhes");if(el){el.style.display=el.style.display==='none'?'block':'none';if(btn)btn.textContent=el.style.display==='none'?'(Ver)':'(Esconder)';}};
     window.toggleTotalGastos=()=>{const el=document.getElementById("total-gastos-det");const btn=document.getElementById("btn-ver-det-gastos");if(el){el.style.display=el.style.display==='none'?'block':'none';if(btn)btn.textContent=el.style.display==='none'?'(Ver)':'(Esconder)';}};
     window.toggleTotalMetas=()=>{const el=document.getElementById("total-metas-det");const btn=document.getElementById("btn-ver-det-metas");if(el){el.style.display=el.style.display==='none'?'block':'none';if(btn)btn.textContent=el.style.display==='none'?'(Ver)':'(Esconder)';}};
-    window.tipoTotals=()=>{const t={salario:{u:0,b:0},reembolso:{u:0,b:0},review:{u:0,b:0},bonus:{u:0,b:0}};(activeData.semanas||[]).forEach(s=>{if(!s.isBRL&&s.tipos){window.TIPOS.forEach(tp=>{const v=s.tipos[tp.k]||0;if(v>0){t[tp.k].u+=v;t[tp.k].b+=(v*(s.cam||5.90));}});}});return t;};
+    window.tipoTotals=()=>{const t={salario:{u:0,b:0},reembolso:{u:0,b:0},review:{u:0,b:0},bonus:{u:0,b:0}};(activeData.semanas||[]).forEach(s=>{if(!s.isBRL&&s.tipos){window.TIPOS.forEach(tp=>{const v=s.tipos[tp.k]||0;if(v>0){t[tp.k].u+=v;t[tp.k].b+=window.brlFromSemana(v,s);}});}});return t;};
 
     window.buildReceitas=function(){
         const list=document.getElementById("lista-receitas");list.innerHTML="";
@@ -1280,10 +1328,10 @@
             if(isUSD){
                 const isBRL=s.isBRL||false;const cc=isBRL?'#30d158':'#007aff';const iv=isBRL?window.toInput(s.brl):window.toInput(s.usd);
                 const oif=isBRL?`this.value=window.formatMoneyInput(this.value);window.updateReceitaBRL(${i},window.parseMoney(this.value))`:`this.value=window.formatMoneyInput(this.value);window.updateReceitaUSD(${i},window.parseMoney(this.value))`;
-                const dt=isBRL?window.R(s.brl):window.R((s.usd||0)*(s.cam||5.90));
+                const dt=isBRL?window.R(s.brl):window.R(window.brlFromSemana(s.usd,s));
                 let ti='';
                 if(isErgeon)ti=window.TIPOS.map(t=>{const v=window.toInput((s.tipos&&s.tipos[t.k])||0);return`<div style="background:#f9f9f9;border:1px solid #e5e5ea;border-radius:10px;padding:6px 8px;"><div style="font-size:10px;font-weight:700;color:${t.tc};background:${t.bg};padding:2px 6px;border-radius:6px;display:inline-block;margin-bottom:4px;">${t.l}</div><input id="ti-${i}-${t.k}" type="text" inputmode="decimal" value="${v}" placeholder="0,00" oninput="this.value=window.formatMoneyInput(this.value);window.updateReceitaTipo(${i},'${t.k}',window.parseMoney(this.value))" style="width:100%;height:28px;border:none;background:transparent;font-size:16px;text-align:right;font-weight:600;color:#1c1c1e;padding:0;"></div>`;}).join('');
-                html+=`<div class="receita-inputs" style="margin-top:8px;"><div style="flex:1;background:#f2f2f7;border-radius:10px;display:flex;align-items:center;padding:0 8px;"><span onclick="window.toggleCurrency(${i})" style="font-size:13px;color:${cc};font-weight:800;cursor:pointer;padding:8px 4px 8px 0;user-select:none;">${isBRL?'R$':'U$'} <span style="font-size:9px;vertical-align:middle;">▼</span></span><input id="wu-${i}" type="text" inputmode="decimal" value="${iv}" placeholder="0,00" oninput="${oif}" style="border:none;background:transparent;height:42px;width:100%;font-weight:600;text-align:left;color:#1c1c1e;font-size:16px;"></div>${!isBRL?`<div style="width:100px;background:#f2f2f7;border-radius:10px;display:flex;flex-direction:column;justify-content:center;padding:4px 8px;cursor:pointer;" onclick="window.abrirModalCambio(${i})"><span style="font-size:10px;color:#8e8e93;line-height:1;">Câmbio <span style="font-size:9px">✏️</span></span><span style="font-size:14px;font-weight:600;color:#1c1c1e;margin-top:2px;">R$ ${window.toCambioInput(s.cam||5.90)}</span>${s.camData?`<span style="font-size:9px;color:#007aff;margin-top:1px;">${s.camData}</span>`:`<span style="font-size:9px;color:#8e8e93;margin-top:1px;">Definir data</span>`}</div>`:''}<div style="min-width:80px;display:flex;flex-direction:column;align-items:flex-end;"><span id="rec-line-total-${i}" style="font-weight:800;color:#30d158;font-size:15px;">${dt}</span>${(!isBRL&&isErgeon)?`<span onclick="window.toggleWeek(${i})" style="font-size:10px;color:#007aff;font-weight:700;cursor:pointer;margin-top:2px;padding:4px 0;">Detalhar ▾</span>`:''}</div></div>${(!isBRL&&isErgeon)?`<div id="wd-${i}" style="display:none;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;padding-top:10px;border-top:1px dashed #e5e5ea;">${ti}</div>`:''}`;
+                html+=`<div class="receita-inputs" style="margin-top:8px;"><div style="flex:1;background:#f2f2f7;border-radius:10px;display:flex;align-items:center;padding:0 8px;"><span onclick="window.toggleCurrency(${i})" style="font-size:13px;color:${cc};font-weight:800;cursor:pointer;padding:8px 4px 8px 0;user-select:none;">${isBRL?'R$':'U$'} <span style="font-size:9px;vertical-align:middle;">▼</span></span><input id="wu-${i}" type="text" inputmode="decimal" value="${iv}" placeholder="0,00" oninput="${oif}" style="border:none;background:transparent;height:42px;width:100%;font-weight:600;text-align:left;color:#1c1c1e;font-size:16px;"></div>${!isBRL?`<div style="width:100px;background:#f2f2f7;border-radius:10px;display:flex;flex-direction:column;justify-content:center;padding:4px 8px;cursor:pointer;" onclick="window.abrirModalCambio(${i})"><span style="font-size:10px;color:#8e8e93;line-height:1;">Câmbio <span style="font-size:9px">✏️</span></span><span style="font-size:14px;font-weight:600;color:#1c1c1e;margin-top:2px;">R$ ${s.camStr||window.toCambioInput(s.cam||5.90)}</span>${s.camData?`<span style="font-size:9px;color:#007aff;margin-top:1px;">${s.camData}</span>`:`<span style="font-size:9px;color:#8e8e93;margin-top:1px;">Definir data</span>`}</div>`:''}<div style="min-width:80px;display:flex;flex-direction:column;align-items:flex-end;"><span id="rec-line-total-${i}" style="font-weight:800;color:#30d158;font-size:15px;">${dt}</span>${(!isBRL&&isErgeon)?`<span onclick="window.toggleWeek(${i})" style="font-size:10px;color:#007aff;font-weight:700;cursor:pointer;margin-top:2px;padding:4px 0;">Detalhar ▾</span>`:''}</div></div>${(!isBRL&&isErgeon)?`<div id="wd-${i}" style="display:none;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;padding-top:10px;border-top:1px dashed #e5e5ea;">${ti}</div>`:''}`;
             } else {
                 html+=`<div style="display:flex;justify-content:flex-end;"><div style="width:160px;display:flex;align-items:center;background:#f2f2f7;border-radius:10px;padding:0 12px;"><span style="font-size:14px;color:#30d158;font-weight:800;">R$</span><input type="text" inputmode="decimal" value="${window.toInput(s.brl)}" placeholder="0,00" oninput="this.value=window.formatMoneyInput(this.value);window.updateReceitaBRL(${i},window.parseMoney(this.value))" style="border:none;background:transparent;height:42px;width:100%;text-align:right;font-weight:800;font-size:16px;color:#30d158;"></div></div>`;
             }
@@ -1902,6 +1950,22 @@
         window.atualizarVisualizacaoMetaDetalhes(metaId);
         window.buildMetas();window.recalc();window.scheduleSync();
     };
+    window.calcMetaMonthFlow=function(dataObj,m,y){
+        if(!dataObj)return{tAp:0,tSai:0};
+        if(!dataObj.metasHist)dataObj.metasHist={};
+        if(!dataObj.metasAcum)dataObj.metasAcum={};
+        if(!dataObj.metasSaidas)dataObj.metasSaidas={};
+        let tAp=0,tSai=0;
+        (window.S.metas||[]).filter(meta=>window.isItemActive(meta,m,y)).forEach(meta=>{
+            window.migrarMetaHistLegado(meta.id,dataObj);
+            (dataObj.metasHist[meta.id]||[]).forEach(e=>{
+                if(e.tipo==='aporte')tAp+=Number(e.val||0);
+                else if(e.tipo==='saida')tSai+=Number(e.val||0);
+            });
+            window.syncMetaTotaisFromHist(meta.id,dataObj);
+        });
+        return{tAp,tSai};
+    };
     window.calcMetaAcumulado=function(m){
         let ac=m.acumInicial||0;
         Object.keys(window.S.dataByMonth).forEach(k=>{const[km,ky]=k.split('-').map(Number);if(ky<activeY||(ky===activeY&&km<=activeM)){ac+=((window.S.dataByMonth[k].metasAcum||{})[m.id]||0);ac-=((window.S.dataByMonth[k].metasSaidas||{})[m.id]||0);}});
@@ -2061,14 +2125,15 @@
         if(!dataObj)return{tBRL:0,tUSD:0,tOrc:0,tReal:0,tAp:0,tSai:0,saldo:0,hasData:false,realFixos:0,realVar:0};
         const dm=(window.S.config&&window.S.config.dolarMode)?window.S.config.dolarMode:'none';
         const isUSD=dm!=='none';let tBRL=0,tUSD=0;
-        (dataObj.semanas||[]).forEach(s=>{if(isUSD&&!s.isBRL){tUSD+=Number(s.usd||0);tBRL+=(Number(s.usd||0)*Number(s.cam||5.90));}else{tBRL+=Number(s.brl||0);}});
+        (dataObj.semanas||[]).forEach(s=>{if(isUSD&&!s.isBRL){tUSD+=Number(s.usd||0);tBRL+=window.brlFromSemana(s.usd,s);}else{tBRL+=Number(s.brl||0);}});
         const tOrc=(window.S.gastosFixos||[]).filter(gf=>window.isItemActive(gf,m,y)).reduce((a,g)=>a+g.val,0);
         const realFixos=Object.values(dataObj.gastosF||{}).reduce((a,obj)=>a+(typeof obj==='object'?(obj.val||0):(Number(obj)||0)),0);
         const realVar=(dataObj.gastosV||[]).reduce((a,v)=>a+v.val,0);
         const tReal=realFixos+realVar;
-        const tAp=(window.S.metas||[]).filter(meta=>window.isItemActive(meta,m,y)).reduce((a,meta)=>a+((dataObj.metasAcum||{})[meta.id]||0),0);
-        const tSai=(window.S.metas||[]).filter(meta=>window.isItemActive(meta,m,y)).reduce((a,meta)=>a+((dataObj.metasSaidas||{})[meta.id]||0),0);
-        const saldo=tBRL-tReal-tAp+tSai;const hasData=tBRL>0||tReal>0||tAp>0||tSai>0;
+        const{tAp,tSai}=window.calcMetaMonthFlow(dataObj,m,y);
+        // Saldo disponível = receita − contas/gastos − aportes + retiradas das metas (volta p/ conta)
+        const saldo=tBRL-tReal-tAp+tSai;
+        const hasData=tBRL>0||tReal>0||tAp>0||tSai>0;
         return{tBRL,tUSD,tOrc,tReal,tAp,tSai,saldo,hasData,realFixos,realVar};
     };
 
@@ -2105,9 +2170,13 @@
             const liquido=tAp-tSai;
             detMetasEl.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:0.5px solid rgba(0,0,0,0.08);"><span class="meta-det-tag meta-det-aporte">Aportes do mês</span><div style="font-size:14px;font-weight:700;color:#30d158;">${window.R(tAp)}</div></div><div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:0.5px solid rgba(0,0,0,0.08);"><span class="meta-det-tag meta-det-saida">Saídas do mês</span><div style="font-size:14px;font-weight:700;color:#ff453a;">${window.R(tSai)}</div></div><div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;"><span class="meta-det-tag meta-det-liquido">Líquido (aporte − saída)</span><div style="font-size:14px;font-weight:700;color:${liquido>=0?'#007aff':'#ff453a'};">${window.R(liquido)}</div></div>`;
         }
-        let totalAcumGeral=0;let activeMetasCount=0;
-        (window.S.metas||[]).forEach(m=>{if(window.isItemActive(m,activeM,activeY)){activeMetasCount++;totalAcumGeral+=window.calcMetaAcumulado(m);}});
-        document.getElementById("painel-metrics").innerHTML=`<div class="m-card" onclick="window.goTo('receitas')" style="cursor:pointer;"><div class="m-label">RECEBIDO</div><div class="m-val green">${window.R(tBRL)}</div><div class="m-sub">Total do mês</div></div><div class="m-card" onclick="window.goTo('gastos')" style="cursor:pointer;"><div class="m-label">GASTOS</div><div class="m-val red">${window.R(tReal)}</div><div class="m-sub">${tReal>0&&tOrc>0?Math.round(tReal/tOrc*100)+"% da base":"orçado"}</div></div><div class="m-card" onclick="window.goTo('metas')" style="cursor:pointer;"><div class="m-label">APORTES</div><div class="m-val blue">${window.R(tAp)}</div><div class="m-sub">${activeMetasCount} ativas • Acum: ${window.R(totalAcumGeral).replace('R$ ','')}</div></div><div class="m-card"><div class="m-label">SALDO</div><div class="m-val ${saldo>=0?'green':'red'}">${window.R(saldo)}</div><div class="m-sub">${tBRL>0?Math.round(saldo/tBRL*100)+"% livre":"—"}</div></div>`;
+        let activeMetasCount=0;
+        (window.S.metas||[]).forEach(m=>{if(window.isItemActive(m,activeM,activeY))activeMetasCount++;});
+        const saldoCls=saldo>=0?'green':'red';
+        const saldoSub=tBRL>0?Math.round(saldo/tBRL*100)+'% livre':'disponível p/ gastar';
+        const heroEl=document.getElementById('painel-saldo-hero');
+        if(heroEl)heroEl.innerHTML=`<div class="painel-saldo-hero"><div class="painel-saldo-main"><div class="m-label">Saldo</div><div class="m-val saldo-val ${saldoCls}">${window.R(saldo)}</div><div class="m-sub">${saldoSub}</div></div><div class="painel-saldo-side"><div class="painel-saldo-side-item" onclick="window.goTo('receitas')"><div class="m-label">Recebido</div><div class="m-val green">${window.R(tBRL)}</div></div><div class="painel-saldo-side-item" onclick="window.goTo('gastos')"><div class="m-label">Gastos</div><div class="m-val red">${window.R(tReal)}</div><div class="m-sub" style="font-size:10px;margin-top:2px;">sem metas</div></div></div></div>`;
+        document.getElementById("painel-metrics").innerHTML=`<div class="m-card" onclick="window.goTo('metas')" style="cursor:pointer;"><div class="m-label">Aportes</div><div class="m-val blue">${window.R(tAp)}</div><div class="m-sub">${activeMetasCount} ativas • investido</div></div><div class="m-card" onclick="window.goTo('metas')" style="cursor:pointer;"><div class="m-label">Retirada de metas</div><div class="m-val green">${window.R(tSai)}</div><div class="m-sub">Voltou p/ sua conta</div></div>`;
         document.getElementById("painel-alerts").innerHTML="";
         window.buildParcelas();window.buildAssinaturas();window.buildCal();window.buildHistorico();
         if(document.getElementById("pg-saude").classList.contains("active"))window.buildSaude();
